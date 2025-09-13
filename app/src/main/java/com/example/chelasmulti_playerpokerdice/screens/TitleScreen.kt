@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TitleScreen() {
+fun TitleScreen(onAboutClick: () -> Unit ) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
@@ -26,11 +26,15 @@ fun TitleScreen() {
                 Text("Profile")
             }
 
-            Button(onClick = {}) {
+            Button(onClick = {
+
+            }) {
                 Text("Start Match")
             }
 
-            Button(onClick = {}) {
+            Button(onClick = {
+                onAboutClick()
+            }) {
                 Text("About")
             }
         }
@@ -40,5 +44,5 @@ fun TitleScreen() {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    TitleScreen()
+    TitleScreen({})
 }
