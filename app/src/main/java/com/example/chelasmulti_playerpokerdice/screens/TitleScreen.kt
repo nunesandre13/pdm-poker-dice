@@ -1,25 +1,44 @@
 package com.example.chelasmulti_playerpokerdice.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.chelasmulti_playerpokerdice.Greeting
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun TitleScreen() {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Column {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = "Welcome to Poker Dice!",
-                modifier = Modifier.padding(innerPadding)
+                style = MaterialTheme.typography.headlineMedium
             )
-            Button(value= "Start ") { }
+            Spacer(modifier = Modifier.height(32.dp))
 
+            Button(onClick = {}) {
+                Text("Profile")
+            }
+
+            Button(onClick = {}) {
+                Text("Start Match")
+            }
+
+            Button(onClick = {}) {
+                Text("About")
+            }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    TitleScreen()
 }
