@@ -1,5 +1,8 @@
 package pt.isel.pdm.screens
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +15,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 
 @Composable
 fun AboutScreen() {
+    val context = LocalContext.current
+
     val groupMembers = listOf("André Nunes - 51766", "Guilherme Coutinho - 50467")
     val emails = listOf("A51766@alunos.isel.pt","A50467@alunos.isel.pt")
 
@@ -35,7 +42,7 @@ fun AboutScreen() {
                 text = "Detailed description",
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable {
-                    fetchAboutOnBrowser()
+                    fetchAboutOnBrowser(context, "https://testeeeee")
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -45,7 +52,10 @@ fun AboutScreen() {
             }
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = {
-               fetchMembers()
+                fetchMembers(
+                    context = context,
+                    emails = emails
+                )
             }) {
                 Text("Contact all members")
             }
@@ -53,12 +63,27 @@ fun AboutScreen() {
     }
 }
 
-fun fetchMembers() {
-    TODO()
+fun fetchMembers(
+    context: Context,
+    emails: List<String>
+) {
+    val intent = Intent(Intent.ACTION_SENDTO,"mailto:".toUri() ).apply {
+        putExtra(Intent.EXTRA_EMAIL, emails.toTypedArray())
+    }
+    try {
+        context.startActivity(Intent.createChooser(intent, "Escolher app de email"))
+    } catch (e: ActivityNotFoundException) {
+
+    }
 }
 
-fun fetchAboutOnBrowser() {
+fun fetchAboutOnBrowser(context: Context, url: String) {
+    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+    try {
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
 
+    }
 }
 
 @Preview(showBackground = true)
