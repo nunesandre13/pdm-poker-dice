@@ -1,4 +1,4 @@
-package com.example.chelasmulti_playerpokerdice.ui.theme
+package pt.isel.pdm.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

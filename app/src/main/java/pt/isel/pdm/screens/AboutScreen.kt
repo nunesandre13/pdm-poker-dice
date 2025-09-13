@@ -1,4 +1,5 @@
-package com.example.chelasmulti_playerpokerdice.screens
+package pt.isel.pdm.screens
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,10 +17,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AboutScreen() {
-    val groupMembers = listOf(
-        "André Nunes - 51766",
-        "GUI CUTINHO - 234567")
-    val emails = listOf("A51766@blablaisel.com")
+    val groupMembers = listOf("André Nunes - 51766", "Guilherme Coutinho - 50467")
+    val emails = listOf("A51766@alunos.isel.pt","A50467@alunos.isel.pt")
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
@@ -28,19 +27,19 @@ fun AboutScreen() {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Bem-vindo ao Poker Dice!\n\nO Poker Dice é um jogo de dados onde você tenta formar as melhores combinações de poker com cinco dados. Para mais detalhes, acesse:",
+                text = "Poker Dice is a dice game inspired by poker where each player rolls five dice and may re-roll up to two times to form the best hand. After all players finish, their combinations are compared and the highest hand wins. Hands rank from strongest to weakest as: Five of a Kind, Four of a Kind, Full House, Straight, Three of a Kind, Two Pair, One Pair, and Bust.",
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Descrição detalhada",
+                text = "Detailed description",
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable {
                     fetchAboutOnBrowser()
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Membros do grupo:", style = MaterialTheme.typography.titleMedium)
+            Text("Members of group:", style = MaterialTheme.typography.titleMedium)
             groupMembers.forEach { member ->
                 Text(text = member)
             }
@@ -48,7 +47,7 @@ fun AboutScreen() {
             Button(onClick = {
                fetchMembers()
             }) {
-                Text("Contactar todos os membros")
+                Text("Contact all members")
             }
         }
     }

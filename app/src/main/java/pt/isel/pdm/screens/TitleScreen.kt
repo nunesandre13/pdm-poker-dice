@@ -1,4 +1,4 @@
-package com.example.chelasmulti_playerpokerdice.screens
+package pt.isel.pdm.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

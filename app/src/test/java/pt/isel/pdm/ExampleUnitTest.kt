@@ -1,4 +1,4 @@
-package com.example.chelasmulti_playerpokerdice
+package pt.isel.pdm
 
 import org.junit.Test
 

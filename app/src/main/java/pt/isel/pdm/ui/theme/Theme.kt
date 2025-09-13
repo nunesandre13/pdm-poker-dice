@@ -1,6 +1,5 @@
-package com.example.chelasmulti_playerpokerdice.ui.theme
+package pt.isel.pdm.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

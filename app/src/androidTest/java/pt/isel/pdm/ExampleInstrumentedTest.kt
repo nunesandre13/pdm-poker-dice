@@ -1,4 +1,4 @@
-package com.example.chelasmulti_playerpokerdice
+package pt.isel.pdm
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

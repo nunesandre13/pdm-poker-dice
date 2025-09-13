@@ -1,7 +1,7 @@
-package com.example.chelasmulti_playerpokerdice
+package pt.isel.pdm
 
 enum class Screens(val route: String) {
-    START_SCREEN("start_screen"),
+    HOME_SCREEN("start_screen"),
     ABOUT("about"),
     PROFILE("profile"),
     START_MATCH("start-match")
