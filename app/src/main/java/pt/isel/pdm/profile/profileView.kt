@@ -38,6 +38,7 @@ fun ProfileScreen(
                     ,contentDescription = "Back to Menu",
                 )
             }
+            Text("Player Info and Statistics")
         }
     }
 }
