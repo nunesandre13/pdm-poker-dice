@@ -1,4 +1,4 @@
-package pt.isel.pdm.profile
+package pt.isel.pdm.login
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

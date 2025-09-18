@@ -12,7 +12,8 @@ import com.example.chelasmulti_playerpokerdice.R
 
 @Composable
 fun TitleScreen(
-    onAboutClick: () -> Unit
+    onAboutClick: () -> Unit,
+    onProfileClick:() -> Unit,
 ) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
@@ -26,7 +27,9 @@ fun TitleScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            Button(onClick = {}) {
+            Button(onClick = {
+                onProfileClick()
+            }) {
                 Text("Profile")
             }
 
@@ -46,5 +49,5 @@ fun TitleScreen(
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    TitleScreen({})
+    TitleScreen({},{} )
 }

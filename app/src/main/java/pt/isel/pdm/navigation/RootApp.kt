@@ -8,6 +8,7 @@ import pt.isel.pdm.Screens
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.home.TitleScreen
+import pt.isel.pdm.profile.ProfileScreen
 
 @Composable
 fun RootApp() {
@@ -15,9 +16,10 @@ fun RootApp() {
     NavHost(navController = navController, startDestination = Screens.HOME_SCREEN.route) {
 
         composable(Screens.HOME_SCREEN.route) {
-            TitleScreen{
-                navController.navigate(Screens.ABOUT.route)
-            }
+            TitleScreen(
+                { navController.navigate(Screens.ABOUT.route)},
+                {navController.navigate((Screens.PROFILE.route))}
+            )
        }
 
         composable(Screens.ABOUT.route) {
@@ -25,6 +27,12 @@ fun RootApp() {
                 {action -> onAction(action)}
                 , {action -> onAction(action)},
                 { navController.popBackStack() })
+        }
+
+        composable(Screens.PROFILE.route ) {
+            ProfileScreen(
+                { navController.popBackStack() }
+            )
         }
     }
 }
