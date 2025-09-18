@@ -21,31 +21,23 @@ fun GameView() {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
-            Image(
-                painter = painterResource(R.drawable.dadoa),
-                contentDescription = ""
+            val dados = listOf(
+                R.drawable.dadoa,
+                R.drawable.dadok,
+                R.drawable.dado10,
+                R.drawable.dadoo9,
+                R.drawable.dadoj,
+                R.drawable.dadoq
             )
-            Spacer(modifier = Modifier.height(32.dp))
-            Image(
-                painter = painterResource(R.drawable.dadok),
-                contentDescription = ""
-            )
-            Image(
-                painter = painterResource(R.drawable.dado10),
-                contentDescription = ""
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Image(
-                painter = painterResource(R.drawable.dado9),
-                contentDescription = ""
-            )
-            Image(
-                painter = painterResource(R.drawable.dadoj),
-                contentDescription = ""
-            )
-
-
-            Spacer(modifier = Modifier.height(32.dp))
+            dados.forEach {
+                Image(
+                    painter = painterResource(id = it),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .padding(4.dp)
+                )
+            }
             Button({}) {
                 Text("Roll Dices")
             }
