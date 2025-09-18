@@ -51,7 +51,7 @@ fun LobbyListScreen(lobbies: List<String>, onJoinClick: (String) -> Unit) {
 
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GreetingPreview() {
     LobbyListScreen(
