@@ -1,4 +1,4 @@
-package pt.isel.pdm.screens
+package pt.isel.pdm.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

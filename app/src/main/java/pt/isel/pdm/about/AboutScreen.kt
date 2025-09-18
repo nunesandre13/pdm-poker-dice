@@ -1,4 +1,4 @@
-package pt.isel.pdm.screens
+package pt.isel.pdm.about
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,7 +21,12 @@ import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.actions.ActionsIntent
 
 @Composable
-fun AboutScreen(onDetails: (action: ActionsIntent) -> Unit, onSendEmail : (action: ActionsIntent) -> Unit ) {
+fun AboutScreen(
+    onDetails: (action: ActionsIntent) -> Unit,
+    onSendEmail : (action: ActionsIntent) -> Unit,
+    onBack: () -> Unit
+) {
+
     val context = LocalContext.current
     val groupMembers = listOf("André Nunes - 51766", "Guilherme Coutinho - 50467")
     val emails = listOf("A51766@alunos.isel.pt","A50467@alunos.isel.pt")
@@ -31,14 +37,21 @@ fun AboutScreen(onDetails: (action: ActionsIntent) -> Unit, onSendEmail : (actio
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
+            Button(onClick = { onBack() }) {
+                Text("Back to Menu")
+            }
+
             Text(
                 text = stringResource(R.string.description_game),
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Detailed description",
-                modifier = Modifier.clickable {
+                color = Color.Blue,
+                text = "More info about Poker Dice",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.
+                clickable {
                     onDetails(
                         ActionsIntent.Browser("https://en.wikipedia.org/wiki/Poker_dice", context)
                     )
@@ -62,5 +75,5 @@ fun AboutScreen(onDetails: (action: ActionsIntent) -> Unit, onSendEmail : (actio
 @Preview(showBackground = true)
 @Composable
 fun Teste(){
-    AboutScreen({}, {})
+    AboutScreen({}, {},{})
 }

@@ -6,8 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isel.pdm.Screens
 import pt.isel.pdm.actions.onAction
-import pt.isel.pdm.screens.AboutScreen
-import pt.isel.pdm.screens.TitleScreen
+import pt.isel.pdm.about.AboutScreen
+import pt.isel.pdm.home.TitleScreen
 
 @Composable
 fun RootApp() {
@@ -21,8 +21,10 @@ fun RootApp() {
        }
 
         composable(Screens.ABOUT.route) {
-            AboutScreen({action -> onAction(action)}
-                , {action -> onAction(action)})
+            AboutScreen(
+                {action -> onAction(action)}
+                , {action -> onAction(action)},
+                { navController.popBackStack() })
         }
     }
 }
