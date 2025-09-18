@@ -5,11 +5,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.chelasmulti_playerpokerdice.R
 
 @Composable
-fun TitleScreen(onAboutClick: () -> Unit ) {
+fun TitleScreen(
+    onAboutClick: () -> Unit
+) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
@@ -17,7 +21,7 @@ fun TitleScreen(onAboutClick: () -> Unit ) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Welcome to Poker Dice!",
+                text = stringResource(id = R.string.title_app),
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -26,9 +30,7 @@ fun TitleScreen(onAboutClick: () -> Unit ) {
                 Text("Profile")
             }
 
-            Button(onClick = {
-
-            }) {
+            Button(onClick = {}) {
                 Text("Start Match")
             }
 

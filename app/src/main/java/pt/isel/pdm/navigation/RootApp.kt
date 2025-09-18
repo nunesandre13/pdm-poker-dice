@@ -12,11 +12,13 @@ import pt.isel.pdm.screens.TitleScreen
 fun RootApp() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screens.HOME_SCREEN.route) {
+
         composable(Screens.HOME_SCREEN.route) {
             TitleScreen{
                 navController.navigate(Screens.ABOUT.route)
             }
        }
+
         composable(Screens.ABOUT.route) {
             AboutScreen()
         }

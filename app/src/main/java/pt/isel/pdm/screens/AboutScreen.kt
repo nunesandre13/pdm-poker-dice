@@ -16,9 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.example.chelasmulti_playerpokerdice.R
 
 @Composable
 fun AboutScreen() {
@@ -34,7 +36,7 @@ fun AboutScreen() {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Poker Dice is a dice game inspired by poker where each player rolls five dice and may re-roll up to two times to form the best hand. After all players finish, their combinations are compared and the highest hand wins. Hands rank from strongest to weakest as: Five of a Kind, Four of a Kind, Full House, Straight, Three of a Kind, Two Pair, One Pair, and Bust.",
+                text = stringResource(R.string.description_game),
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.height(8.dp))
