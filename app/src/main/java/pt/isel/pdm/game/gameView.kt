@@ -19,7 +19,7 @@ fun GameView() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
             Image(
                 painter = painterResource(R.drawable.dadoa),
@@ -28,6 +28,19 @@ fun GameView() {
             Spacer(modifier = Modifier.height(32.dp))
             Image(
                 painter = painterResource(R.drawable.dadok),
+                contentDescription = ""
+            )
+            Image(
+                painter = painterResource(R.drawable.dado10),
+                contentDescription = ""
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Image(
+                painter = painterResource(R.drawable.dado9),
+                contentDescription = ""
+            )
+            Image(
+                painter = painterResource(R.drawable.dadoj),
                 contentDescription = ""
             )
 
