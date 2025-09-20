@@ -41,11 +41,15 @@ fun AboutScreen(
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            IconButton(onClick = { onBack() }) {
+            IconButton(
+                onClick = {
+                    onBack()
+                })
+            {
                 Icon(
-                    Icons.Default.ArrowBack
-                    ,contentDescription = "Back to Menu",
-                    )
+                    imageVector = Icons.Default.ArrowBack
+                    ,contentDescription = "Back to Menu"
+                )
             }
 
             Text(

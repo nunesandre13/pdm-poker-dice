@@ -14,6 +14,7 @@ import com.example.chelasmulti_playerpokerdice.R
 fun TitleScreen(
     onAboutClick: () -> Unit,
     onProfileClick:() -> Unit,
+    onStartMatchClick:() -> Unit
 ) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
@@ -33,7 +34,9 @@ fun TitleScreen(
                 Text("Profile")
             }
 
-            Button(onClick = {}) {
+            Button(onClick = {
+                onStartMatchClick()
+            }) {
                 Text("Start Match")
             }
 
@@ -49,5 +52,5 @@ fun TitleScreen(
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    TitleScreen({},{} )
+    TitleScreen({},{},{} )
 }

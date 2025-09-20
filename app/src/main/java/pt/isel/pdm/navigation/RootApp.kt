@@ -8,30 +8,45 @@ import pt.isel.pdm.Screens
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.home.TitleScreen
+import pt.isel.pdm.lobby.LobbyCreationView
+import pt.isel.pdm.lobby.LobbyListScreen
+import pt.isel.pdm.login.LoginScreen
 import pt.isel.pdm.profile.ProfileScreen
 
 @Composable
 fun RootApp() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screens.HOME_SCREEN.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Screens.HOME_SCREEN.route
+    ) {
 
         composable(Screens.HOME_SCREEN.route) {
             TitleScreen(
-                { navController.navigate(Screens.ABOUT.route)},
-                {navController.navigate((Screens.PROFILE.route))}
+                onAboutClick = { navController.navigate(Screens.ABOUT.route) },
+                onProfileClick = { navController.navigate((Screens.PROFILE.route)) },
+                onStartMatchClick = { navController.navigate((Screens.START_MATCH.route)) }
             )
-       }
+        }
 
         composable(Screens.ABOUT.route) {
             AboutScreen(
-                {action -> onAction(action)}
-                , {action -> onAction(action)},
-                { navController.popBackStack() })
+                onDetails = { action -> onAction(action) },
+                onSendEmail = { action -> onAction(action) },
+                onBack = { navController.popBackStack() })
         }
 
-        composable(Screens.PROFILE.route ) {
+        composable(Screens.PROFILE.route) {
             ProfileScreen(
-                { navController.popBackStack() }
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screens.START_MATCH.route) {
+            LobbyListScreen(
+                lobbies = listOf("Lobby 1", "Lobby 2", "Lobby 3"),
+                onJoinClick = { lobby -> navController.navigate(Screens.START_MATCH) },
+                onBack = { navController.popBackStack() }
             )
         }
     }
