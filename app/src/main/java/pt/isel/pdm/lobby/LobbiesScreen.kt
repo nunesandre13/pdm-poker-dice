@@ -13,6 +13,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,44 +24,67 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LobbyListScreen(
     lobbies: List<String>,
     onJoinClick: (String) -> Unit,
     onBack: () -> Unit = {},
+    onCreateLobby: () -> Unit = {}
 ) {
-    Column {
-        Spacer(modifier = Modifier.height(16.dp))
-        IconButton(onClick = { onBack() }) {
-            Icon(
-                Icons.Default.ArrowBack
-                ,contentDescription = "Back to Menu",
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Lobbies") },
+                navigationIcon = {
+                    IconButton(onClick = { onBack() }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Voltar ao Menu"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             )
         }
-        lobbies.forEach { lobby ->
-            Spacer(modifier = Modifier.height(32.dp))
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Red),
-            ) {
-                Row(
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(8.dp)
+        ) {
+            lobbies.forEach { lobby ->
+                Spacer(modifier = Modifier.height(32.dp))
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(horizontal = 8.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.Red),
                 ) {
-                    Text(text = lobby, style = MaterialTheme.typography.bodyLarge)
-                    Button(onClick = { onJoinClick(lobby) }) {
-                        Text("Join")
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = lobby, style = MaterialTheme.typography.bodyLarge)
+                        Button(onClick = { onJoinClick(lobby) }) {
+                            Text("Join")
+                        }
                     }
                 }
             }
-        }
-        Button(onClick = {
-        }) {
-            Text("Create Lobby")
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(onClick = { onCreateLobby() }) {
+                Text("Criar Lobby")
+            }
         }
     }
 }
