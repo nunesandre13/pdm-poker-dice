@@ -1,6 +1,8 @@
 package pt.isel.pdm.ui
 
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,24 +34,23 @@ fun PasswordForm(
     showPassword: Boolean,
     onShowPasswordChange: () -> Unit
 ) {
-    MakeRow (
-        {
-            OutlinedTextField(
-                value = password?.password ?: "",
-                onValueChange = { newValue ->
-                    onPasswordChange(Password(newValue))
-                },
-                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                label = { Text("Password") }
-            )
+    OutlinedTextField(
+        value = password?.password ?: "",
+        onValueChange = { newValue ->
+            onPasswordChange(Password(newValue))
         },
-        {
-            Button(onClick = onShowPasswordChange) {
-                Text(text = "Show password")
-            }
+        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+        label = { Text("Password") },
+        trailingIcon = {
+            ClickableIcon(
+                icon = if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                contentDescription = if (showPassword) "Show" else "NotShow",
+                onClick = onShowPasswordChange
+            )
         }
     )
 }
+
 
 @Composable
 fun NamerForm(
