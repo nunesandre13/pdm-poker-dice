@@ -1,14 +1,13 @@
 package pt.isel.pdm.ui
-import android.widget.Space
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.content.MediaType.Companion.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.ui.Handlers.TopBarConfig
 
@@ -89,10 +89,9 @@ fun TopBar(config: TopBarConfig) {
 @Composable
 fun TopBarPreview() {
     TopBar(
-        TopBarConfig.WithBackAndNext(
+        TopBarConfig.WithBack(
             title = "Exemplo",
-            onBack = {},
-            onNext = {}
+            onBack = {}
         )
     )
 }
@@ -125,12 +124,14 @@ fun ClickableIcon(
 fun ClickableImage(
     resourceId: Int,
     contentDescription: String? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    size: Dp,
 ) {
     Image(
         painter = painterResource(id = resourceId),
         contentDescription = contentDescription,
         modifier = Modifier.clickable { onClick() }
+            .size(size)
     )
 }
 
