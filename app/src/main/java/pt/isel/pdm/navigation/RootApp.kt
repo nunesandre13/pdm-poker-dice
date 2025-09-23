@@ -44,7 +44,7 @@ fun RootApp() {
 
         composable(Screens.START_MATCH.route) {
             LobbyListScreen(
-                lobbies = listOf("Lobby 1", "Lobby 2", "Lobby 3"),
+                lobbies = listOf("Lobby 1", "Lobby 2", "Lobby 3", "Lobby 4"),
                 onJoinClick = { lobby -> navController.navigate(Screens.START_MATCH) },
                 onBack = { navController.popBackStack() }
             )

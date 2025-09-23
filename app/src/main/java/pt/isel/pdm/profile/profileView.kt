@@ -18,43 +18,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import pt.isel.pdm.ui.DefaultBackGround
+import pt.isel.pdm.ui.Handlers.TopBarConfig
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onBack: () -> Unit = {}
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text("Profile") },
-                navigationIcon = {
-                    IconButton(onClick = { onBack() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Voltar ao Menu"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    DefaultBackGround({
             Text("Player Info and Statistics")
-        }
-    }
+        },
+        topBarConfig = TopBarConfig.WithBack(
+            title = "Profile",
+            onBack = onBack
+        )
+    )
 }
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

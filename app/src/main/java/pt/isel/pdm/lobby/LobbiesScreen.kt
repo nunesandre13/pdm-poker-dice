@@ -26,7 +26,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 
-@OptIn(ExperimentalMaterial3Api::class)
+import pt.isel.pdm.ui.DefaultBackGround
+import pt.isel.pdm.ui.Handlers.TopBarConfig
+
 @Composable
 fun LobbyListScreen(
     lobbies: List<String>,
@@ -34,29 +36,8 @@ fun LobbyListScreen(
     onBack: () -> Unit = {},
     onCreateLobby: () -> Unit = {}
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Profile") },
-                navigationIcon = {
-                    IconButton(onClick = { onBack() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Voltar ao Menu"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(8.dp)
-        ) {
+    DefaultBackGround(
+        {
             lobbies.forEach { lobby ->
                 Spacer(modifier = Modifier.height(32.dp))
                 Card(
@@ -78,20 +59,25 @@ fun LobbyListScreen(
                     }
                 }
             }
+        },
+        {
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = { onCreateLobby() }) {
                 Text("Criar Lobby")
             }
-        }
-    }
+        },
+        topBarConfig = TopBarConfig.WithBack(
+            title = "Lobbies",
+            onBack = onBack
+        )
+    )
 }
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GreetingPreview() {
     LobbyListScreen(
-        lobbies = listOf("Lobby 1", "Lobby 2", "Lobby 3"),
+        lobbies = listOf("Lobby 1", "Lobby 2", "Lobby 3", "Lobby 4"),
         onJoinClick = {},
         onBack = {}
     )

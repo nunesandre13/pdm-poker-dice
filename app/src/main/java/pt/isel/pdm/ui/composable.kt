@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,7 +82,10 @@ fun TopBar(config: TopBarConfig) {
                 }
                 else -> {}
             }
-        }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     )
 }
 
@@ -103,7 +107,7 @@ fun DefaultBackGround(
     vararg content: @Composable () -> Unit,
     topBarConfig : TopBarConfig,
 ){
-    ColumnScaffold(topBar = { TopBar(topBarConfig) }, content= content)
+    ColumnScaffold(topBar = { TopBar(topBarConfig) }, content= content,)
 }
 
 
