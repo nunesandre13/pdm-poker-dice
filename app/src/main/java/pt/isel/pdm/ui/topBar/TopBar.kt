@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.ui.clickable.ClickableIcon
 
+const val BACK_BUTTON_TAG = "Back"
+const val NEXT_BUTTON_TAG = "Next"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(config: TopBarConfig) {
@@ -20,12 +22,12 @@ fun TopBar(config: TopBarConfig) {
         navigationIcon = {
             when (config) {
                 is TopBarConfig.WithBack -> {
-                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back"){
+                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = BACK_BUTTON_TAG){
                         config.onBack()
                     }
                 }
                 is TopBarConfig.WithBackAndNext -> {
-                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back"){
+                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = BACK_BUTTON_TAG){
                         config.onBack()
                     }
                 }
@@ -35,12 +37,12 @@ fun TopBar(config: TopBarConfig) {
         actions = {
             when (config) {
                 is TopBarConfig.WithNext -> {
-                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next"){
+                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = NEXT_BUTTON_TAG){
                         config.onNext()
                     }
                 }
                 is TopBarConfig.WithBackAndNext -> {
-                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next"){
+                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = NEXT_BUTTON_TAG){
                         config.onNext()
                     }
                 }
