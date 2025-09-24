@@ -4,13 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import pt.isel.pdm.Screens
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.home.TitleScreen
-import pt.isel.pdm.lobby.LobbyCreationView
 import pt.isel.pdm.lobby.LobbyListScreen
-import pt.isel.pdm.login.LoginScreen
 import pt.isel.pdm.profile.ProfileScreen
 
 @Composable

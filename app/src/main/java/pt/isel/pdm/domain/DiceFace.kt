@@ -1,6 +1,6 @@
 package pt.isel.pdm.domain
-import com.example.chelasmulti_playerpokerdice.R
 
+import com.example.chelasmulti_playerpokerdice.R
 
 enum class DiceFace(val resId: Int) {
     NINE(R.drawable.dadoo9),

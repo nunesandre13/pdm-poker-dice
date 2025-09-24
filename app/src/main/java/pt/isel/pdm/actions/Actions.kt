@@ -1,8 +1,8 @@
 package pt.isel.pdm.actions
+
 import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
-
 
 fun onAction(actionsIntent: ActionsIntent){
     when(actionsIntent){

@@ -1,4 +1,4 @@
-package pt.isel.pdm.ui
+package pt.isel.pdm.ui.forms
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -11,6 +11,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.Password
+import pt.isel.pdm.ui.clickable.ClickableIcon
 
 @Composable
 fun EmailForm(

@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.ui.ClickableImage
+import pt.isel.pdm.ui.clickable.ClickableImage
 
 @Composable
 fun RollingDie(

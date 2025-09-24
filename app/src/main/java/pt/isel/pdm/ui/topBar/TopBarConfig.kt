@@ -1,4 +1,4 @@
-package pt.isel.pdm.ui.Handlers
+package pt.isel.pdm.ui.topBar
 
 sealed class TopBarConfig(val title : String) {
     class Simple(title: String) : TopBarConfig(title)

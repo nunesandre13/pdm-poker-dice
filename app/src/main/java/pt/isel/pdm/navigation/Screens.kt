@@ -1,4 +1,4 @@
-package pt.isel.pdm
+package pt.isel.pdm.navigation
 
 enum class Screens(val route: String) {
     HOME_SCREEN("start_screen"),
