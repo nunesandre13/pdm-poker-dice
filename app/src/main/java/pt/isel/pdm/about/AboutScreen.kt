@@ -1,7 +1,8 @@
 package pt.isel.pdm.about
 
 import androidx.compose.foundation.clickable
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,32 +36,40 @@ fun AboutScreen(
             )
         },
         {
-            Text(
-                color = Color.Blue,
-                text = "Mais info sobre Poker Dice",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.clickable {
-                    onDetails(
-                        ActionsIntent.Browser("https://en.wikipedia.org/wiki/Poker_dice", context)
-                    )
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    color = Color.Blue,
+                    text = "More Info about Poker Dice",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.clickable {
+                        onDetails(
+                            ActionsIntent.Browser(
+                                "https://en.wikipedia.org/wiki/Poker_dice",
+                                context
+                            )
+                        )
+                    }
+                )
+            }
+        },
+        {
+            Text("Members of group:", style = MaterialTheme.typography.titleLarge)
+        },
+        {
+            Author(
+                name = groupMembers[1],
+                imageResId = R.drawable.gui,
+                onSendEmailRequested = {
+                    onSendEmail(ActionsIntent.Email(listOf(emails[0]), context))
                 }
             )
-        },
-        {
-            Text("Members of group:", style = MaterialTheme.typography.titleMedium)
-            groupMembers.forEach { member ->
-                Text(text = member)
-            }
-        },
-        {
-            Button(onClick = {
-                onSendEmail(ActionsIntent.Email(emails, context))
-            }) {
-                Text("Contactar todos os membros")
-            }
-        },
-        {
-            Author(onSendEmailRequested = {})
+            Author(
+                name = groupMembers[0],
+                imageResId = R.drawable.andre,
+                onSendEmailRequested = {
+                    onSendEmail(ActionsIntent.Email(listOf(emails[1]), context))
+                }
+            )
         },
         topBarConfig = TopBarConfig.WithBack(
             title = "About the game",

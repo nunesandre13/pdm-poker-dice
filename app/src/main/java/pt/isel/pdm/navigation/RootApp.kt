@@ -32,7 +32,8 @@ fun RootApp() {
             AboutScreen(
                 onDetails = { action -> onAction(action) },
                 onSendEmail = { action -> onAction(action) },
-                onBack = { navController.popBackStack() })
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(Screens.PROFILE.route) {
