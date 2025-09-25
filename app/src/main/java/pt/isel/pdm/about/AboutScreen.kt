@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.actions.ActionsIntent
+import pt.isel.pdm.ui.author.Author
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 
@@ -57,6 +58,9 @@ fun AboutScreen(
             }) {
                 Text("Contactar todos os membros")
             }
+        },
+        {
+            Author(onSendEmailRequested = {})
         },
         topBarConfig = TopBarConfig.WithBack(
             title = "About the game",
