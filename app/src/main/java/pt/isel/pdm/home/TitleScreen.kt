@@ -26,45 +26,41 @@ fun TitleScreen(
     onStartMatchClick:() -> Unit
 ) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Box(
-            modifier = Modifier.fillMaxSize().background(color = Color.Gray)
+        Column(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.background),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(200.dp)
-                        .clip(CircleShape)
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    text = stringResource(id = R.string.title_app),
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                Spacer(modifier = Modifier.height(32.dp))
+            Image(
+                painter = painterResource(id = R.drawable.background),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = stringResource(id = R.string.title_app),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.height(32.dp))
 
-                Button(onClick = {
-                    onProfileClick()
-                }) {
-                    Text("Profile")
-                }
+            Button(onClick = {
+                onProfileClick()
+            }) {
+                Text("Profile")
+            }
 
-                Button(onClick = {
-                    onStartMatchClick()
-                }) {
-                    Text("Start Match")
-                }
+            Button(onClick = {
+                onStartMatchClick()
+            }) {
+                Text("Start Match")
+            }
 
-                Button(onClick = {
-                    onAboutClick()
-                }) {
-                    Text("About")
-                }
+            Button(onClick = {
+                onAboutClick()
+            }) {
+                Text("About")
             }
         }
     }
