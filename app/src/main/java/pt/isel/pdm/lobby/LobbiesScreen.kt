@@ -18,7 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
-
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 
 @Composable
 fun LobbyListScreen(
@@ -29,23 +30,25 @@ fun LobbyListScreen(
 ) {
     DefaultBackGround(
         {
-            lobbies.forEach { lobby ->
-                Spacer(modifier = Modifier.height(32.dp))
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.Red),
-                ) {
-                    Row(
+            LazyColumn {
+                items(lobbies) { lobby ->
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .padding(horizontal = 8.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.Red),
                     ) {
-                        Text(text = lobby, style = MaterialTheme.typography.bodyLarge)
-                        Button(onClick = { onJoinClick(lobby) }) {
-                            Text("Join")
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = lobby, style = MaterialTheme.typography.bodyLarge)
+                            Button(onClick = { onJoinClick(lobby) }) {
+                                Text("Join")
+                            }
                         }
                     }
                 }
