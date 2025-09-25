@@ -10,7 +10,7 @@ import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.lobby.LobbyCreationView
 import pt.isel.pdm.lobby.LobbyListScreen
 import pt.isel.pdm.profile.ProfileScreen
-import pt.isel.pdm.ui.HandlingViewPreview
+import pt.isel.pdm.ui.HandlingView
 
 @Composable
 fun RootApp() {
@@ -57,10 +57,8 @@ fun RootApp() {
             )
         }
 
-        composable(
-            Screens.AWAIING_GAME.route
-        ) {
-            HandlingViewPreview(
+        composable(Screens.AWAIING_GAME.route) {
+            HandlingView(
                 onBack = { navController.popBackStack() }
             )
         }
