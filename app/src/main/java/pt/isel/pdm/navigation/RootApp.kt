@@ -7,8 +7,10 @@ import androidx.navigation.compose.rememberNavController
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.home.TitleScreen
+import pt.isel.pdm.lobby.LobbyCreationView
 import pt.isel.pdm.lobby.LobbyListScreen
 import pt.isel.pdm.profile.ProfileScreen
+import pt.isel.pdm.ui.HandlingViewPreview
 
 @Composable
 fun RootApp() {
@@ -42,7 +44,23 @@ fun RootApp() {
         composable(Screens.START_MATCH.route) {
             LobbyListScreen(
                 lobbies = listOf("Lobby 1", "Lobby 2", "Lobby 3", "Lobby 4"),
-                onJoinClick = { lobby -> navController.navigate(Screens.START_MATCH) },
+                onJoinClick = { navController.navigate(Screens.START_MATCH.route) },
+                onBack = { navController.popBackStack() },
+                onCreateLobby = { navController.navigate(Screens.CREATE_LOBBY.route) }
+            )
+        }
+
+        composable(Screens.CREATE_LOBBY.route) {
+            LobbyCreationView(
+                onCreateLobby = { navController.navigate(Screens.AWAIING_GAME.route) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            Screens.AWAIING_GAME.route
+        ) {
+            HandlingViewPreview(
                 onBack = { navController.popBackStack() }
             )
         }

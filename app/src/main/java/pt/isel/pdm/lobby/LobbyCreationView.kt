@@ -7,41 +7,43 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pt.isel.pdm.ui.background.DefaultBackGround
+import pt.isel.pdm.ui.topBar.TopBarConfig
 
 @Composable
-fun LobbyCreationView(onCreateLobby: (String) -> Unit) {
-    var lobbyName by remember { mutableStateOf("") } //simples estado
+fun LobbyCreationView(
+    onCreateLobby: () -> Unit,
+    onBack: () -> Unit = {}
+) {
+    var lobbyName by remember { mutableStateOf("") }
     var numOfPlayers by remember { mutableIntStateOf(0) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Create Lobby",
-            style = MaterialTheme.typography.headlineMedium
+    DefaultBackGround({
+        OutlinedTextField(
+            value = numOfPlayers.toString(),
+            onValueChange = { numOfPlayers = it.toInt() },
+            label = { Text("Number of Players:") },
+            modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(16.dp))
-
         OutlinedTextField(
             value = lobbyName,
             onValueChange = { lobbyName = it },
-            label = { Text("Name do Lobbyyyyyyyyyyyy") },
+            label = { Text("Name of lobby") },
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-
         Button(
-            onClick = { onCreateLobby(lobbyName) },
+            onClick = { onCreateLobby() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Create Lobby")
         }
-    }
+    },
+    topBarConfig = TopBarConfig.WithBack(
+        title = "Create Lobby",
+        onBack = onBack
+    ),
+        modifier = Modifier
+    )
 }
 
 

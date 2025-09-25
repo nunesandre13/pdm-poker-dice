@@ -63,7 +63,8 @@ fun LobbyListScreen(
         topBarConfig = TopBarConfig.WithBack(
             title = "Lobbies",
             onBack = onBack
-        )
+        ),
+        modifier = Modifier
     )
 }
 

@@ -61,7 +61,8 @@ fun AboutScreen(
         topBarConfig = TopBarConfig.WithBack(
             title = "About the game",
             onBack = onBack
-        )
+        ),
+        modifier = Modifier
     )
 }
 
