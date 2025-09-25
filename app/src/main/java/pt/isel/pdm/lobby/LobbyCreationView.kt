@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LobbyCreationView(onCreateLobby: (String) -> Unit) {
     var lobbyName by remember { mutableStateOf("") } //simples estado
+    var numOfPlayers by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -32,6 +33,8 @@ fun LobbyCreationView(onCreateLobby: (String) -> Unit) {
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+
         Button(
             onClick = { onCreateLobby(lobbyName) },
             modifier = Modifier.fillMaxWidth()
