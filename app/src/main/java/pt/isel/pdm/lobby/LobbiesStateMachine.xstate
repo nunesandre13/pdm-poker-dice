@@ -8,19 +8,19 @@
    <name/>
    <description>Lobby State Machine</description>
    <states>
-    <state id="" label="LobbiesScreen" x_loc="245" y_loc="6">
+    <state id="" label="LobbyScreen" x_loc="414" y_loc="92">
      <description/>
      <reference/>
      <entry_action/>
      <exit_action/>
     </state>
-    <state id="" label="Lobby Creation Screen" x_loc="626" y_loc="144">
+    <state id="" label="LobbiesScreen" x_loc="132" y_loc="86">
      <description/>
      <reference/>
      <entry_action/>
      <exit_action/>
     </state>
-    <state id="" label="Lobby screen" x_loc="398" y_loc="300">
+    <state id="" label="LobbyCreationScreen" x_loc="396" y_loc="340">
      <description/>
      <reference/>
      <entry_action/>
@@ -32,13 +32,17 @@
     <event id="OnCreatLobby" label=""/>
     <event id="onBack" label=""/>
     <event id="onNavigationToCreation" label=""/>
+    <event id="createNewLobby" label=""/>
+    <event id="join" label=""/>
+    <event id="join" label=""/>
+    <event id="create" label=""/>
+    <event id="createNewLobby" label=""/>
    </events>
    <transitions>
-    <transition event_id="onJoinClick" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
+    <transition event_id="join" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
+    <transition event_id="createNewLobby" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
+    <transition event_id="create" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
     <transition event_id="onBack" source_id="" style="widthFirst" target_id="" transit_action="" transit_guard=""/>
-    <transition event_id="onNavigationToCreation" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
-    <transition event_id="OnCreatLobby" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
-    <transition event_id="OnCreatLobby" source_id="" style="heightFirst" target_id="" transit_action="" transit_guard=""/>
    </transitions>
   </state_machine>
  </state_machines>
