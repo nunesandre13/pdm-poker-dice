@@ -1,4 +1,4 @@
-package pt.isel.pdm.login
+package pt.isel.pdm.user
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api

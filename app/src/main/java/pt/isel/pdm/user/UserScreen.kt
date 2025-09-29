@@ -1,19 +1,17 @@
-package pt.isel.pdm.login
+package pt.isel.pdm.user
 
-import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.profile.ProfileScreen
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.UserCreate
+import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.ui.topBar.TopBarConfig
 
 
 @Composable
 fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
-    when (val stateUi = viewModel.stateUi.collectAsState().value) {
+    when (viewModel.stateUi.collectAsState().value) {
         UserScreenState.CreatingUser ->
             CreateUserScreen(
                 topBarConfig = TopBarConfig.WithBack(
@@ -21,7 +19,12 @@ fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
                     onBack = goBack
                 ),
                 createUser = { name, email, password ->
-                    viewModel.createUser(viewModel.user)
+                    viewModel.createUser(
+                        UserCreate(
+                            name = Name(name.name),
+                            email=email,
+                            password=password)
+                    )
                 }
             )
 
@@ -37,7 +40,12 @@ fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
             LoginScreen(
                 onBack = goBack,
                 login = { email, password ->
-                viewModel.login(viewModel.user)
+                viewModel.login(
+                    UserLogin(
+                        email = email,
+                        password = password,
+                    )
+                )
             }
         )
 
