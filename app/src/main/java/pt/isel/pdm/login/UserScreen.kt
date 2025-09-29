@@ -7,36 +7,39 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-
+import pt.isel.pdm.domain.User
+import pt.isel.pdm.ui.topBar.TopBarConfig
 
 
 @Composable
 fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
     when (val stateUi = viewModel.stateUi.collectAsState().value) {
-
-        UserScreenState.Idle -> {
-            TitleScreen(
-                {},{},{}
+        UserScreenState.CreatingUser ->
+            CreateUserScreen(
+                topBarConfig = TopBarConfig.WithBack(
+                    title = "Create Account",
+                    onBack = goBack
+                ),
+                createUser = { name, email, password ->
+                    viewModel.createUser(viewModel.user)
+                }
             )
-        }
 
-        UserScreenState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                CircularProgressIndicator() // nAO SEU OQ METER
-            }
-        }
+        UserScreenState.Idle -> {}
 
-        is UserScreenState.UserLogged -> {
-            ProfileScreen {
-                viewModel.logout(stateUi.user)
-                goBack()
-            }
-        }
 
-        UserScreenState.UserLoggedOut -> {
-            TitleScreen(
-                {},{},{}
+        is UserScreenState.UserLoggIn ->
+            ProfileScreen(
+               onBack = goBack
             )
-        }
+
+        UserScreenState.UserLoggedOut ->
+            LoginScreen(
+                onBack = goBack,
+                login = { email, password ->
+                viewModel.login(viewModel.user)
+            }
+        )
+
     }
 }

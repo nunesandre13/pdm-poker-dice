@@ -12,21 +12,25 @@ import pt.isel.pdm.login.services.UserServices
 class UserViewModel(private val userService: UserServices) : ViewModel() {
 
     private val _stateUi: MutableStateFlow<UserScreenState> = MutableStateFlow(UserScreenState.Idle)
+    val stateUi: StateFlow<UserScreenState> = _stateUi
+
+    val user = User(
+        id = "1",
+        name = "andrezinhoooo"
+    )
 
     fun navigateTo(userState: UserScreenState) {
         _stateUi.value = userState
     }
 
-    val stateUi: StateFlow<UserScreenState> = _stateUi
-
     fun login(user: User) {
         viewModelScope.launch {
-            _stateUi.value = UserScreenState.Loading
-            userService.selectUser(user).let { response ->
+            _stateUi.value = UserScreenState.Idle
+            userService.login(user).let { response ->
                 if (response) {
-                     navigateTo(UserScreenState.UserLogged(user))
+                    navigateTo(UserScreenState.UserLoggIn(user))
                 } else {
-                    //
+                    // Tratar erro de login
                 }
             }
         }
@@ -34,25 +38,25 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
 
     fun createUser(user: User) {
         viewModelScope.launch {
-            _stateUi.value = UserScreenState.Loading
-            userService.createNewUser(user).let { response ->
+            _stateUi.value = UserScreenState.Idle
+            userService.createUser(user).let { response ->
                 if (response) {
-                    navigateTo(UserScreenState.UserLogged(user))
+                    navigateTo(UserScreenState.UserLoggIn(user))
                 } else {
-                    //
+                    // Tratar erro de criação
                 }
             }
         }
     }
 
-    fun logout(user: User) {
+    fun logout() {
         viewModelScope.launch {
-            _stateUi.value = UserScreenState.Loading
-            userService.removeUser(user).let { response ->
+            _stateUi.value = UserScreenState.Idle
+            userService.logout().let { response ->
                 if (response) {
                     navigateTo(UserScreenState.UserLoggedOut)
                 } else {
-                    //
+                    // Tratar erro de logout
                 }
             }
         }
@@ -61,7 +65,8 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
 
 sealed interface UserScreenState {
     data object Idle : UserScreenState
-    data object Loading : UserScreenState
     data object UserLoggedOut : UserScreenState
-    data class UserLogged(val user: User) : UserScreenState
+    data class UserLoggIn(val user: User) : UserScreenState
+
+    data object CreatingUser : UserScreenState
 }
