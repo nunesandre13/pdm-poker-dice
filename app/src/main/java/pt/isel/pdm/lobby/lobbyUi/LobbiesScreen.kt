@@ -20,11 +20,15 @@ import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.flow.SharedFlow
+import pt.isel.pdm.domain.Lobby
+
 
 @Composable
-fun LobbyListScreen(
-    lobbies: List<String>,
-    onJoinClick: (String) -> Unit,
+fun LobbyListView(
+    lobbies: List<Lobby>,
+    onJoinClick: (Lobby) -> Unit,
     onBack: () -> Unit = {},
     onCreateLobby: () -> Unit = {}
 ) {
@@ -45,7 +49,7 @@ fun LobbyListScreen(
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = lobby, style = MaterialTheme.typography.bodyLarge)
+                            Text(text = lobby.name, style = MaterialTheme.typography.bodyLarge)
                             Button(onClick = { onJoinClick(lobby) }) {
                                 Text("Join")
                             }
@@ -71,10 +75,12 @@ fun LobbyListScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GreetingPreview() {
-    LobbyListScreen(
-        lobbies = listOf("Lobby 1", "Lobby 2", "Lobby 3", "Lobby 4"),
+    LobbyListView(
+        listOf(
+            Lobby("Lobby 1", 4, emptyList()),
+            Lobby("Lobby 2", 6, emptyList())
+        ),
         onJoinClick = {},
         onBack = {}
     )
 }
-

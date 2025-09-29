@@ -6,12 +6,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 
 @Composable
 fun LobbyCreationView(
-    onCreateLobby: () -> Unit,
+    onCreateLobby: (Lobby) -> Unit,
     onBack: () -> Unit = {}
 ) {
     var lobbyName by remember { mutableStateOf("") }
@@ -31,7 +32,9 @@ fun LobbyCreationView(
             modifier = Modifier.fillMaxWidth()
         )
         Button(
-            onClick = { onCreateLobby() },
+            onClick = { onCreateLobby(Lobby(
+                lobbyName,numOfPlayers,emptyList()
+            )) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Create Lobby")

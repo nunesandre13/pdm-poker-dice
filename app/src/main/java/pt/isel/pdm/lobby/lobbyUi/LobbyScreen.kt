@@ -1,55 +1,35 @@
 package pt.isel.pdm.lobby.lobbyUi
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
-import pt.isel.pdm.domain.Lobby
-import pt.isel.pdm.domain.User
-import pt.isel.pdm.ui.background.DefaultBackGround
-import pt.isel.pdm.ui.topBar.TopBarConfig
-
+import pt.isel.pdm.lobby.LobbyScreenState
+import pt.isel.pdm.lobby.LobbyViewModel
+import pt.isel.pdm.lobby.services.LobbyServiceMock
 
 @Composable
-fun LobbyScreen(
-    lobby: Lobby?,
-    onLeave: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    DefaultBackGround(
-        {
-            lobby?.let {
-                Column {
-                    Text("Nome: ${it.name}")
-                    Text("Máx. Jogadores: ${it.maxPlayers}")
-                    Text("Jogadores: ${it.players.joinToString { user -> user.name }}")
-                    Button(onClick = onLeave) {
-                        Text("Sair do Lobby")
-                    }
-                }
-            } ?: Text("A carregar lobby...")
-        },
-        topBarConfig = TopBarConfig.WithBack(
-            title = "Lobby",
-            onBack = onLeave
-        ),
-        modifier = modifier
-    )
+fun LobbyScreen(viewModel: LobbyViewModel, goBack: () -> Unit) {
+    when (val stateUi = viewModel.stateUi.collectAsState().value) {
+        is LobbyScreenState.Loading -> {}
+        LobbyScreenState.Creation -> LobbyCreationView(
+            { viewModel.createLobby(it) },
+            {viewModel.goToLobbiesList()}
+        )
+        is LobbyScreenState.JoinedLobby -> LobbyView(stateUi.lobby, onLeave = {viewModel.leaveLobby(stateUi.lobby)})
+
+        is LobbyScreenState.LobbiesList -> {
+            val lobbyList = stateUi.lobby.collectAsState(emptyList()).value
+            LobbyListView(lobbyList,
+                {viewModel.joinLobby(it)},
+            {goBack()},
+                {viewModel.goToCreation()})
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LobbyScreenPreview() {
-    val fakeLobby = Lobby(
-        name = "Exemplo",
-        maxPlayers = 4,
-        players = listOf(User("1233","Alice"), User("1234444","Bob"))
-    )
-    LobbyScreen(
-        fakeLobby,
-        onLeave = {},
-        modifier = Modifier
-    )
+fun PreviewLobbyScreen() {
+    val viewModel = LobbyViewModel(LobbyServiceMock())
+    LobbyScreen(viewModel = viewModel, goBack = {})
 }

@@ -8,7 +8,7 @@ import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
-import pt.isel.pdm.lobby.lobbyUi.LobbyListScreen
+import pt.isel.pdm.lobby.lobbyUi.LobbyListView
 import pt.isel.pdm.profile.ProfileScreen
 import pt.isel.pdm.ui.HandlingView
 
@@ -43,8 +43,8 @@ fun RootApp() {
         }
 
         composable(Screens.START_MATCH.route) {
-            LobbyListScreen(
-                lobbies = listOf("Lobby 1", "Lobby 2", "Lobby 3", "Lobby 4"),
+            LobbyListView(
+                lobbies = emptyList(),
                 onJoinClick = { navController.navigate(Screens.START_MATCH.route) },
                 onBack = { navController.popBackStack() },
                 onCreateLobby = { navController.navigate(Screens.CREATE_LOBBY.route) }
