@@ -7,8 +7,8 @@ import androidx.navigation.compose.rememberNavController
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.home.TitleScreen
-import pt.isel.pdm.lobby.LobbyCreationView
-import pt.isel.pdm.lobby.LobbyListScreen
+import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
+import pt.isel.pdm.lobby.lobbyUi.LobbyListScreen
 import pt.isel.pdm.profile.ProfileScreen
 import pt.isel.pdm.ui.HandlingView
 

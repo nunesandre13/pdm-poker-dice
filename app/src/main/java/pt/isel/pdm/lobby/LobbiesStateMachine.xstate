@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<state_machine_diagram>
+ <name>LobbiesStateMachine</name>
+ <description/>
+ <state_machines>
+  <state_machine>
+   <name/>
+   <description>Lobby State Machine</description>
+   <states>
+    <state id="" label="LobbiesScreen" x_loc="245" y_loc="6">
+     <description/>
+     <reference/>
+     <entry_action/>
+     <exit_action/>
+    </state>
+    <state id="" label="Lobby Creation Screen" x_loc="626" y_loc="144">
+     <description/>
+     <reference/>
+     <entry_action/>
+     <exit_action/>
+    </state>
+    <state id="" label="Lobby screen" x_loc="398" y_loc="300">
+     <description/>
+     <reference/>
+     <entry_action/>
+     <exit_action/>
+    </state>
+   </states>
+   <events>
+    <event id="onJoinClick" label=""/>
+    <event id="OnCreatLobby" label=""/>
+    <event id="onBack" label=""/>
+    <event id="onNavigationToCreation" label=""/>
+   </events>
+   <transitions>
+    <transition event_id="onJoinClick" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
+    <transition event_id="onBack" source_id="" style="widthFirst" target_id="" transit_action="" transit_guard=""/>
+    <transition event_id="onNavigationToCreation" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
+    <transition event_id="OnCreatLobby" source_id="" style="direct" target_id="" transit_action="" transit_guard=""/>
+    <transition event_id="OnCreatLobby" source_id="" style="heightFirst" target_id="" transit_action="" transit_guard=""/>
+   </transitions>
+  </state_machine>
+ </state_machines>
+</state_machine_diagram>

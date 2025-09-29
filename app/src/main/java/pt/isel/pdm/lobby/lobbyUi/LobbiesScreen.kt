@@ -1,4 +1,4 @@
-package pt.isel.pdm.lobby
+package pt.isel.pdm.lobby.lobbyUi
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
