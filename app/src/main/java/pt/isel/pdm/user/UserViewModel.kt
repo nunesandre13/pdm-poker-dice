@@ -63,6 +63,28 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         }
     )
 
+    val createUserConfiguration: UserFormsConfiguration = UserFormsConfiguration.CreateUserForm(
+        topBarConfig = TopBarConfig.Simple("Create Account"),
+        email = email.value,
+        onEmailChange = { onEmailChange(it) },
+        name = name.value,
+        onNameChange = { onNameChange(it) },
+        password = password.value,
+        onPasswordChange = { onPasswordChange(it) },
+        showPassword = showPassword.value,
+        onShowPassword = { onShowPassword() },
+        onCreateUser = {
+            val currentEmail = email.value
+            val currentPassword = password.value
+            val currentName = name.value
+            if (currentEmail != null && currentPassword != null && currentName != null) {
+                createUser(UserCreate(currentName, currentEmail, currentPassword))
+            }
+        }
+    )
+
+
+
     fun navigateTo(userState: UserScreenState) {
         _stateUi.value = userState
     }
@@ -80,7 +102,7 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         viewModelScope.launch {
             _stateUi.value = UserScreenState.Idle
             userService.createUser(user)?.let { response ->
-                navigateTo(UserScreenState.UserLoggIn(user.convertToUserLogin(user)))
+                navigateTo(UserScreenState.UserLoggIn(UserLogin(user.email, user.password)))
             }
         }
     }
