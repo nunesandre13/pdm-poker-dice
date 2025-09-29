@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Password
+import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.ui.column.ColumnScaffold
 import pt.isel.pdm.ui.forms.EmailForm
 import pt.isel.pdm.ui.forms.PasswordForm
@@ -29,11 +30,16 @@ import java.lang.IllegalStateException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onBack: () -> Unit, login: (email: Email, password: Password) -> Unit) {
-    var email by remember { mutableStateOf<Email?>(null) }
-    var password by remember { mutableStateOf<Password?>(null) }
-    var showPassword by remember { mutableStateOf(false) }
-
+fun LoginScreen(
+    email: Email? = null,
+    password: Password? = null,
+    onEmailChange: (Email) -> Unit = {},
+    onPasswordChange: (Password) -> Unit = {},
+    showPassword: Boolean = false,
+    onShowPassword : () -> Unit = {},
+    onBack: () -> Unit = {},
+    login: (UserLogin) -> Unit = {}
+) {
     ColumnScaffold(
         topBar = {
             TopAppBar(
@@ -52,14 +58,14 @@ fun LoginScreen(onBack: () -> Unit, login: (email: Email, password: Password) ->
             )
         },
         {
-            EmailForm(email = email) { email = it }
+            EmailForm(email = email, onEmailChange = onEmailChange)
         },
         {
             PasswordForm(
-                password,
-                { password = it },
-                showPassword,
-                { showPassword = !showPassword }
+                password = password,
+                onPasswordChange = onPasswordChange,
+                showPassword = showPassword,
+                onShowPasswordChange = { onShowPassword() }
             )
         },
         {
@@ -68,8 +74,10 @@ fun LoginScreen(onBack: () -> Unit, login: (email: Email, password: Password) ->
         {
             Button(onClick = {
                 login(
-                    email ?: throw IllegalStateException(),
-                    password ?: throw IllegalStateException()
+                    UserLogin(
+                        email ?: throw IllegalStateException(),
+                        password ?: throw IllegalStateException()
+                    )
                 )
             }) {
                 Text(text = "Login")
@@ -78,8 +86,9 @@ fun LoginScreen(onBack: () -> Unit, login: (email: Email, password: Password) ->
     )
 }
 
+
 @Composable
 @Preview
 fun LoginScreenPreview() {
-    LoginScreen({}) { _, _ -> }
+    LoginScreen()
 }

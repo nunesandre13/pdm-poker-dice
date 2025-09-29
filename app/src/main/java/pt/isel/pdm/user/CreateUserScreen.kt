@@ -21,34 +21,38 @@ import pt.isel.pdm.ui.forms.PasswordForm
 import pt.isel.pdm.ui.theme.ChelasMultiPlayerPokerDiceTheme
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import java.lang.IllegalStateException
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateUserScreen(topBarConfig: TopBarConfig, createUser: (user: UserCreate) -> Unit) {
-    var email by remember { mutableStateOf<Email?>(null) }
-    var userName by remember { mutableStateOf<Name?>(null) }
-    var password by remember { mutableStateOf<Password?>(null) }
-    var showPassword by remember { mutableStateOf(false) }
-
+fun CreateUserScreen(
+    topBarConfig: TopBarConfig,
+    email: Email? = null,
+    onEmailChange: (Email) -> Unit = {},
+    userName: Name? = null,
+    onUserNameChange: (Name) -> Unit = {},
+    password: Password? = null,
+    onPasswordChange: (Password) -> Unit = {},
+    showPassword: Boolean = false,
+    onShowPassword: () -> Unit = {},
+    onCreateUser: (user: UserCreate) -> Unit = {}
+) {
     DefaultBackGround(
         {
-            NamerForm(name = userName) { userName = it }
+            NamerForm(name = userName, onNameChange = onUserNameChange)
         },
         {
-            EmailForm(email = email) { email = it }
+            EmailForm(email = email, onEmailChange = onEmailChange)
         },
         {
             PasswordForm(
-                password,
-                { password = it },
-                showPassword,
-                { showPassword = !showPassword }
+                password = password,
+                onPasswordChange = onPasswordChange,
+                showPassword = showPassword,
+                onShowPasswordChange = onShowPassword
             )
         },
         {
             Button(onClick = {
-                createUser(
+                onCreateUser(
                     UserCreate(
                         name = userName ?: throw IllegalStateException(),
                         email = email ?: throw IllegalStateException(),
@@ -59,8 +63,7 @@ fun CreateUserScreen(topBarConfig: TopBarConfig, createUser: (user: UserCreate) 
                 Text(text = "Criar Conta")
             }
         },
-        topBarConfig = topBarConfig
-        ,
+        topBarConfig = topBarConfig,
         modifier = Modifier
     )
 }

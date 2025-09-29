@@ -12,8 +12,8 @@ import pt.isel.pdm.ui.topBar.TopBarConfig
 @Composable
 fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
     val stateUi = viewModel.stateUi.collectAsState().value
-    when (stateUi) {
 
+    when (stateUi) {
         is UserScreenState.CreatingUser ->
             CreateUserScreen(
                 topBarConfig = TopBarConfig.WithBack(
@@ -25,8 +25,7 @@ fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
                 }
             )
 
-        UserScreenState.Idle -> {}
-
+        is UserScreenState.Idle -> {}
 
         is UserScreenState.UserLoggIn ->
             ProfileScreen(
@@ -36,16 +35,7 @@ fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
         is UserScreenState.UserLoggedOut ->
             LoginScreen(
                 onBack = goBack,
-                login = {
-                viewModel.login(
-                    UserLogin(
-                        email = email,
-                        password = password,
-                    )
-                )
-            }
+                login = { viewModel.login(it) }
         )
-
-
     }
 }

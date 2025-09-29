@@ -5,14 +5,63 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import pt.isel.pdm.domain.Email
+import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.Password
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
+import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.services.UserServices
 
 class UserViewModel(private val userService: UserServices) : ViewModel() {
 
     private val _stateUi: MutableStateFlow<UserScreenState> = MutableStateFlow(UserScreenState.Idle)
     val stateUi: StateFlow<UserScreenState> = _stateUi
+
+    private val _email: MutableStateFlow<Email?> = MutableStateFlow(null)
+    val email: StateFlow<Email?> = _email
+
+    private val _password: MutableStateFlow<Password?> = MutableStateFlow(null)
+    val password: StateFlow<Password?> = _password
+
+    private val _name: MutableStateFlow<Name?> = MutableStateFlow(null)
+    val name: StateFlow<Name?> = _name
+
+    private val _showPassword: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val showPassword: StateFlow<Boolean> = _showPassword
+
+    fun onEmailChange(email: Email) {
+        _email.value = email
+    }
+
+    fun onPasswordChange(password: Password) {
+        _password.value = password
+    }
+
+    fun onNameChange(name: Name) {
+        _name.value = name
+    }
+
+    fun onShowPassword(){
+        _showPassword.value = !_showPassword.value
+    }
+
+    val loginConfiguration: UserFormsConfiguration = UserFormsConfiguration.LoginForm(
+        topBarConfig = TopBarConfig.Simple("Login"),
+        email = email.value,
+        onEmailChange = { onEmailChange(it) },
+        password = password.value,
+        onPasswordChange = { onPasswordChange(it) },
+        showPassword = showPassword.value,
+        onShowPassword = { onShowPassword() },
+        onLogin = {
+            val currentEmail = email.value
+            val currentPassword = password.value
+            if (currentEmail != null && currentPassword != null) {
+                login(UserLogin(currentEmail, currentPassword))
+            }
+        }
+    )
 
     fun navigateTo(userState: UserScreenState) {
         _stateUi.value = userState
@@ -55,6 +104,5 @@ sealed interface UserScreenState {
     data object Idle : UserScreenState
     data object UserLoggedOut : UserScreenState
     data class UserLoggIn(val user: UserLogin) : UserScreenState
-
     data object CreatingUser : UserScreenState
 }
