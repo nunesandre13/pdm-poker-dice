@@ -11,20 +11,17 @@ import pt.isel.pdm.ui.topBar.TopBarConfig
 
 @Composable
 fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
-    when (viewModel.stateUi.collectAsState().value) {
-        UserScreenState.CreatingUser ->
+    val stateUi = viewModel.stateUi.collectAsState().value
+    when (stateUi) {
+
+        is UserScreenState.CreatingUser ->
             CreateUserScreen(
                 topBarConfig = TopBarConfig.WithBack(
                     title = "Create Account",
                     onBack = goBack
                 ),
-                createUser = { name, email, password ->
-                    viewModel.createUser(
-                        UserCreate(
-                            name = Name(name.name),
-                            email=email,
-                            password=password)
-                    )
+                createUser = { user ->
+                    viewModel.createUser(user)
                 }
             )
 
@@ -36,10 +33,10 @@ fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
                onBack = goBack
             )
 
-        UserScreenState.UserLoggedOut ->
+        is UserScreenState.UserLoggedOut ->
             LoginScreen(
                 onBack = goBack,
-                login = { email, password ->
+                login = {
                 viewModel.login(
                     UserLogin(
                         email = email,
@@ -48,6 +45,7 @@ fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
                 )
             }
         )
+
 
     }
 }

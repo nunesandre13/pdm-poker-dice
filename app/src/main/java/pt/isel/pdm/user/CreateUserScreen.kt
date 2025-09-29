@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.Password
+import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.forms.EmailForm
 import pt.isel.pdm.ui.forms.NamerForm
@@ -24,7 +25,7 @@ import java.lang.IllegalStateException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateUserScreen(topBarConfig: TopBarConfig, createUser: (userName: Name, email: Email, password: Password) -> Unit) {
+fun CreateUserScreen(topBarConfig: TopBarConfig, createUser: (user: UserCreate) -> Unit) {
     var email by remember { mutableStateOf<Email?>(null) }
     var userName by remember { mutableStateOf<Name?>(null) }
     var password by remember { mutableStateOf<Password?>(null) }
@@ -48,9 +49,11 @@ fun CreateUserScreen(topBarConfig: TopBarConfig, createUser: (userName: Name, em
         {
             Button(onClick = {
                 createUser(
-                    userName ?: throw IllegalStateException(),
-                    email ?: throw IllegalStateException(),
-                    password ?: throw IllegalStateException()
+                    UserCreate(
+                        name = userName ?: throw IllegalStateException(),
+                        email = email ?: throw IllegalStateException(),
+                        password = password ?: throw IllegalStateException()
+                    )
                 )
             }) {
                 Text(text = "Criar Conta")
@@ -66,6 +69,12 @@ fun CreateUserScreen(topBarConfig: TopBarConfig, createUser: (userName: Name, em
 @Preview
 fun CreateUserScreenPreview() {
     ChelasMultiPlayerPokerDiceTheme {
-        CreateUserScreen (TopBarConfig.Simple("Example")){ _, _, _ -> }
+        CreateUserScreen (TopBarConfig.Simple("Example")){
+            UserCreate(
+                name = Name("Example"),
+                email = Email(""),
+                password = Password(""),
+            )
+        }
     }
 }

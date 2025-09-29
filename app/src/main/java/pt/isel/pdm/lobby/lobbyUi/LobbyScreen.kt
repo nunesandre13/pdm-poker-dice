@@ -9,7 +9,8 @@ import pt.isel.pdm.lobby.services.LobbyServiceMock
 
 @Composable
 fun LobbyScreen(viewModel: LobbyViewModel, goBack: () -> Unit) {
-    when (val stateUi = viewModel.stateUi.collectAsState().value) {
+    val stateUi =viewModel.stateUi.collectAsState().value
+    when (stateUi) {
 
         is LobbyScreenState.Loading -> {}
 
