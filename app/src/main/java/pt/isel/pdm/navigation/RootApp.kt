@@ -7,8 +7,11 @@ import androidx.navigation.compose.rememberNavController
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.home.TitleScreen
+import pt.isel.pdm.lobby.LobbyViewModel
 import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
 import pt.isel.pdm.lobby.lobbyUi.LobbyListView
+import pt.isel.pdm.lobby.lobbyUi.LobbyScreen
+import pt.isel.pdm.lobby.services.LobbyServiceMock
 import pt.isel.pdm.profile.ProfileScreen
 import pt.isel.pdm.ui.HandlingView
 
@@ -42,12 +45,11 @@ fun RootApp() {
             )
         }
 
+        val viewModel= LobbyViewModel(LobbyServiceMock())
         composable(Screens.START_MATCH.route) {
-            LobbyListView(
-                lobbies = emptyList(),
-                onJoinClick = { navController.navigate(Screens.START_MATCH.route) },
-                onBack = { navController.popBackStack() },
-                onCreateLobby = { navController.navigate(Screens.CREATE_LOBBY.route) }
+            LobbyScreen(
+                viewModel = viewModel,
+                goBack = { navController.popBackStack() }
             )
         }
 

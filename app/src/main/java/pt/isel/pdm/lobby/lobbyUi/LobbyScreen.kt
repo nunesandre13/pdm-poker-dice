@@ -10,19 +10,28 @@ import pt.isel.pdm.lobby.services.LobbyServiceMock
 @Composable
 fun LobbyScreen(viewModel: LobbyViewModel, goBack: () -> Unit) {
     when (val stateUi = viewModel.stateUi.collectAsState().value) {
+
         is LobbyScreenState.Loading -> {}
-        LobbyScreenState.Creation -> LobbyCreationView(
-            { viewModel.createLobby(it) },
-            {viewModel.goToLobbiesList()}
+
+        is LobbyScreenState.Creation ->
+            LobbyCreationView(
+            onCreateLobby = { viewModel.createLobby(it) },
+            onBack = {viewModel.goToLobbiesList()}
         )
-        is LobbyScreenState.JoinedLobby -> LobbyView(stateUi.lobby, onLeave = {viewModel.leaveLobby(stateUi.lobby)})
+
+        is LobbyScreenState.JoinedLobby ->
+            LobbyView(
+                lobby = stateUi.lobby,
+                onLeave = {viewModel.leaveLobby(stateUi.lobby)}
+            )
 
         is LobbyScreenState.LobbiesList -> {
             val lobbyList = stateUi.lobby.collectAsState(emptyList()).value
-            LobbyListView(lobbyList,
-                {viewModel.joinLobby(it)},
-            {goBack()},
-                {viewModel.goToCreation()})
+            LobbyListView(
+                lobbies = lobbyList,
+                onJoinClick = {viewModel.joinLobby(it)},
+                onBack = {goBack()},
+                onCreateLobby = {viewModel.goToCreation()})
         }
     }
 }
