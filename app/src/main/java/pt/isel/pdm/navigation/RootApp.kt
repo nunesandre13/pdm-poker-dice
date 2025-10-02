@@ -14,6 +14,9 @@ import pt.isel.pdm.lobby.lobbyUi.LobbyScreen
 import pt.isel.pdm.lobby.services.LobbyServiceMock
 import pt.isel.pdm.profile.ProfileScreen
 import pt.isel.pdm.ui.HandlingView
+import pt.isel.pdm.user.UserScreen
+import pt.isel.pdm.user.UserViewModel
+import pt.isel.pdm.user.services.UsersServiceMock
 
 @Composable
 fun RootApp() {
@@ -23,11 +26,28 @@ fun RootApp() {
         startDestination = Screens.HOME_SCREEN.route
     ) {
 
+        val viewModelUser= UserViewModel(UsersServiceMock())
         composable(Screens.HOME_SCREEN.route) {
+            UserScreen(
+                viewModel = viewModelUser,
+                onTitleScreen = { navController.navigate(Screens.TITLE_SCREEN.route) }
+            )
+        }
+
+        composable(Screens.TITLE_SCREEN.route) {
             TitleScreen(
                 onAboutClick = { navController.navigate(Screens.ABOUT.route) },
-                onProfileClick = { navController.navigate((Screens.PROFILE.route)) },
-                onStartMatchClick = { navController.navigate((Screens.START_MATCH.route)) }
+                onProfileClick = { navController.navigate(Screens.PROFILE.route) },
+                onStartMatchClick = { navController.navigate(Screens.START_MATCH.route) }
+            )
+        }
+
+        val user = UsersServiceMock().getCurrentUser()
+        composable(Screens.PROFILE.route) {
+            ProfileScreen(
+                user = user!!,
+                onBack = { navController.popBackStack() }
+
             )
         }
 

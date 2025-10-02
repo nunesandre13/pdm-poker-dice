@@ -39,7 +39,7 @@ fun LoginScreen(
     ColumnScaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Profile") },
+                title = { Text("Login") },
                 navigationIcon = {
                     IconButton(onClick = { onBack() }) {
                         Icon(
@@ -63,9 +63,6 @@ fun LoginScreen(
                 showPassword = showPassword,
                 onShowPasswordChange = { onShowPassword() }
             )
-        },
-        {
-            Spacer(modifier = Modifier.height(16.dp))
         },
         {
             Button(onClick = {

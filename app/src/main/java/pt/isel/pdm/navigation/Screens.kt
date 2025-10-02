@@ -7,5 +7,6 @@ enum class Screens(val route: String) {
     START_MATCH("start-match"),
     CREATE_LOBBY("create-lobby"),
 
-    AWAIING_GAME("awaing-game")
+    AWAIING_GAME("awaing-game"),
+    TITLE_SCREEN("title_screen")
 }

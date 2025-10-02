@@ -5,10 +5,11 @@ import pt.isel.pdm.profile.ProfileScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.user.services.UsersServiceMock
 
 @Composable
-fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
+fun UserScreen(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
 
     val stateUi = viewModel.stateUi.collectAsState().value
 
@@ -18,7 +19,7 @@ fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
 
         is UserScreenState.Idle -> {}
 
-        is UserScreenState.UserLoggIn -> ProfileScreen(onBack = goBack, user = stateUi.user)
+        is UserScreenState.UserLoggIn -> onTitleScreen()
 
         is UserScreenState.UserLoggedOut -> UserFormView(config = viewModel.loginConfiguration)
 
@@ -28,5 +29,5 @@ fun UserScreen(viewModel: UserViewModel, goBack: () -> Unit) {
 @Composable
 @Preview
 fun UserScreenPreview() {
-    UserScreen(viewModel = UserViewModel(UsersServiceMock()), goBack = {})
+    UserScreen(viewModel = UserViewModel(UsersServiceMock()),{})
 }
