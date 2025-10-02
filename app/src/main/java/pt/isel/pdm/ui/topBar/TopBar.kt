@@ -1,5 +1,6 @@
 package pt.isel.pdm.ui.topBar
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -9,25 +10,34 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import pt.isel.pdm.ui.clickable.ClickableIcon
 
 const val BACK_BUTTON_TAG = "Back"
 const val NEXT_BUTTON_TAG = "Next"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(config: TopBarConfig) {
     TopAppBar(
-        title = { Text(config.title) },
+        modifier = Modifier.height(56.dp),
+        title = {
+            Text(
+                text = config.title,
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
         navigationIcon = {
             when (config) {
                 is TopBarConfig.WithBack -> {
-                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = BACK_BUTTON_TAG){
+                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = BACK_BUTTON_TAG) {
                         config.onBack()
                     }
                 }
                 is TopBarConfig.WithBackAndNext -> {
-                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = BACK_BUTTON_TAG){
+                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = BACK_BUTTON_TAG) {
                         config.onBack()
                     }
                 }
@@ -37,12 +47,12 @@ fun TopBar(config: TopBarConfig) {
         actions = {
             when (config) {
                 is TopBarConfig.WithNext -> {
-                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = NEXT_BUTTON_TAG){
+                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = NEXT_BUTTON_TAG) {
                         config.onNext()
                     }
                 }
                 is TopBarConfig.WithBackAndNext -> {
-                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = NEXT_BUTTON_TAG){
+                    ClickableIcon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = NEXT_BUTTON_TAG) {
                         config.onNext()
                     }
                 }
@@ -50,8 +60,12 @@ fun TopBar(config: TopBarConfig) {
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        )
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        ),
+        scrollBehavior = null
     )
 }
 

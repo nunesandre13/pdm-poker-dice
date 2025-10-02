@@ -34,8 +34,8 @@ fun Author(
             contentDescription = null,
             modifier = Modifier
                 .sizeIn(
-                    minWidth = 100.dp, maxWidth = 200.dp,
-                    minHeight = 100.dp, maxHeight = 200.dp
+                    minWidth = 50.dp, maxWidth = 100.dp,
+                    minHeight = 50.dp, maxHeight = 100.dp
                 )
                 .clip(CircleShape)
         )

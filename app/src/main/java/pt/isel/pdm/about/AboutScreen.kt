@@ -1,8 +1,18 @@
 package pt.isel.pdm.about
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.actions.ActionsIntent
 import pt.isel.pdm.ui.author.Author
@@ -30,31 +41,59 @@ fun AboutScreen(
 
     DefaultBackGround(
         {
-            Text(
-                text = stringResource(R.string.description_game),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
-        {
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
                 Text(
-                    color = Color.Blue,
-                    text = "More Info about Poker Dice",
+                    text = stringResource(R.string.description_game),
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.padding(16.dp)
+                )
+            }}
+        ,
+        {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 5.dp, vertical = 2.dp)
+                    .clickable {
                         onDetails(
                             ActionsIntent.Browser(
                                 "https://en.wikipedia.org/wiki/Poker_dice",
                                 context
                             )
                         )
-                    }
-                )
+                    },
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceDim),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "See more about Poker Dice",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = "More info",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
             }
+
         },
-        {
-            Text("Members of group:", style = MaterialTheme.typography.titleLarge)
-        },
+        { Spacer(modifier = Modifier.size(8.dp)) },
         {
             Author(
                 name = groupMembers[1],
