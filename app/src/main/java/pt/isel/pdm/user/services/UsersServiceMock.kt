@@ -2,6 +2,7 @@ package pt.isel.pdm.user.services
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
@@ -11,7 +12,8 @@ class UsersServiceMock : UserServices {
     private val _currentUser = MutableStateFlow<User?>(
         User(
             id = "1",
-            name = "Mock User"
+            name = "Mock User",
+            email = Email("MockUser@gmail.com")
         ))
 
     override val currentUser: StateFlow<User?> = _currentUser

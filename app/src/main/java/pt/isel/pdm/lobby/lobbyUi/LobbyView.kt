@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.ui.background.DefaultBackGround
@@ -45,7 +46,10 @@ fun LobbyScreenPreview() {
     val fakeLobby = Lobby(
         name = "Exemplo",
         maxPlayers = 4,
-        players = listOf(User("1233","Alice"), User("1234444","Bob"))
+        players = listOf(
+            User("1233","Alice", Email("Alice@gamail.com")),
+            User("1234444","Bob",Email("Bob@gmail.com"))
+        )
     )
     LobbyView(
         fakeLobby,

@@ -5,6 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.actions.ActionsIntent
+import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
@@ -18,7 +20,7 @@ fun ProfileScreen(
     DefaultBackGround({
             Text("Player Info and Statistics")
             Text("Name: ${user.name}")
-            Text("Email: ${user.id}")
+            Text("Email: ${user.email}")
         },
         topBarConfig = TopBarConfig.WithBack(
             title = "Profile",
@@ -31,5 +33,5 @@ fun ProfileScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GreetingPreview() {
-    ProfileScreen(User("joao","12344")) {}
+    ProfileScreen(User("1","Gui", Email("joao@gmail.com"))) {}
 }

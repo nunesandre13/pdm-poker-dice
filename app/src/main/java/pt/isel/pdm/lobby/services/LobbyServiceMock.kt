@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.User
 import kotlin.collections.plus
@@ -21,17 +22,23 @@ class LobbyServiceMock : LobbyServices {
         scope.launch {
             lobbiesFlow.emit(
                 listOf(
-                    Lobby("Lobby 1", 4, listOf(User("1234", "user1"))),
-                    Lobby("Lobby 2", 6, listOf(User("123445", "user2"), User("1235677", "user3")))
+                    Lobby("Lobby 1", 4,
+                        listOf(User("1234", "user1", Email("user1@gmail.com")))),
+                    Lobby("Lobby 2", 6,
+                        listOf(
+                            User("123445", "user2", Email("user2@gmail.com")),
+                            User("1235677", "user3", Email("user3@gmail.com"))
+                    )
                 )
-            )
+            ))
         }
 
         scope.launch {
             while (true) {
                 delay(5.seconds)
                 lobbiesFlow.value.plus(
-                    Lobby("Lobby 4", 4, listOf(User("1234", "user1"))),
+                    Lobby("Lobby 4", 4,
+                        listOf(User("1234", "user1", Email("user1@gmail.com")))),
                 ).also { lobbies ->
                     lobbiesFlow.value = lobbies
                 }
