@@ -7,18 +7,26 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import pt.isel.pdm.domain.DomainError
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.lobby.services.LobbyServices
+import pt.isel.pdm.user.services.UserServices
 
-class LobbyViewModel(private val lobbyService: LobbyServices) : ViewModel() {
+class LobbyViewModel(private val lobbyService: LobbyServices, private val userService: UserServices) : ViewModel() {
+
     private val _stateUi : MutableStateFlow<LobbyScreenState> = MutableStateFlow(LobbyScreenState.Loading)
     val stateUi : StateFlow<LobbyScreenState> = _stateUi
+
+    private val _errorState : MutableStateFlow<LobbyError> = MutableStateFlow(LobbyError.NoError)
+    val errorState : StateFlow<LobbyError> = _errorState
 
     init {
         getLobbies()
     }
 
-    private val player = "1234" // for now
+    fun emitError(error: LobbyError) {
+        _errorState.value = error
+    }
 
     fun navigateTo(lobbyState: LobbyScreenState) {
         _stateUi.value = lobbyState
@@ -28,7 +36,7 @@ class LobbyViewModel(private val lobbyService: LobbyServices) : ViewModel() {
         viewModelScope.launch {
             lobbyService.selectLobby(lobby).let { response ->
                 if (response) navigateTo(LobbyScreenState.JoinedLobby(lobby)) else {
-                    // maybe present error or something like that
+                    emitError(LobbyError.LobbyNotFound)
                 }
             }
         }
@@ -38,7 +46,7 @@ class LobbyViewModel(private val lobbyService: LobbyServices) : ViewModel() {
         viewModelScope.launch {
             lobbyService.createNewLobby(lobby).let { response ->
                 if (response) navigateTo(LobbyScreenState.JoinedLobby(lobby)) else {
-                    // maybe present error or something like that
+                    emitError(LobbyError.LobbyNotFound)
                 }
             }
         }
@@ -60,14 +68,20 @@ class LobbyViewModel(private val lobbyService: LobbyServices) : ViewModel() {
         }
     }
 
+    fun dismissError(){
+        emitError(LobbyError.NoError)
+    }
+
 
     fun leaveLobby(lobby: Lobby) {
         viewModelScope.launch {
-            lobbyService.leaveLobby(lobby, player).let { response ->
-                if (response) navigateTo(LobbyScreenState.Loading).also {
-                    getLobbies()
-                } else {
-                    // something like present a error
+            userService.getCurrentUser()?.let { user ->
+                lobbyService.leaveLobby(lobby, user.id).let { response ->
+                    if (response) navigateTo(LobbyScreenState.Loading).also {
+                        getLobbies()
+                    } else {
+                        emitError(LobbyError.LobbyNotFound)
+                    }
                 }
             }
         }
@@ -79,4 +93,9 @@ sealed interface LobbyScreenState {
     data object Creation : LobbyScreenState
     data class JoinedLobby(val lobby : Lobby) : LobbyScreenState
     data class LobbiesList(val lobby : Flow<List<Lobby>>) : LobbyScreenState
+}
+
+sealed class LobbyError(override val message: String?): DomainError {
+    data object NoError: LobbyError(null)
+    data object LobbyNotFound: DomainError, LobbyError("Lobby not found")
 }

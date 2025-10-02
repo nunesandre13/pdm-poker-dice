@@ -1,6 +1,9 @@
 package pt.isel.pdm.navigation
 
+import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -8,6 +11,7 @@ import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.lobby.LobbyViewModel
+import pt.isel.pdm.lobby.LobbyViewModelFactory
 import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
 import pt.isel.pdm.lobby.lobbyUi.LobbyListView
 import pt.isel.pdm.lobby.lobbyUi.LobbyScreen
@@ -60,10 +64,16 @@ fun RootApp() {
         }
 
 
-        val viewModel= LobbyViewModel(LobbyServiceMock())
         composable(Screens.START_MATCH.route) {
+
+            val lobbyVm by with(LocalContext.current as ComponentActivity) {
+                viewModels<LobbyViewModel>(
+                    factoryProducer = { LobbyViewModelFactory(LobbyServiceMock(), UsersServiceMock()) }
+                )
+            }
+
             LobbyScreen(
-                viewModel = viewModel,
+                viewModel = lobbyVm,
                 goBack = { navController.popBackStack() }
             )
         }
