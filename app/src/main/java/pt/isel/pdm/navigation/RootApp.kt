@@ -39,11 +39,6 @@ fun RootApp() {
             )
         }
 
-        composable(Screens.PROFILE.route) {
-            ProfileScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
 
         val viewModel= LobbyViewModel(LobbyServiceMock())
         composable(Screens.START_MATCH.route) {

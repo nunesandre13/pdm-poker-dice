@@ -11,7 +11,7 @@ import pt.isel.pdm.domain.UserLogin
 interface UserServices {
 
     val currentUser: StateFlow<User?>
-
+    fun getCurrentUser(): User?
     suspend fun login(user: UserLogin): User?
     suspend fun logout(): Boolean
     suspend fun createUser(user: UserCreate): User?

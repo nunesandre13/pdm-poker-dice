@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.Password
+import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.ui.topBar.TopBarConfig
@@ -29,6 +30,16 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
 
     private val _showPassword: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showPassword: StateFlow<Boolean> = _showPassword
+
+    init {
+        viewModelScope.launch {
+            userService.getCurrentUser()?.let { user ->
+                navigateTo(UserScreenState.UserLoggIn(user))
+            } ?: run {
+                navigateTo(UserScreenState.UserLoggedOut)
+            }
+        }
+    }
 
     fun onEmailChange(email: Email) {
         _email.value = email
@@ -93,7 +104,7 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         viewModelScope.launch {
             _stateUi.value = UserScreenState.Idle
             userService.login(user)?.let { response ->
-                navigateTo(UserScreenState.UserLoggIn(user))
+                navigateTo(UserScreenState.UserLoggIn(response))
             }
         }
     }
@@ -102,7 +113,7 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         viewModelScope.launch {
             _stateUi.value = UserScreenState.Idle
             userService.createUser(user)?.let { response ->
-                navigateTo(UserScreenState.UserLoggIn(UserLogin(user.email, user.password)))
+                navigateTo(UserScreenState.UserLoggIn(response))
             }
         }
     }
@@ -125,6 +136,6 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
 sealed interface UserScreenState {
     data object Idle : UserScreenState
     data object UserLoggedOut : UserScreenState
-    data class UserLoggIn(val user: UserLogin) : UserScreenState
+    data class UserLoggIn(val user: User) : UserScreenState
     data object CreatingUser : UserScreenState
 }
