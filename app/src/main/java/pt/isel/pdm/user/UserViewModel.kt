@@ -71,7 +71,8 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
             if (currentEmail != null && currentPassword != null) {
                 login(UserLogin(currentEmail, currentPassword))
             }
-        }
+        },
+        onSignUp = {navigateTo(UserScreenState.CreatingUser)}
     )
 
     val createUserConfiguration: UserFormsConfiguration = UserFormsConfiguration.CreateUserForm(

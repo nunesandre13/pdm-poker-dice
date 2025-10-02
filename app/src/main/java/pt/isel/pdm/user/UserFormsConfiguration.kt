@@ -16,7 +16,8 @@ sealed interface UserFormsConfiguration {
         val onPasswordChange: (Password) -> Unit,
         val showPassword: Boolean,
         val onShowPassword: () -> Unit,
-        val onLogin: () -> Unit
+        val onLogin: () -> Unit,
+        val onSignUp: () -> Unit
     ) : UserFormsConfiguration
 
     data class CreateUserForm(

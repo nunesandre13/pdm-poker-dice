@@ -34,7 +34,8 @@ fun LoginScreen(
     showPassword: Boolean = false,
     onShowPassword : () -> Unit = {},
     onBack: () -> Unit = {},
-    login: (UserLogin) -> Unit = {}
+    login: (UserLogin) -> Unit = {},
+    onSignUp: () -> Unit = {},
 ) {
     ColumnScaffold(
         topBar = {
@@ -75,6 +76,12 @@ fun LoginScreen(
             }) {
                 Text(text = "Login")
             }
+            Button(onClick = {
+                onSignUp()
+            }) {
+                Text(text = "Sign up")
+            }
+
         }
     )
 }

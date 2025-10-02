@@ -1,24 +1,19 @@
 package pt.isel.pdm.navigation
 
-import android.annotation.SuppressLint
-import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
+import pt.isel.pdm.configuration.DependenciesContainer
+import pt.isel.pdm.configuration.MockConfiguration
 import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.lobby.LobbyViewModel
 import pt.isel.pdm.lobby.LobbyViewModelFactory
 import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
 import pt.isel.pdm.lobby.lobbyUi.LobbyScreen
-import pt.isel.pdm.lobby.services.LobbyServiceMock
 import pt.isel.pdm.profile.ProfileScreen
 import pt.isel.pdm.ui.HandlingView
 import pt.isel.pdm.user.UserScreen
@@ -27,22 +22,19 @@ import pt.isel.pdm.user.UserViewModelFactory
 import pt.isel.pdm.user.services.UsersServiceMock
 
 
-
 @Composable
-fun RootApp() {
+fun RootApp(appConfiguration: DependenciesContainer) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Screens.HOME_SCREEN.route,
-        route = Screens.ROOT.route
+        startDestination = Screens.HOME_SCREEN.route
     ) {
 
-        composable(Screens.HOME_SCREEN.route) {
-            val userVm by with(LocalContext.current as ComponentActivity) {
-                viewModels<UserViewModel>(
-                    factoryProducer = { UserViewModelFactory( UsersServiceMock()) }
-                )
-            }
+        composable(Screens.HOME_SCREEN.route) { backStackEntry ->
+            val userVm: UserViewModel = viewModel(
+                viewModelStoreOwner = backStackEntry,
+                factory = UserViewModelFactory(appConfiguration.userServices)
+            )
             UserScreen(
                 viewModel = userVm,
                 onTitleScreen = { navController.navigate(Screens.TITLE_SCREEN.route) }
@@ -57,10 +49,9 @@ fun RootApp() {
             )
         }
 
-        val user = UsersServiceMock().getCurrentUser()
         composable(Screens.PROFILE.route) {
             ProfileScreen(
-                user = user!!,
+                user = appConfiguration.userServices.getCurrentUser()!!,
                 onBack = { navController.popBackStack() }
 
             )
@@ -75,12 +66,10 @@ fun RootApp() {
         }
 
 
-
         composable(Screens.START_MATCH.route) { backStackEntry ->
-            val rootGraphEntry = remember { navController.getBackStackEntry(Screens.ROOT.route) }
             val lobbyVm: LobbyViewModel = viewModel(
-                viewModelStoreOwner = rootGraphEntry,
-                factory = LobbyViewModelFactory(LobbyServiceMock(), UsersServiceMock())
+                viewModelStoreOwner = backStackEntry,
+                factory = LobbyViewModelFactory(appConfiguration.lobbyServices, appConfiguration.userServices)
             )
 
             LobbyScreen(

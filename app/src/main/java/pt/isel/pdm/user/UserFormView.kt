@@ -26,7 +26,8 @@ fun UserFormView(config: UserFormsConfiguration) {
             onPasswordChange = config.onPasswordChange,
             showPassword = config.showPassword,
             onShowPassword = config.onShowPassword,
-            login = { config.onLogin() }
+            login = { config.onLogin() },
+            onSignUp = { config.onSignUp() }
         )
     }
 }
