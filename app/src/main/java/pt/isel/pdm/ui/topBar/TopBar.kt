@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.ui.clickable.ClickableIcon
+import kotlin.invoke
 
 const val BACK_BUTTON_TAG = "Back"
 const val NEXT_BUTTON_TAG = "Next"
@@ -58,6 +60,7 @@ fun TopBar(config: TopBarConfig) {
                 }
                 else -> {}
             }
+           IsProfile(config)
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -69,13 +72,24 @@ fun TopBar(config: TopBarConfig) {
     )
 }
 
+@Composable
+fun IsProfile(config: TopBarConfig) {
+    if (config is TopBarConfig.Profile) {
+            ClickableIcon(Icons.Filled.AccountCircle, contentDescription = "Profile") {
+               config.onProfileClick()
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun TopBarPreview() {
     TopBar(
-        TopBarConfig.WithBack(
+        TopBarConfig.WithBackNextAndProfile(
             title = "Exemplo",
-            onBack = {}
+            onBack = {},
+            onNext = {},
+            onProfileClick = {}
         )
     )
 }
