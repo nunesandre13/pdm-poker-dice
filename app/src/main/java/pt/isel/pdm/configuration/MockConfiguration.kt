@@ -6,7 +6,7 @@ import pt.isel.pdm.lobby.services.LobbyServiceMock
 import pt.isel.pdm.user.services.UsersServiceMock
 
 
-// por agora pode ser assim, futuramente deve se utilizar uma class que herda de application()
+// podia ser um singleton
 class MockConfiguration : Application(), DependenciesContainer {
     init {
         Log.d("Mock", "Mock configuration created")

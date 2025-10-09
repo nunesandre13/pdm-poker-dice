@@ -1,6 +1,7 @@
 package pt.isel.pdm.lobby
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -86,6 +87,17 @@ class LobbyViewModel(private val lobbyService: LobbyServices, private val userSe
             }
         }
     }
+
+     companion object {
+
+         fun getFactory(lobbyServices: LobbyServices, userServices: UserServices ) = object : ViewModelProvider.Factory {
+         @Suppress("UNCHECKED_CAST")
+             override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                 return LobbyViewModel(lobbyServices, userServices) as T
+             }
+         }
+     }
+
 }
 
 sealed interface LobbyScreenState {

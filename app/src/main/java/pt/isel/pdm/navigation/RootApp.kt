@@ -11,7 +11,6 @@ import pt.isel.pdm.configuration.DependenciesContainer
 import pt.isel.pdm.configuration.MockConfiguration
 import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.lobby.LobbyViewModel
-import pt.isel.pdm.lobby.LobbyViewModelFactory
 import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
 import pt.isel.pdm.lobby.lobbyUi.LobbyScreen
 import pt.isel.pdm.profile.ProfileScreen
@@ -69,7 +68,7 @@ fun RootApp(appConfiguration: DependenciesContainer) {
         composable(Screens.START_MATCH.route) { backStackEntry ->
             val lobbyVm: LobbyViewModel = viewModel(
                 viewModelStoreOwner = backStackEntry,
-                factory = LobbyViewModelFactory(appConfiguration.lobbyServices, appConfiguration.userServices)
+                factory = LobbyViewModel.getFactory(appConfiguration.lobbyServices, appConfiguration.userServices)
             )
 
             LobbyScreen(
