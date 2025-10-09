@@ -19,6 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chelasmulti_playerpokerdice.R
+import pt.isel.pdm.ui.background.DefaultBackGround
+import pt.isel.pdm.ui.topBar.TopBarConfig
 
 @Composable
 fun TitleScreen(
@@ -26,86 +28,78 @@ fun TitleScreen(
     onProfileClick: () -> Unit,
     onStartMatchClick: () -> Unit
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.85f),
-                            MaterialTheme.colorScheme.secondary.copy(alpha = 0.85f)
-                        )
-                    )
-                )
-                .padding(innerPadding)
-        ) {
-            Column(
+    DefaultBackGround(
+        {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.background),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(180.dp)
-                        .shadow(12.dp, CircleShape)
-                        .clip(CircleShape)
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    text = stringResource(id = R.string.title_app),
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 32.sp,
-                        color = Color.White
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.85f),
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.85f)
+                            )
+                        )
                     )
-                )
-
-                Spacer(modifier = Modifier.height(48.dp))
-
-                OutlinedButton(
-                    onClick = onProfileClick,
+            ) {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .padding(vertical = 8.dp),
-                    shape = MaterialTheme.shapes.large,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Profile", fontSize = 18.sp)
-                }
+                    Image(
+                        painter = painterResource(id = R.drawable.background),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(180.dp)
+                            .shadow(12.dp, CircleShape)
+                            .clip(CircleShape)
+                    )
 
-                OutlinedButton(
-                    onClick = onStartMatchClick,
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .padding(vertical = 8.dp),
-                    shape = MaterialTheme.shapes.large,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
-                ) {
-                    Text("Start Match", fontSize = 18.sp)
-                }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Text(
+                        text = stringResource(id = R.string.title_app),
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                    )
 
-                OutlinedButton(
-                    onClick = onAboutClick,
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .padding(vertical = 8.dp),
-                    shape = MaterialTheme.shapes.large,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
-                ) {
-                    Text("About", fontSize = 18.sp)
+                    OutlinedButton(
+                        onClick = onStartMatchClick,
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .padding(vertical = 8.dp),
+                        shape = MaterialTheme.shapes.large,
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+                    ) {
+                        Text("Start Match", fontSize = 18.sp)
+                    }
+
+                    OutlinedButton(
+                        onClick = onAboutClick,
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .padding(vertical = 8.dp),
+                        shape = MaterialTheme.shapes.large,
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+                    ) {
+                        Text("About", fontSize = 18.sp)
+                    }
                 }
             }
-        }
-    }
+        },
+        topBarConfig = TopBarConfig.WithProfile(
+            title = "Poker Dice",
+            onProfileClick = onProfileClick
+        ),
+        modifier = Modifier.fillMaxSize()
+    )
 }
+
 
 @Preview(showBackground = true)
 @Composable
