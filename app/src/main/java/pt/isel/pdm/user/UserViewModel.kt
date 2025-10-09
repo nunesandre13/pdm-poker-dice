@@ -1,6 +1,7 @@
 package pt.isel.pdm.user
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -90,6 +91,14 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
                 else {
                     ///
                 }
+            }
+        }
+    }
+    companion object {
+        fun factory(userService: UserServices)  =object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return UserViewModel(userService) as T
             }
         }
     }

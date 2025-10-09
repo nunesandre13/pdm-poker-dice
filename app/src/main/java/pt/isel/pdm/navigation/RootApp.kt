@@ -8,7 +8,6 @@ import androidx.navigation.compose.rememberNavController
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.configuration.DependenciesContainer
-import pt.isel.pdm.configuration.MockConfiguration
 import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.lobby.LobbyViewModel
 import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
@@ -17,7 +16,6 @@ import pt.isel.pdm.profile.ProfileScreen
 import pt.isel.pdm.ui.HandlingView
 import pt.isel.pdm.user.UserScreen
 import pt.isel.pdm.user.UserViewModel
-import pt.isel.pdm.user.UserViewModelFactory
 import pt.isel.pdm.user.services.UsersServiceMock
 
 
@@ -32,7 +30,7 @@ fun RootApp(appConfiguration: DependenciesContainer) {
         composable(Screens.HOME_SCREEN.route) { backStackEntry ->
             val userVm: UserViewModel = viewModel(
                 viewModelStoreOwner = backStackEntry,
-                factory = UserViewModelFactory(appConfiguration.userServices)
+                factory = UserViewModel.factory(appConfiguration.userServices)
             )
             UserScreen(
                 viewModel = userVm,
