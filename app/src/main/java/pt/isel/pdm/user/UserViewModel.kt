@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import pt.isel.pdm.domain.DomainError
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.Password
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
+import pt.isel.pdm.lobby.LobbyError
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.services.UserServices
 
@@ -31,6 +33,17 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
 
     private val _showPassword: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showPassword: StateFlow<Boolean> = _showPassword
+
+    private val _errorState : MutableStateFlow<UserError> = MutableStateFlow(UserError.NoError)
+
+    val errorState : StateFlow<UserError> = _errorState
+
+    fun emitError(error: UserError) {
+        _errorState.value = error
+    }
+    fun dismissError(){
+        emitError(UserError.NoError)
+    }
 
     init {
         viewModelScope.launch {
@@ -65,9 +78,12 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
 
     fun login(user: UserLogin) {
         viewModelScope.launch {
+            val lastState = _stateUi.value
             _stateUi.value = UserScreenState.Idle
             userService.login(user)?.let { response ->
                 navigateTo(UserScreenState.UserLoggIn(response))
+            }?: emitError(UserError.ErrorLogin).also {
+                _stateUi.value = lastState
             }
         }
     }
@@ -78,6 +94,7 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
             userService.createUser(user)?.let { response ->
                 navigateTo(UserScreenState.UserLoggIn(response))
             }
+
         }
     }
 
@@ -89,7 +106,7 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
                     navigateTo(UserScreenState.UserLoggedOut)
                 }
                 else {
-                    ///
+                    emitError(UserError.NoError)
                 }
             }
         }
@@ -109,4 +126,13 @@ sealed interface UserScreenState {
     data object UserLoggedOut : UserScreenState
     data class UserLoggIn(val user: User) : UserScreenState
     data object CreatingUser : UserScreenState
+
+}
+
+
+sealed class UserError(override val message: String?): DomainError {
+    data object NoError: UserError(null)
+    data object UserNotFound: DomainError, UserError("Users not found")
+    data object ErrorLogin: DomainError, UserError("Login not possible")
+    data object ErrorCreateUser: DomainError, UserError("Create user not possible")
 }
