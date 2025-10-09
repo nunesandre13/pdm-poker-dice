@@ -62,7 +62,7 @@ class LobbyServiceMock : LobbyServices {
         // Adiciona o novo lobby à lista e emite
         val current = lobbiesFlow.replayCache.firstOrNull() ?: emptyList()
         lobbiesFlow.emit(current + lobby)
-        return false
+        return true
     }
 
     override fun listAvailableLobbies(): SharedFlow<List<Lobby>> {

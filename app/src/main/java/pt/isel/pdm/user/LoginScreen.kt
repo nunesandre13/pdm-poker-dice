@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Password
 import pt.isel.pdm.domain.UserLogin
+import pt.isel.pdm.domain.inputs.EmailInput
+import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.column.ColumnScaffold
 import pt.isel.pdm.ui.forms.EmailForm
@@ -30,14 +32,14 @@ import java.lang.IllegalStateException
 @Composable
 fun LoginScreen(
     topBarConfig: TopBarConfig,
-    email: Email? = null,
-    password: Password? = null,
-    onEmailChange: (Email) -> Unit = {},
-    onPasswordChange: (Password) -> Unit = {},
+    email: EmailInput? = null,
+    password: PasswordInput? = null,
+    onEmailChange: (EmailInput) -> Unit = {},
+    onPasswordChange: (PasswordInput) -> Unit = {},
     showPassword: Boolean = false,
     onShowPassword : () -> Unit = {},
     onBack: () -> Unit = {},
-    login: (UserLogin) -> Unit = {},
+    login: () -> Unit = {},
     onSignUp: () -> Unit = {},
 ) {
     DefaultBackGround(
@@ -55,12 +57,7 @@ fun LoginScreen(
         },
         {
             Button(onClick = {
-                login(
-                    UserLogin(
-                        email ?: throw IllegalStateException(),
-                        password ?: throw IllegalStateException()
-                    )
-                )
+                login()
             }) {
                 Text(text = "Login")
             }
@@ -83,8 +80,8 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     LoginScreen(
         topBarConfig = TopBarConfig.WithBack("Login", {}),
-        email = Email("ola"),
-        password = Password("ola"),
+        email = EmailInput("ola"),
+        password = PasswordInput("ola"),
         onEmailChange = {},
         onPasswordChange = {},
         showPassword = true,

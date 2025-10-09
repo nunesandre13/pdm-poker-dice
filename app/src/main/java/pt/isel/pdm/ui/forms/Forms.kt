@@ -11,17 +11,20 @@ import androidx.compose.ui.text.input.VisualTransformation
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.Password
+import pt.isel.pdm.domain.inputs.EmailInput
+import pt.isel.pdm.domain.inputs.NameInput
+import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.ui.clickable.ClickableIcon
 
 @Composable
 fun EmailForm(
-    email: Email?,
-    onEmailChange: (Email) -> Unit
+    email: EmailInput?,
+    onEmailChange: (EmailInput) -> Unit
 ) {
     OutlinedTextField(
         value = email?.email ?: "",
         onValueChange = { newValue ->
-            onEmailChange(Email(newValue))
+            onEmailChange(EmailInput(newValue))
         },
         label = { Text("Email") },
         placeholder = { Text("nome@exemplo.com") }
@@ -30,15 +33,15 @@ fun EmailForm(
 
 @Composable
 fun PasswordForm(
-    password: Password?,
-    onPasswordChange: (Password) -> Unit,
+    password: PasswordInput?,
+    onPasswordChange: (PasswordInput) -> Unit,
     showPassword: Boolean,
     onShowPasswordChange: () -> Unit
 ) {
     OutlinedTextField(
-        value = password?.password ?: "",
+        value = password?.passwordInput ?: "",
         onValueChange = { newValue ->
-            onPasswordChange(Password(newValue))
+            onPasswordChange(PasswordInput(newValue))
         },
         visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         label = { Text("Password") },
@@ -55,13 +58,13 @@ fun PasswordForm(
 
 @Composable
 fun NamerForm(
-    name: Name?,
-    onNameChange: (Name) -> Unit
+    name: NameInput?,
+    onNameChange: (NameInput) -> Unit
 ) {
     OutlinedTextField(
         value = name?.name ?: "",
         onValueChange = { newValue ->
-            onNameChange(Name(newValue))
+            onNameChange(NameInput(newValue))
         },
         label = { Text("Name") }
     )

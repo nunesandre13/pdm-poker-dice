@@ -9,6 +9,9 @@ import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.Password
 import pt.isel.pdm.domain.UserCreate
+import pt.isel.pdm.domain.inputs.EmailInput
+import pt.isel.pdm.domain.inputs.NameInput
+import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.forms.EmailForm
 import pt.isel.pdm.ui.forms.NamerForm
@@ -19,15 +22,15 @@ import java.lang.IllegalStateException
 @Composable
 fun CreateUserScreen(
     topBarConfig: TopBarConfig,
-    email: Email? = null,
-    onEmailChange: (Email) -> Unit = {},
-    userName: Name? = null,
-    onUserNameChange: (Name) -> Unit = {},
-    password: Password? = null,
-    onPasswordChange: (Password) -> Unit = {},
+    email: EmailInput? = null,
+    onEmailChange: (EmailInput) -> Unit = {},
+    userName: NameInput? = null,
+    onUserNameChange: (NameInput) -> Unit = {},
+    password: PasswordInput? = null,
+    onPasswordChange: (PasswordInput) -> Unit = {},
     showPassword: Boolean = false,
     onShowPassword: () -> Unit = {},
-    onCreateUser: (user: UserCreate) -> Unit = {}
+    onCreateUser: () -> Unit = {}
 ) {
     DefaultBackGround(
         {
@@ -46,13 +49,7 @@ fun CreateUserScreen(
         },
         {
             Button(onClick = {
-                onCreateUser(
-                    UserCreate(
-                        name = userName ?: throw IllegalStateException(),
-                        email = email ?: throw IllegalStateException(),
-                        password = password ?: throw IllegalStateException()
-                    )
-                )
+                onCreateUser()
             }) {
                 Text(text = "Criar Conta")
             }

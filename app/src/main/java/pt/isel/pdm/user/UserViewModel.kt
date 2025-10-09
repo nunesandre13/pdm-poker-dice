@@ -76,14 +76,25 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         _stateUi.value = userState
     }
 
-    fun login(user: UserLogin) {
+    fun login() {
         viewModelScope.launch {
-            val lastState = _stateUi.value
-            _stateUi.value = UserScreenState.Idle
-            userService.login(user)?.let { response ->
-                navigateTo(UserScreenState.UserLoggIn(response))
-            }?: emitError(UserError.ErrorLogin).also {
-                _stateUi.value = lastState
+            runCatching {
+                UserLogin(
+                    email = _email.value ?: throw IllegalArgumentException("Email inválido"),
+                    password = _password.value ?: throw IllegalArgumentException("Password inválida")
+                )
+            }.onSuccess { userLogin ->
+                val lastState = _stateUi.value
+                _stateUi.value = UserScreenState.Idle
+
+                userService.login(userLogin)?.let { response ->
+                    navigateTo(UserScreenState.UserLoggIn(response))
+                } ?: run {
+                    emitError(UserError.ErrorLogin)
+                    _stateUi.value = lastState
+                }
+            }.onFailure { error ->
+
             }
         }
     }
