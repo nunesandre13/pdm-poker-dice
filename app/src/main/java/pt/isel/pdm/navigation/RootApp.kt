@@ -16,7 +16,7 @@ import pt.isel.pdm.profile.ProfileScreen
 import pt.isel.pdm.ui.HandlingView
 import pt.isel.pdm.user.UserScreen
 import pt.isel.pdm.user.UserViewModel
-import pt.isel.pdm.user.services.UsersServiceMock
+
 
 
 @Composable

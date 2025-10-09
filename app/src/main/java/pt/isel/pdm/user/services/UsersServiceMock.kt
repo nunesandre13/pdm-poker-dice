@@ -30,8 +30,9 @@ class UsersServiceMock : UserServices {
     }
 
     override suspend fun createUser(user: UserCreate): User? {
+        _currentUser.value =
+            User("122434566",user.name.name,user.email)
         return _currentUser.value
-
     }
 
 }
