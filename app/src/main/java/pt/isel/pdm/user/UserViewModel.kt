@@ -57,45 +57,6 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         _showPassword.value = !_showPassword.value
     }
 
-    val loginConfiguration: UserFormsConfiguration = UserFormsConfiguration.LoginForm(
-        topBarConfig = TopBarConfig.Simple("Login"),
-        email = email.value,
-        onEmailChange = { onEmailChange(it) },
-        password = password.value,
-        onPasswordChange = { onPasswordChange(it) },
-        showPassword = showPassword.value,
-        onShowPassword = { onShowPassword() },
-        onLogin = {
-            val currentEmail = email.value
-            val currentPassword = password.value
-            if (currentEmail != null && currentPassword != null) {
-                login(UserLogin(currentEmail, currentPassword))
-            }
-        },
-        onSignUp = {navigateTo(UserScreenState.CreatingUser)}
-    )
-
-    val createUserConfiguration: UserFormsConfiguration = UserFormsConfiguration.CreateUserForm(
-        topBarConfig = TopBarConfig.Simple("Create Account"),
-        email = email.value,
-        onEmailChange = { onEmailChange(it) },
-        name = name.value,
-        onNameChange = { onNameChange(it) },
-        password = password.value,
-        onPasswordChange = { onPasswordChange(it) },
-        showPassword = showPassword.value,
-        onShowPassword = { onShowPassword() },
-        onCreateUser = {
-            val currentEmail = email.value
-            val currentPassword = password.value
-            val currentName = name.value
-            if (currentEmail != null && currentPassword != null && currentName != null) {
-                createUser(UserCreate(currentName, currentEmail, currentPassword))
-            }
-        }
-    )
-
-
 
     fun navigateTo(userState: UserScreenState) {
         _stateUi.value = userState
