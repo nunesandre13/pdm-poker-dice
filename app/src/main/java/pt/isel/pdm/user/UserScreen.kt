@@ -1,16 +1,23 @@
 package pt.isel.pdm.user
 
 import android.annotation.SuppressLint
-import pt.isel.pdm.profile.ProfileScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
-import pt.isel.pdm.home.TitleScreen
+
+
+import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.services.UsersServiceMock
 
 @Composable
-fun UserScreen(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
+fun UserScreen(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
+    UserScreenContent(viewModel,onTitleScreen)
+    UserScreenError(viewModel)
+}
+
+@Composable
+fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
 
     val stateUi = viewModel.stateUi.collectAsState().value
     val name = viewModel.name.collectAsState().value
@@ -49,11 +56,35 @@ fun UserScreen(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
             login = { viewModel.login(it) },
             onSignUp = { viewModel.navigateTo(UserScreenState.CreatingUser) }
         )
+
+
     }
 }
 
+
+@Composable
+private fun UserScreenError(viewModel: UserViewModel) {
+    when (val stateError = viewModel.errorState.collectAsState().value) {
+        is UserError.NoError -> {}
+        is UserError.ErrorLogin -> ErrorPopUp(stateError){
+            viewModel.dismissError()
+        }
+        is UserError.ErrorCreateUser -> ErrorPopUp(stateError){
+            viewModel.dismissError()
+        }
+        UserError.UserNotFound -> ErrorPopUp(stateError){
+            viewModel.dismissError()
+        }
+    }
+}
+
+
+@SuppressLint("ViewModelConstructorInComposable")
 @Composable
 @Preview
 fun UserScreenPreview() {
-    UserScreen(viewModel = UserViewModel(UsersServiceMock()),{})
+    UserScreen(
+        UserViewModel(UsersServiceMock()),
+        onTitleScreen = {}
+    )
 }
