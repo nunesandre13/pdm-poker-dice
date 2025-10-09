@@ -19,14 +19,17 @@ import androidx.compose.ui.unit.dp
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Password
 import pt.isel.pdm.domain.UserLogin
+import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.column.ColumnScaffold
 import pt.isel.pdm.ui.forms.EmailForm
 import pt.isel.pdm.ui.forms.PasswordForm
+import pt.isel.pdm.ui.topBar.TopBarConfig
 import java.lang.IllegalStateException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
+    topBarConfig: TopBarConfig,
     email: Email? = null,
     password: Password? = null,
     onEmailChange: (Email) -> Unit = {},
@@ -37,23 +40,8 @@ fun LoginScreen(
     login: (UserLogin) -> Unit = {},
     onSignUp: () -> Unit = {},
 ) {
-    ColumnScaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Login") },
-                navigationIcon = {
-                    IconButton(onClick = { onBack() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Voltar ao Menu"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        },
+    DefaultBackGround(
+
         {
             EmailForm(email = email, onEmailChange = onEmailChange)
         },
@@ -82,7 +70,10 @@ fun LoginScreen(
                 Text(text = "Sign up")
             }
 
-        }
+        },
+        topBarConfig=topBarConfig,
+        modifier = Modifier
+
     )
 }
 
@@ -90,5 +81,15 @@ fun LoginScreen(
 @Composable
 @Preview
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(
+        topBarConfig = TopBarConfig.WithBack("Login", {}),
+        email = Email("ola"),
+        password = Password("ola"),
+        onEmailChange = {},
+        onPasswordChange = {},
+        showPassword = true,
+        onShowPassword = {},
+        onBack = {},
+        login = {},
+        onSignUp = {})
 }

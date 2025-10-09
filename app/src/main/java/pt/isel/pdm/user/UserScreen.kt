@@ -38,6 +38,7 @@ fun UserScreen(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
         is UserScreenState.UserLoggIn -> onTitleScreen()
 
         is UserScreenState.UserLoggedOut -> LoginScreen(
+            TopBarConfig.Simple("Login"),
             email,
             password,
             onEmailChange = { viewModel.onEmailChange(it) },
