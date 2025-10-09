@@ -3,11 +3,13 @@ package pt.isel.pdm.lobby.services
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyEvent
 import pt.isel.pdm.domain.User
 import kotlin.collections.plus
 import kotlin.time.Duration.Companion.seconds
@@ -15,6 +17,8 @@ import kotlin.time.Duration.Companion.seconds
 
 class LobbyServiceMock : LobbyServices {
     private val lobbiesFlow = MutableStateFlow<List<Lobby>>(emptyList())
+
+    private val lobbyEventFlow = MutableSharedFlow<LobbyEvent>()
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -73,5 +77,17 @@ class LobbyServiceMock : LobbyServices {
         }
         lobbiesFlow.emit(updated)
         return true
+    }
+
+    override suspend fun getLobbyEvent(lobby: Lobby): SharedFlow<LobbyEvent> {
+        scope.launch {
+            delay(5.seconds)
+            lobbyEventFlow.emit(LobbyEvent.PlayerAdded(User("1234", "user1", Email("user1"))))
+            delay(1.seconds)
+            lobbyEventFlow.emit(LobbyEvent.PlayerRemoved(User("1234", "user1", Email("user1"))))
+            delay(1.seconds)
+            lobbyEventFlow.emit(LobbyEvent.MatchStarted)
+        }
+        return lobbyEventFlow
     }
 }

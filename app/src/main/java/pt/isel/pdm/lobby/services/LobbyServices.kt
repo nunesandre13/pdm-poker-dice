@@ -2,6 +2,7 @@ package pt.isel.pdm.lobby.services
 
 import kotlinx.coroutines.flow.SharedFlow
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyEvent
 
 interface LobbyServices {
 
@@ -12,5 +13,7 @@ interface LobbyServices {
     fun listAvailableLobbies() : SharedFlow<List<Lobby>>
 
     suspend fun leaveLobby(lobby: Lobby, playerId: String) : Boolean
+
+    suspend fun getLobbyEvent(lobby: Lobby): SharedFlow<LobbyEvent>
 
 }

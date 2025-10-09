@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.DomainError
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyEvent
 import pt.isel.pdm.lobby.services.LobbyServices
 import pt.isel.pdm.user.services.UserServices
 
@@ -36,10 +37,31 @@ class LobbyViewModel(private val lobbyService: LobbyServices, private val userSe
     fun joinLobby(lobby: Lobby) {
         viewModelScope.launch {
             lobbyService.selectLobby(lobby).let { response ->
-                if (response) navigateTo(LobbyScreenState.JoinedLobby(lobby)) else {
+                if (response) {
+                    viewModelScope.launch {
+                        lobbyService.getLobbyEvent(lobby).let { event ->
+                            event.collect { newEvent ->
+                                if (stateUi.value is LobbyScreenState.JoinedLobby) {
+                                    _stateUi.value = LobbyScreenState.JoinedLobby(handleNewState(newEvent))
+                                }
+                            }
+                        }
+                    }
+                    navigateTo(LobbyScreenState.JoinedLobby(lobby))
+                } else {
                     emitError(LobbyError.LobbyNotFound)
                 }
             }
+        }
+    }
+
+    private fun handleNewState(newState: LobbyEvent): Lobby {
+        when(newState) {
+            is LobbyEvent.LobbyClosed -> TODO()
+            is LobbyEvent.LobbyFull -> TODO()
+            is LobbyEvent.MatchStarted -> TODO()
+            is LobbyEvent.PlayerAdded -> TODO()
+            is LobbyEvent.PlayerRemoved -> TODO()
         }
     }
 
