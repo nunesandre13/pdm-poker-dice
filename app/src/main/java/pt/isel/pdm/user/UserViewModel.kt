@@ -13,6 +13,9 @@ import pt.isel.pdm.domain.Password
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
+import pt.isel.pdm.domain.inputs.EmailInput
+import pt.isel.pdm.domain.inputs.NameInput
+import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.lobby.LobbyError
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.services.UserServices
@@ -22,14 +25,14 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
     private val _stateUi: MutableStateFlow<UserScreenState> = MutableStateFlow(UserScreenState.Idle)
     val stateUi: StateFlow<UserScreenState> = _stateUi
 
-    private val _email: MutableStateFlow<Email?> = MutableStateFlow(null)
-    val email: StateFlow<Email?> = _email
+    private val _email: MutableStateFlow<EmailInput?> = MutableStateFlow(null)
+    val email: StateFlow<EmailInput?> = _email
 
-    private val _password: MutableStateFlow<Password?> = MutableStateFlow(null)
-    val password: StateFlow<Password?> = _password
+    private val _password: MutableStateFlow<PasswordInput?> = MutableStateFlow(null)
+    val password: StateFlow<PasswordInput?> = _password
 
-    private val _name: MutableStateFlow<Name?> = MutableStateFlow(null)
-    val name: StateFlow<Name?> = _name
+    private val _name: MutableStateFlow<NameInput?> = MutableStateFlow(null)
+    val name: StateFlow<NameInput?> = _name
 
     private val _showPassword: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val showPassword: StateFlow<Boolean> = _showPassword
@@ -55,16 +58,16 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         }
     }
 
-    fun onEmailChange(email: Email) {
-        _email.value = email
+    fun onEmailChange(emailInput: EmailInput) {
+        _email.value = emailInput
     }
 
-    fun onPasswordChange(password: Password) {
-        _password.value = password
+    fun onPasswordChange(passwordInput: PasswordInput) {
+        _password.value = passwordInput
     }
 
-    fun onNameChange(name: Name) {
-        _name.value = name
+    fun onNameChange(nameInput: NameInput) {
+        _name.value = nameInput
     }
 
     fun onShowPassword(){
@@ -80,8 +83,8 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         viewModelScope.launch {
             runCatching {
                 UserLogin(
-                    email = _email.value ?: throw IllegalArgumentException("Email inválido"),
-                    password = _password.value ?: throw IllegalArgumentException("Password inválida")
+                    email = _email.value?.toEmail() ?: throw IllegalArgumentException("Email inválido"),
+                    password = _password.value?.toPassword() ?: throw IllegalArgumentException("Password inválida")
                 )
             }.onSuccess { userLogin ->
                 val lastState = _stateUi.value
@@ -99,13 +102,27 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         }
     }
 
-    fun createUser(user: UserCreate) {
+    fun createUser() {
         viewModelScope.launch {
-            _stateUi.value = UserScreenState.Idle
-            userService.createUser(user)?.let { response ->
-                navigateTo(UserScreenState.UserLoggIn(response))
-            }
+            runCatching {
+                UserCreate(
+                    name = _name.value?.toName() ?: throw IllegalArgumentException("Name inválido"),
+                    email = _email.value?.toEmail() ?: throw IllegalArgumentException("Email inválido"),
+                    password = _password.value?.toPassword() ?: throw IllegalArgumentException("Password inválida")
+                )
+            }.onSuccess { userCreate ->
+                val lastState = _stateUi.value
+                _stateUi.value = UserScreenState.Idle
 
+                userService.createUser(userCreate)?.let { response ->
+                    navigateTo(UserScreenState.UserLoggIn(response))
+                } ?: run {
+                    emitError(UserError.ErrorLogin)
+                    _stateUi.value = lastState
+                }
+            }.onFailure { error ->
+
+            }
         }
     }
 

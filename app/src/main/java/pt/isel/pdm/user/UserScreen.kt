@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 
-
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.services.UsersServiceMock
@@ -37,7 +36,7 @@ fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
             {viewModel.onPasswordChange(it)},
             showPassword,
             {viewModel.onShowPassword()},
-            {viewModel.createUser(it)}
+            {viewModel.createUser()}
         )
 
         is UserScreenState.Idle -> {}
@@ -53,7 +52,7 @@ fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
             showPassword = showPassword,
             onShowPassword = { viewModel.onShowPassword() },
             onBack = {},
-            login = { viewModel.login(it) },
+            login = { viewModel.login() },
             onSignUp = { viewModel.navigateTo(UserScreenState.CreatingUser) }
         )
 
