@@ -1,32 +1,17 @@
 package pt.isel.pdm.user
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.Password
-import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.ui.background.DefaultBackGround
-import pt.isel.pdm.ui.column.ColumnScaffold
 import pt.isel.pdm.ui.forms.EmailForm
 import pt.isel.pdm.ui.forms.PasswordForm
 import pt.isel.pdm.ui.topBar.TopBarConfig
-import java.lang.IllegalStateException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +23,6 @@ fun LoginScreen(
     onPasswordChange: (PasswordInput) -> Unit = {},
     showPassword: Boolean = false,
     onShowPassword : () -> Unit = {},
-    onBack: () -> Unit = {},
     login: () -> Unit = {},
     onSignUp: () -> Unit = {},
 ) {
@@ -86,7 +70,6 @@ fun LoginScreenPreview() {
         onPasswordChange = {},
         showPassword = true,
         onShowPassword = {},
-        onBack = {},
         login = {},
         onSignUp = {})
 }

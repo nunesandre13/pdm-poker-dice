@@ -12,7 +12,6 @@ import pt.isel.pdm.domain.User
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 
-
 @Composable
 fun LobbyView(
     lobby: Lobby?,

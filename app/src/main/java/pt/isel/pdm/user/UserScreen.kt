@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
-
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.services.UsersServiceMock
@@ -43,20 +42,23 @@ fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
 
         is UserScreenState.UserLoggIn -> onTitleScreen()
 
-        is UserScreenState.UserLoggedOut -> LoginScreen(
-            TopBarConfig.Simple("Login"),
-            email,
-            password,
-            onEmailChange = { viewModel.onEmailChange(it) },
-            onPasswordChange = { viewModel.onPasswordChange(it) },
-            showPassword = showPassword,
-            onShowPassword = { viewModel.onShowPassword() },
-            onBack = {},
-            login = { viewModel.login() },
-            onSignUp = { viewModel.navigateTo(UserScreenState.CreatingUser) }
+        is UserScreenState.UserLoggedOut -> ViewUserLoginStateFull(
+            onLogin = { viewModel.login(it) },
+            topBarConfig = TopBarConfig.Simple("Login"),
+            loginView = { state, actions ->
+                LoginScreen(
+                    topBarConfig = state.topBarConfig,
+                    email = state.email,
+                    password = state.password,
+                    onEmailChange = actions.onEmailChange,
+                    onPasswordChange = actions.onPasswordChange,
+                    showPassword = state.showPassword,
+                    onShowPassword = actions.onShowPassword,
+                    login = actions.onLogin,
+                    onSignUp = actions.onSignUp
+                )
+            }
         )
-
-
     }
 }
 
