@@ -37,6 +37,7 @@ typealias LoginView = @Composable (
 @Composable
 fun ViewUserLoginStateFull(
     onLogin: (UserLogin) -> Unit,
+    onSignUp: () -> Unit,
     loginView: LoginView,
     topBarConfig: TopBarConfig,
 ) {
@@ -57,12 +58,12 @@ fun ViewUserLoginStateFull(
         onShowPassword = { showPassword = !showPassword },
         onLogin = {
             if (email != null && password != null) {
-                val myEmail = email!!.toEmail() ?: presentError { return@LoginActions }
-                val myPassword = password!!.toPassword() ?: return@LoginActions
+                val myEmail = email?.toEmail() ?: presentError { return@LoginActions }
+                val myPassword = password?.toPassword() ?: presentError { return@LoginActions }
                 onLogin(UserLogin(myEmail,myPassword))
             }
         },
-        onSignUp = {}
+        onSignUp = onSignUp
     )
     loginView(state, actions)
 }

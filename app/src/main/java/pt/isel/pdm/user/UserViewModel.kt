@@ -13,6 +13,9 @@ import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.NameInput
 import pt.isel.pdm.domain.inputs.PasswordInput
+import pt.isel.pdm.domain.toEmail
+import pt.isel.pdm.domain.toName
+import pt.isel.pdm.domain.toPassword
 import pt.isel.pdm.user.services.UserServices
 
 class UserViewModel(private val userService: UserServices) : ViewModel() {
@@ -69,20 +72,22 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         _showPassword.value = !_showPassword.value
     }
 
-
     fun navigateTo(userState: UserScreenState) {
         _stateUi.value = userState
     }
 
     fun login(userLogin: UserLogin) {
         viewModelScope.launch {
-            val lastState = _stateUi.value
-            _stateUi.value = UserScreenState.Idle
-            userService.login(userLogin)?.let { response ->
-                navigateTo(UserScreenState.UserLoggIn(response))
-            } ?: run {
-                emitError(UserError.ErrorLogin)
-                _stateUi.value = lastState
+            runOperation(_stateUi.value) {
+                _stateUi.value = UserScreenState.Idle
+                userService.login(userLogin)?.let { response ->
+                        return@let UserScreenState.UserLoggIn(response)
+                } ?: run {
+                    emitError(UserError.ErrorLogin)
+                    return@run null
+                }
+            }.also{
+                navigateTo(it)
             }
         }
     }
@@ -141,6 +146,11 @@ sealed interface UserScreenState {
     data object CreatingUser : UserScreenState
 
 }
+
+suspend fun <T> runOperation(defaultValue: T, operation: suspend () -> T?) : T {
+    return operation() ?: defaultValue
+}
+
 
 
 sealed class UserError(override val message: String?): DomainError {

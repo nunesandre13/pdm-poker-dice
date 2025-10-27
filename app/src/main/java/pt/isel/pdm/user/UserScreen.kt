@@ -44,6 +44,7 @@ fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
 
         is UserScreenState.UserLoggedOut -> ViewUserLoginStateFull(
             onLogin = { viewModel.login(it) },
+            onSignUp = {viewModel.navigateTo(UserScreenState.CreatingUser)},
             topBarConfig = TopBarConfig.Simple("Login"),
             loginView = { state, actions ->
                 LoginScreen(
