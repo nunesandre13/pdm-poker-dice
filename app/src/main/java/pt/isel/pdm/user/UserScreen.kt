@@ -7,6 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.services.UsersServiceMock
+import pt.isel.pdm.utils.ViewModelBase
 
 @Composable
 fun UserScreen(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
@@ -93,7 +94,8 @@ private fun UserScreenError(viewModel: UserViewModel) {
 @Preview
 fun UserScreenPreview() {
     UserScreen(
-        UserViewModel(UsersServiceMock()),
+        UserViewModel(UsersServiceMock(),
+            viewModelBase = ViewModelBase(UserScreenState.Idle, UserError.NoError)),
         onTitleScreen = {}
     )
 }

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.DomainError
-import pt.isel.pdm.domain.State
+import pt.isel.pdm.domain.User
 import pt.isel.pdm.user.UserScreenState
 import pt.isel.pdm.user.services.UserServices
 
@@ -20,6 +20,15 @@ class ProfileViewModel(private val userService: UserServices) : ViewModel(){
 
     val errorState : StateFlow<ProfileError> = _errorState
 
+    init {
+        viewModelScope.launch {
+            userService.getCurrentUser()?.let { user ->
+                navigateTo(ProfileScreenState.OnProfileView(user))
+            } ?: run {
+                navigateTo(ProfileScreenState.LoggedOut)
+            }
+        }
+    }
 
     fun emitError(error: ProfileError) {
         _errorState.value = error
@@ -58,9 +67,9 @@ class ProfileViewModel(private val userService: UserServices) : ViewModel(){
     }
 }
 
-sealed class ProfileScreenState: State{
+sealed class ProfileScreenState{
     data object Idle: ProfileScreenState()
-    data object OnProfileView: ProfileScreenState()
+    data class OnProfileView(val user: User): ProfileScreenState()
     data object LoggedOut: ProfileScreenState()
 }
 sealed class ProfileError(override val message: String?): DomainError {

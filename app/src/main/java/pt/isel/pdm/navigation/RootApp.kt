@@ -13,6 +13,8 @@ import pt.isel.pdm.lobby.LobbyViewModel
 import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
 import pt.isel.pdm.lobby.lobbyUi.LobbyScreen
 import pt.isel.pdm.profile.ProfileScreen
+import pt.isel.pdm.profile.ProfileView
+import pt.isel.pdm.profile.ProfileViewModel
 import pt.isel.pdm.ui.HandlingView
 import pt.isel.pdm.user.UserScreen
 import pt.isel.pdm.user.UserViewModel
@@ -46,13 +48,7 @@ fun RootApp(appConfiguration: DependenciesContainer) {
             )
         }
 
-        composable(Screens.PROFILE.route) {
-            ProfileScreen(
-                user = appConfiguration.userServices.getCurrentUser()!!,
-                onBack = { navController.popBackStack() }
 
-            )
-        }
 
         composable(Screens.ABOUT.route) {
             AboutScreen(
@@ -85,6 +81,17 @@ fun RootApp(appConfiguration: DependenciesContainer) {
         composable(Screens.AWAIING_GAME.route) {
             HandlingView(
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screens.PROFILE.route) { backStackEntry ->
+            val profileVm: ProfileViewModel = viewModel(
+                viewModelStoreOwner = backStackEntry,
+                factory = ProfileViewModel.factory(appConfiguration.userServices)
+            )
+            ProfileScreen(
+                viewModel = profileVm,
+                onLogOut = {navController.navigate(Screens.HOME_SCREEN.route)}
             )
         }
     }

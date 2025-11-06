@@ -3,7 +3,6 @@ package pt.isel.pdm.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
@@ -24,9 +23,10 @@ import pt.isel.pdm.ui.topBar.TopBarConfig
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(
+fun ProfileView(
     user: User,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onLogOut:() -> Unit = {}
 ) {
     DefaultBackGround(
         {
@@ -83,6 +83,11 @@ fun ProfileScreen(
                     StatCard("Wins", "12")
                     StatCard("Rank", "#5")
                 }
+                Button(
+                    onLogOut
+                ) {
+                    Text("LogOut")
+                }
             }
         },
         topBarConfig = TopBarConfig.WithBack(
@@ -93,8 +98,3 @@ fun ProfileScreen(
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ProfilePreview() {
-    ProfileScreen(User("1", "Gui", Email("joao@gmail.com")))
-}
