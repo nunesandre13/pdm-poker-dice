@@ -23,18 +23,6 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
     private val _stateUi: MutableStateFlow<UserScreenState> = MutableStateFlow(UserScreenState.Idle)
     val stateUi: StateFlow<UserScreenState> = _stateUi
 
-    private val _email: MutableStateFlow<EmailInput?> = MutableStateFlow(null)
-    val email: StateFlow<EmailInput?> = _email
-
-    private val _password: MutableStateFlow<PasswordInput?> = MutableStateFlow(null)
-    val password: StateFlow<PasswordInput?> = _password
-
-    private val _name: MutableStateFlow<NameInput?> = MutableStateFlow(null)
-    val name: StateFlow<NameInput?> = _name
-
-    private val _showPassword: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showPassword: StateFlow<Boolean> = _showPassword
-
     private val _errorState : MutableStateFlow<UserError> = MutableStateFlow(UserError.NoError)
 
     val errorState : StateFlow<UserError> = _errorState
@@ -54,22 +42,6 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
                 navigateTo(UserScreenState.UserLoggedOut)
             }
         }
-    }
-
-    fun onEmailChange(emailInput: EmailInput) {
-        _email.value = emailInput
-    }
-
-    fun onPasswordChange(passwordInput: PasswordInput) {
-        _password.value = passwordInput
-    }
-
-    fun onNameChange(nameInput: NameInput) {
-        _name.value = nameInput
-    }
-
-    fun onShowPassword(){
-        _showPassword.value = !_showPassword.value
     }
 
     fun navigateTo(userState: UserScreenState) {
@@ -92,29 +64,23 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         }
     }
 
-    fun createUser() {
-        viewModelScope.launch {
-            runCatching {
-                UserCreate(
-                    name = _name.value?.toName() ?: throw IllegalArgumentException("Name inválido"),
-                    email = _email.value?.toEmail() ?: throw IllegalArgumentException("Email inválido"),
-                    password = _password.value?.toPassword() ?: throw IllegalArgumentException("Password inválida")
-                )
-            }.onSuccess { userCreate ->
-                val lastState = _stateUi.value
-                _stateUi.value = UserScreenState.Idle
 
+    fun createUser(userCreate: UserCreate) {
+        viewModelScope.launch {
+            runOperation(_stateUi.value) {
+                _stateUi.value = UserScreenState.Idle
                 userService.createUser(userCreate)?.let { response ->
-                    navigateTo(UserScreenState.UserLoggIn(response))
+                    return@let UserScreenState.UserLoggIn(response)
                 } ?: run {
                     emitError(UserError.ErrorLogin)
-                    _stateUi.value = lastState
+                    return@run null
                 }
-            }.onFailure { error ->
-
+            }.also{
+                navigateTo(it)
             }
         }
     }
+
 
     fun logout() {
         viewModelScope.launch {

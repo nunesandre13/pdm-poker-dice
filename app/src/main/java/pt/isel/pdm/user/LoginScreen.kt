@@ -23,13 +23,14 @@ fun LoginScreen(
     onPasswordChange: (PasswordInput) -> Unit = {},
     showPassword: Boolean = false,
     onShowPassword : () -> Unit = {},
+    emailError: Boolean,
     login: () -> Unit = {},
     onSignUp: () -> Unit = {},
 ) {
     DefaultBackGround(
 
         {
-            EmailForm(email = email, onEmailChange = onEmailChange)
+            EmailForm(email = email, emailError, onEmailChange = onEmailChange)
         },
         {
             PasswordForm(
@@ -70,6 +71,7 @@ fun LoginScreenPreview() {
         onPasswordChange = {},
         showPassword = true,
         onShowPassword = {},
+        emailError = false,
         login = {},
         onSignUp = {})
 }

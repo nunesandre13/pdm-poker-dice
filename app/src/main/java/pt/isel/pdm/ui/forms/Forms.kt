@@ -3,11 +3,13 @@ package pt.isel.pdm.ui.forms
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.Password
@@ -19,6 +21,7 @@ import pt.isel.pdm.ui.clickable.ClickableIcon
 @Composable
 fun EmailForm(
     email: EmailInput?,
+    error: Boolean,
     onEmailChange: (EmailInput) -> Unit
 ) {
     OutlinedTextField(
@@ -27,8 +30,17 @@ fun EmailForm(
             onEmailChange(EmailInput(newValue))
         },
         label = { Text("Email") },
-        placeholder = { Text("nome@exemplo.com") }
+        placeholder = { Text("nome@exemplo.com") },
+        isError = email == null || error,
+        supportingText = { if (error) Text("Email Invalid",color = MaterialTheme.colorScheme.error)}
     )
+}
+
+@Preview
+@Composable
+fun EmailFormPreview(){
+    EmailForm(EmailInput("some email"),  true) {
+    }
 }
 
 @Composable

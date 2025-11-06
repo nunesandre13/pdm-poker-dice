@@ -13,7 +13,7 @@ fun ErrorPopUp(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Erro") },
+        title = { Text("Error") },
         text = { error.message?.let { Text(it) } },
         confirmButton = {
             Button(onClick = onDismiss) {

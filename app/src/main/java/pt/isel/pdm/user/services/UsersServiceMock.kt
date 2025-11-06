@@ -21,7 +21,7 @@ class UsersServiceMock : UserServices {
     override fun getCurrentUser(): User? = _currentUser.value
 
     override suspend fun login(user: UserLogin): User? {
-        return _currentUser.value
+        return null
     }
 
     override suspend fun logout(): Boolean {

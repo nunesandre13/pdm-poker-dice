@@ -18,24 +18,30 @@ fun UserScreen(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
 fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
 
     val stateUi = viewModel.stateUi.collectAsState().value
-    val name = viewModel.name.collectAsState().value
-    val password = viewModel.password.collectAsState().value
-    val showPassword = viewModel.showPassword.collectAsState().value
-    val email = viewModel.email.collectAsState().value
 
     when (stateUi) {
 
-        is UserScreenState.CreatingUser -> CreateUserScreen(
-            TopBarConfig.Simple("Login"),
-            email,
-            {viewModel.onEmailChange(it)},
-            name,
-            {viewModel.onNameChange(it)},
-            password,
-            {viewModel.onPasswordChange(it)},
-            showPassword,
-            {viewModel.onShowPassword()},
-            {viewModel.createUser()}
+        is UserScreenState.CreatingUser -> ViewUserCreateStateFull(
+            onCreateUser = {viewModel.createUser(it)},
+            topBarConfig = TopBarConfig.WithBack("Create User") {
+                viewModel.navigateTo(
+                    UserScreenState.UserLoggedOut
+                )
+            },
+            createView = { state, actions->
+                CreateUserScreen(
+                    topBarConfig = state.topBarConfig,
+                    email = state.email,
+                    onEmailChange = actions.onEmailChange,
+                    userName = state.name,
+                    onUserNameChange = actions.onNameChange,
+                    password = state.password,
+                    onPasswordChange = actions.onPasswordChange,
+                    showPassword = state.showPassword,
+                    onShowPassword = actions.onShowPassword,
+                    onCreateUser = actions.onCreateUser
+                )
+            }
         )
 
         is UserScreenState.Idle -> {}
@@ -56,7 +62,8 @@ fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
                     showPassword = state.showPassword,
                     onShowPassword = actions.onShowPassword,
                     login = actions.onLogin,
-                    onSignUp = actions.onSignUp
+                    onSignUp = actions.onSignUp,
+                    emailError = state.emailError
                 )
             }
         )

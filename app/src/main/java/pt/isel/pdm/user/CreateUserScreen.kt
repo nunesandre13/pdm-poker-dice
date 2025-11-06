@@ -37,7 +37,7 @@ fun CreateUserScreen(
             NamerForm(name = userName, onNameChange = onUserNameChange)
         },
         {
-            EmailForm(email = email, onEmailChange = onEmailChange)
+            EmailForm(email = email, false, onEmailChange = onEmailChange)
         },
         {
             PasswordForm(
