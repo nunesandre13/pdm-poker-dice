@@ -10,13 +10,8 @@ import pt.isel.pdm.domain.DomainError
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
-import pt.isel.pdm.domain.inputs.EmailInput
-import pt.isel.pdm.domain.inputs.NameInput
-import pt.isel.pdm.domain.inputs.PasswordInput
-import pt.isel.pdm.domain.toEmail
-import pt.isel.pdm.domain.toName
-import pt.isel.pdm.domain.toPassword
 import pt.isel.pdm.user.services.UserServices
+import pt.isel.pdm.utils.runOperation
 
 class UserViewModel(private val userService: UserServices) : ViewModel() {
 
@@ -81,20 +76,6 @@ class UserViewModel(private val userService: UserServices) : ViewModel() {
         }
     }
 
-
-    fun logout() {
-        viewModelScope.launch {
-            _stateUi.value = UserScreenState.Idle
-            userService.logout().let { response ->
-                if (response) {
-                    navigateTo(UserScreenState.UserLoggedOut)
-                }
-                else {
-                    emitError(UserError.NoError)
-                }
-            }
-        }
-    }
     companion object {
         fun factory(userService: UserServices)  =object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -112,11 +93,6 @@ sealed interface UserScreenState {
     data object CreatingUser : UserScreenState
 
 }
-
-suspend fun <T> runOperation(defaultValue: T, operation: suspend () -> T?) : T {
-    return operation() ?: defaultValue
-}
-
 
 
 sealed class UserError(override val message: String?): DomainError {
