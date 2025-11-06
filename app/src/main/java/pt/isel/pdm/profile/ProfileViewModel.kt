@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.DomainError
+import pt.isel.pdm.domain.State
 import pt.isel.pdm.user.UserScreenState
 import pt.isel.pdm.user.services.UserServices
 
@@ -57,7 +58,7 @@ class ProfileViewModel(private val userService: UserServices) : ViewModel(){
     }
 }
 
-sealed class ProfileScreenState{
+sealed class ProfileScreenState: State{
     data object Idle: ProfileScreenState()
     data object OnProfileView: ProfileScreenState()
     data object LoggedOut: ProfileScreenState()
