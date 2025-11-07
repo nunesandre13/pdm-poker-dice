@@ -1,11 +1,11 @@
-package pt.isel.pdm.lobby.lobbyUi
+package pt.isel.pdm.lobby.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
-import pt.isel.pdm.lobby.LobbyError
-import pt.isel.pdm.lobby.LobbyScreenState
-import pt.isel.pdm.lobby.LobbyViewModel
+import pt.isel.pdm.lobby.viewmodel.LobbyError
+import pt.isel.pdm.lobby.viewmodel.LobbyScreenState
+import pt.isel.pdm.lobby.viewmodel.LobbyViewModel
 import pt.isel.pdm.lobby.services.LobbyServiceMock
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.user.services.UsersServiceMock

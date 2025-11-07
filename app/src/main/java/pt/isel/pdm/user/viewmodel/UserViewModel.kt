@@ -1,4 +1,4 @@
-package pt.isel.pdm.user
+package pt.isel.pdm.user.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

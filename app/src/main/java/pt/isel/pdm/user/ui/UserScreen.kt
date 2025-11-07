@@ -1,4 +1,4 @@
-package pt.isel.pdm.user
+package pt.isel.pdm.user.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
@@ -6,7 +6,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.ui.topBar.TopBarConfig
+import pt.isel.pdm.user.viewmodel.UserError
+import pt.isel.pdm.user.viewmodel.UserScreenState
+import pt.isel.pdm.user.viewmodel.UserViewModel
 import pt.isel.pdm.user.services.UsersServiceMock
+import pt.isel.pdm.user.ui.create.CreateUserScreen
+import pt.isel.pdm.user.ui.create.ViewUserCreateStateFull
+import pt.isel.pdm.user.ui.login.LoginScreen
+import pt.isel.pdm.user.ui.login.ViewUserLoginStateFull
 import pt.isel.pdm.utils.ViewModelBase
 
 @Composable
@@ -16,20 +23,20 @@ fun UserScreen(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
 }
 
 @Composable
-fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
+fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
 
     val stateUi = viewModel.stateUi.collectAsState().value
 
     when (stateUi) {
 
         is UserScreenState.CreatingUser -> ViewUserCreateStateFull(
-            onCreateUser = {viewModel.createUser(it)},
+            onCreateUser = { viewModel.createUser(it) },
             topBarConfig = TopBarConfig.WithBack("Create User") {
                 viewModel.navigateTo(
                     UserScreenState.UserLoggedOut
                 )
             },
-            createView = { state, actions->
+            createView = { state, actions ->
                 CreateUserScreen(
                     topBarConfig = state.topBarConfig,
                     email = state.email,
@@ -51,7 +58,7 @@ fun UserScreenContent(viewModel: UserViewModel,onTitleScreen: () -> Unit) {
 
         is UserScreenState.UserLoggedOut -> ViewUserLoginStateFull(
             onLogin = { viewModel.login(it) },
-            onSignUp = {viewModel.navigateTo(UserScreenState.CreatingUser)},
+            onSignUp = { viewModel.navigateTo(UserScreenState.CreatingUser) },
             topBarConfig = TopBarConfig.Simple("Login"),
             loginView = { state, actions ->
                 LoginScreen(
@@ -94,8 +101,10 @@ private fun UserScreenError(viewModel: UserViewModel) {
 @Preview
 fun UserScreenPreview() {
     UserScreen(
-        UserViewModel(UsersServiceMock(),
-            viewModelBase = ViewModelBase(UserScreenState.Idle, UserError.NoError)),
+        UserViewModel(
+            UsersServiceMock(),
+            viewModelBase = ViewModelBase(UserScreenState.Idle, UserError.NoError)
+        ),
         onTitleScreen = {}
     )
 }

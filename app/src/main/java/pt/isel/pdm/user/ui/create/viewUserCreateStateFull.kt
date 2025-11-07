@@ -1,4 +1,4 @@
-package pt.isel.pdm.user
+package pt.isel.pdm.user.ui.create
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,6 +13,7 @@ import pt.isel.pdm.domain.toEmail
 import pt.isel.pdm.domain.toName
 import pt.isel.pdm.domain.toPassword
 import pt.isel.pdm.ui.topBar.TopBarConfig
+import pt.isel.pdm.user.ui.login.presentError
 
 data class CreateState(
     val topBarConfig: TopBarConfig,

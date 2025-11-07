@@ -9,15 +9,14 @@ import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.configuration.DependenciesContainer
 import pt.isel.pdm.home.TitleScreen
-import pt.isel.pdm.lobby.LobbyViewModel
-import pt.isel.pdm.lobby.lobbyUi.LobbyCreationView
-import pt.isel.pdm.lobby.lobbyUi.LobbyScreen
-import pt.isel.pdm.profile.ProfileScreen
-import pt.isel.pdm.profile.ProfileView
-import pt.isel.pdm.profile.ProfileViewModel
+import pt.isel.pdm.lobby.viewmodel.LobbyViewModel
+import pt.isel.pdm.lobby.ui.LobbyCreationView
+import pt.isel.pdm.lobby.ui.LobbyScreen
+import pt.isel.pdm.profile.ui.ProfileScreen
+import pt.isel.pdm.profile.viewmodel.ProfileViewModel
 import pt.isel.pdm.ui.HandlingView
-import pt.isel.pdm.user.UserScreen
-import pt.isel.pdm.user.UserViewModel
+import pt.isel.pdm.user.ui.UserScreen
+import pt.isel.pdm.user.viewmodel.UserViewModel
 
 
 

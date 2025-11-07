@@ -1,4 +1,4 @@
-package pt.isel.pdm.lobby
+package pt.isel.pdm.lobby.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

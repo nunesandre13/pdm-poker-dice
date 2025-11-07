@@ -1,4 +1,4 @@
-package pt.isel.pdm.profile
+package pt.isel.pdm.profile.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.DomainError
 import pt.isel.pdm.domain.User
-import pt.isel.pdm.user.UserScreenState
 import pt.isel.pdm.user.services.UserServices
 
 class ProfileViewModel(private val userService: UserServices) : ViewModel(){

@@ -1,4 +1,4 @@
-package pt.isel.pdm.user
+package pt.isel.pdm.user.ui.create
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -18,7 +18,7 @@ import pt.isel.pdm.ui.forms.NamerForm
 import pt.isel.pdm.ui.forms.PasswordForm
 import pt.isel.pdm.ui.theme.ChelasMultiPlayerPokerDiceTheme
 import pt.isel.pdm.ui.topBar.TopBarConfig
-import java.lang.IllegalStateException
+
 @Composable
 fun CreateUserScreen(
     topBarConfig: TopBarConfig,

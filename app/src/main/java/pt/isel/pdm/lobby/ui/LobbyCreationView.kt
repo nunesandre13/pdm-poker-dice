@@ -1,4 +1,4 @@
-package pt.isel.pdm.lobby.lobbyUi
+package pt.isel.pdm.lobby.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

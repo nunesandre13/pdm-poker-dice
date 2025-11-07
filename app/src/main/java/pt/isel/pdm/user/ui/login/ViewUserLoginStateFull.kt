@@ -1,4 +1,4 @@
-package pt.isel.pdm.user
+package pt.isel.pdm.user.ui.login
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
