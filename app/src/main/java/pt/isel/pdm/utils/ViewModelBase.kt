@@ -1,6 +1,5 @@
 package pt.isel.pdm.utils
 
-import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import pt.isel.pdm.domain.DomainError
@@ -9,7 +8,7 @@ import pt.isel.pdm.domain.State
 class ViewModelBase<S : State, E : DomainError>(
     initialState: S,
     private val noError: E
-) : ViewModel(), ViewModelState<S, E> {
+) : ViewModelState<S, E> {
 
     private val _stateUi: MutableStateFlow<S> = MutableStateFlow(initialState)
     override val stateUi = _stateUi.asStateFlow()

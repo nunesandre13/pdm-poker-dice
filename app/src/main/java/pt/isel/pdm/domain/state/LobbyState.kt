@@ -1,0 +1,18 @@
+package pt.isel.pdm.domain.state
+
+import kotlinx.coroutines.flow.Flow
+import pt.isel.pdm.domain.DomainError
+import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.State
+
+sealed interface LobbyScreenState : State{
+    data object Loading : LobbyScreenState
+    data object Creation : LobbyScreenState
+    data class JoinedLobby(val lobby : Lobby) : LobbyScreenState
+    data class LobbiesList(val lobby : Flow<List<Lobby>>) : LobbyScreenState
+}
+
+sealed class LobbyError(override val message: String?): DomainError {
+    data object NoError: LobbyError(null)
+    data object LobbyNotFound: DomainError, LobbyError("Lobby not found")
+}

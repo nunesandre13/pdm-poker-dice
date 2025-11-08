@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.domain.state.UserScreenState
+import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.ui.topBar.TopBarConfig
-import pt.isel.pdm.user.viewmodel.UserError
-import pt.isel.pdm.user.viewmodel.UserScreenState
 import pt.isel.pdm.user.viewmodel.UserViewModel
 import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.user.ui.create.CreateUserScreen
@@ -85,16 +85,10 @@ fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
 @Composable
 private fun UserScreenError(viewModel: UserViewModel) {
     when (val stateError = viewModel.errorState.collectAsState().value) {
+        is UserError.ErrorLogin, is UserError.ErrorCreateUser, is UserError.UserNotFound -> ErrorPopUp(stateError){
+            viewModel.dismissError()
+        }
         is UserError.NoError -> {}
-        is UserError.ErrorLogin -> ErrorPopUp(stateError){
-            viewModel.dismissError()
-        }
-        is UserError.ErrorCreateUser -> ErrorPopUp(stateError){
-            viewModel.dismissError()
-        }
-        UserError.UserNotFound -> ErrorPopUp(stateError){
-            viewModel.dismissError()
-        }
     }
 }
 

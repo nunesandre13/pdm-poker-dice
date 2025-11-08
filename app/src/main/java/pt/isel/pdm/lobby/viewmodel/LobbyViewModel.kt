@@ -3,35 +3,24 @@ package pt.isel.pdm.lobby.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import pt.isel.pdm.domain.DomainError
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyEvent
+import pt.isel.pdm.domain.state.LobbyError
+import pt.isel.pdm.domain.state.LobbyScreenState
 import pt.isel.pdm.lobby.services.LobbyServices
 import pt.isel.pdm.user.services.UserServices
+import pt.isel.pdm.utils.ViewModelBase
+import pt.isel.pdm.utils.ViewModelState
 
-class LobbyViewModel(private val lobbyService: LobbyServices, private val userService: UserServices) : ViewModel() {
-
-    private val _stateUi : MutableStateFlow<LobbyScreenState> = MutableStateFlow(LobbyScreenState.Loading)
-    val stateUi : StateFlow<LobbyScreenState> = _stateUi
-
-    private val _errorState : MutableStateFlow<LobbyError> = MutableStateFlow(LobbyError.NoError)
-    val errorState : StateFlow<LobbyError> = _errorState
+class LobbyViewModel(
+    private val lobbyService: LobbyServices,
+    private val userService: UserServices,
+    viewModelState: ViewModelState<LobbyScreenState,LobbyError>) : ViewModel(), ViewModelState<LobbyScreenState,LobbyError> by viewModelState  {
 
     init {
         getLobbies()
-    }
-
-    fun emitError(error: LobbyError) {
-        _errorState.value = error
-    }
-
-    fun navigateTo(lobbyState: LobbyScreenState) {
-        _stateUi.value = lobbyState
     }
 
     fun joinLobby(lobby: Lobby) {
@@ -42,7 +31,7 @@ class LobbyViewModel(private val lobbyService: LobbyServices, private val userSe
                         lobbyService.getLobbyEvent(lobby).let { event ->
                             event.collect { newEvent ->
                                 if (stateUi.value is LobbyScreenState.JoinedLobby) {
-                                    _stateUi.value = LobbyScreenState.JoinedLobby(handleNewState(newEvent))
+                                    navigateTo(LobbyScreenState.JoinedLobby(handleNewState(newEvent)))
                                 }
                             }
                         }
@@ -82,17 +71,13 @@ class LobbyViewModel(private val lobbyService: LobbyServices, private val userSe
     }
 
     fun goToCreation(){
-        _stateUi.value = LobbyScreenState.Creation
+        navigateTo(LobbyScreenState.Creation)
     }
 
     private fun getLobbies(): SharedFlow<List<Lobby>> {
         return lobbyService.listAvailableLobbies().also { sharedFlow ->
             navigateTo(LobbyScreenState.LobbiesList(sharedFlow))
         }
-    }
-
-    fun dismissError(){
-        emitError(LobbyError.NoError)
     }
 
 
@@ -111,25 +96,13 @@ class LobbyViewModel(private val lobbyService: LobbyServices, private val userSe
     }
 
      companion object {
-
          fun getFactory(lobbyServices: LobbyServices, userServices: UserServices ) = object : ViewModelProvider.Factory {
          @Suppress("UNCHECKED_CAST")
              override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                 return LobbyViewModel(lobbyServices, userServices) as T
+                 return LobbyViewModel(lobbyServices, userServices, ViewModelBase(LobbyScreenState.Loading,LobbyError.NoError) ) as T
              }
          }
      }
 
 }
 
-sealed interface LobbyScreenState {
-    data object Loading : LobbyScreenState
-    data object Creation : LobbyScreenState
-    data class JoinedLobby(val lobby : Lobby) : LobbyScreenState
-    data class LobbiesList(val lobby : Flow<List<Lobby>>) : LobbyScreenState
-}
-
-sealed class LobbyError(override val message: String?): DomainError {
-    data object NoError: LobbyError(null)
-    data object LobbyNotFound: DomainError, LobbyError("Lobby not found")
-}

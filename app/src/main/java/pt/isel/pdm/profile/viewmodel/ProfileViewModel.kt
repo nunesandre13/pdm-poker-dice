@@ -3,21 +3,17 @@ package pt.isel.pdm.profile.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import pt.isel.pdm.domain.DomainError
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.state.ProfileError
+import pt.isel.pdm.domain.state.ProfileScreenState
 import pt.isel.pdm.user.services.UserServices
+import pt.isel.pdm.utils.ViewModelBase
+import pt.isel.pdm.utils.ViewModelState
 
-class ProfileViewModel(private val userService: UserServices) : ViewModel(){
-
-    private val _stateUi: MutableStateFlow<ProfileScreenState> = MutableStateFlow(ProfileScreenState.Idle)
-    val stateUi: StateFlow<ProfileScreenState> = _stateUi
-
-    private val _errorState : MutableStateFlow<ProfileError> = MutableStateFlow(ProfileError.NoError)
-
-    val errorState : StateFlow<ProfileError> = _errorState
+class ProfileViewModel(
+    private val userService: UserServices ,
+    viewModelState: ViewModelState<ProfileScreenState,ProfileError>)
+        : ViewModel(), ViewModelState<ProfileScreenState,ProfileError> by viewModelState {
 
     init {
         viewModelScope.launch {
@@ -29,17 +25,9 @@ class ProfileViewModel(private val userService: UserServices) : ViewModel(){
         }
     }
 
-    fun emitError(error: ProfileError) {
-        _errorState.value = error
-    }
-
-    fun dismissError(){
-        emitError(ProfileError.NoError)
-    }
-
     fun logout() {
         viewModelScope.launch {
-            _stateUi.value = ProfileScreenState.Idle
+            navigateTo(ProfileScreenState.Idle)
             userService.logout().let { response ->
                 if (response) {
                     navigateTo(ProfileScreenState.LoggedOut)
@@ -51,27 +39,13 @@ class ProfileViewModel(private val userService: UserServices) : ViewModel(){
         }
     }
 
-    fun navigateTo( profileState: ProfileScreenState) {
-        _stateUi.value = profileState
-    }
-
-
     companion object {
         fun factory(userService: UserServices)  =object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProfileViewModel(userService) as T
+                return ProfileViewModel(userService, ViewModelBase(ProfileScreenState.Idle,ProfileError.NoError)) as T
             }
         }
     }
 }
 
-sealed class ProfileScreenState{
-    data object Idle: ProfileScreenState()
-    data class OnProfileView(val user: User): ProfileScreenState()
-    data object LoggedOut: ProfileScreenState()
-}
-sealed class ProfileError(override val message: String?): DomainError {
-    data object NoError: ProfileError(null)
-    data object LogoutError: ProfileError("Error doing the logout")
-}

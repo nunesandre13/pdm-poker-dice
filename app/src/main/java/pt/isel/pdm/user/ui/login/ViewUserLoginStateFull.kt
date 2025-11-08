@@ -11,6 +11,7 @@ import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.domain.toEmail
 import pt.isel.pdm.domain.toPassword
 import pt.isel.pdm.ui.topBar.TopBarConfig
+import pt.isel.pdm.utils.presentError
 
 
 data class LoginState(
@@ -80,7 +81,3 @@ fun ViewUserLoginStateFull(
     loginView(state, actions)
 }
 
-
-inline fun presentError(onError: () -> Nothing): Nothing {
-    onError()
-}

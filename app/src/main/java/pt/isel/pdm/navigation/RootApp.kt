@@ -47,8 +47,6 @@ fun RootApp(appConfiguration: DependenciesContainer) {
             )
         }
 
-
-
         composable(Screens.ABOUT.route) {
             AboutScreen(
                 onDetails = { action -> onAction(action) },

@@ -2,8 +2,8 @@ package pt.isel.pdm.profile.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import pt.isel.pdm.profile.viewmodel.ProfileError
-import pt.isel.pdm.profile.viewmodel.ProfileScreenState
+import pt.isel.pdm.domain.state.ProfileError
+import pt.isel.pdm.domain.state.ProfileScreenState
 import pt.isel.pdm.profile.viewmodel.ProfileViewModel
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 

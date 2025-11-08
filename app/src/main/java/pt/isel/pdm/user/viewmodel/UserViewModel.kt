@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.isel.pdm.domain.DomainError
-import pt.isel.pdm.domain.State
-import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
+import pt.isel.pdm.domain.state.UserError
+import pt.isel.pdm.domain.state.UserScreenState
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
@@ -16,7 +15,7 @@ import pt.isel.pdm.utils.runOperation
 
 class UserViewModel(
     private val userService: UserServices,
-    private val viewModelBase: ViewModelState<UserScreenState,UserError>) :
+    private val viewModelBase: ViewModelState<UserScreenState, UserError>) :
         ViewModelState<UserScreenState, UserError> by viewModelBase, ViewModel() {
 
     init {
@@ -72,18 +71,3 @@ class UserViewModel(
     }
 }
 
-sealed interface UserScreenState : State {
-    data object Idle : UserScreenState
-    data object UserLoggedOut : UserScreenState
-    data class UserLoggIn(val user: User) : UserScreenState
-    data object CreatingUser : UserScreenState
-
-}
-
-
-sealed class UserError(override val message: String?) : DomainError {
-    data object NoError : UserError(null)
-    data object UserNotFound : UserError("Users not found")
-    data object ErrorLogin : UserError("Login not possible")
-    data object ErrorCreateUser : UserError("Create user not possible")
-}

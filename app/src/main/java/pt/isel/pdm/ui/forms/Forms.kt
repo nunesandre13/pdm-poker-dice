@@ -31,7 +31,7 @@ fun EmailForm(
         },
         label = { Text("Email") },
         placeholder = { Text("nome@exemplo.com") },
-        isError = error,
+        isError = email == null || error,
         supportingText = { if (error) Text("Email Invalid", color = MaterialTheme.colorScheme.error) },
         modifier = modifier.fillMaxWidth()
     )
@@ -70,7 +70,7 @@ fun PasswordForm(
                 onClick = onShowPasswordChange
             )
         },
-        isError = error,
+        isError = password == null || error,
         supportingText = { if (error) Text("Password Invalid", color = MaterialTheme.colorScheme.error) },
         modifier = modifier.fillMaxWidth()
     )
@@ -85,6 +85,7 @@ fun NamerForm(
     OutlinedTextField(
         value = name?.name ?: "",
         onValueChange = { newValue -> onNameChange(NameInput(newValue)) },
+        isError = name == null,
         label = { Text("Name") },
         modifier = modifier.fillMaxWidth()
     )
