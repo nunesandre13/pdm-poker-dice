@@ -1,5 +1,6 @@
 package pt.isel.pdm.ui.forms
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -7,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,7 +21,8 @@ import pt.isel.pdm.ui.clickable.ClickableIcon
 fun EmailForm(
     email: EmailInput?,
     error: Boolean,
-    onEmailChange: (EmailInput) -> Unit
+    onEmailChange: (EmailInput) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = email?.email ?: "",
@@ -28,16 +31,20 @@ fun EmailForm(
         },
         label = { Text("Email") },
         placeholder = { Text("nome@exemplo.com") },
-        isError = email == null || error,
-        supportingText = { if (error) Text("Email Invalid",color = MaterialTheme.colorScheme.error)}
+        isError = error,
+        supportingText = { if (error) Text("Email Invalid", color = MaterialTheme.colorScheme.error) },
+        modifier = modifier.fillMaxWidth()
     )
 }
 
 @Preview
 @Composable
-fun EmailFormPreview(){
-    EmailForm(EmailInput("some email"),  true) {
-    }
+fun EmailFormPreview() {
+    EmailForm(
+        email = EmailInput("testtetete"),
+        error = false,
+        onEmailChange = {}
+    )
 }
 
 @Composable
@@ -46,7 +53,8 @@ fun PasswordForm(
     onPasswordChange: (PasswordInput) -> Unit,
     showPassword: Boolean,
     onShowPasswordChange: () -> Unit,
-    error: Boolean
+    error: Boolean,
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = password?.passwordInput ?: "",
@@ -62,22 +70,22 @@ fun PasswordForm(
                 onClick = onShowPasswordChange
             )
         },
-        isError = password == null || error,
-        supportingText = { if (error) { Text("Password Inválida", color = MaterialTheme.colorScheme.error) }
-        }
-    )
-}
-@Composable
-fun NamerForm(
-    name: NameInput?,
-    onNameChange: (NameInput) -> Unit
-) {
-    OutlinedTextField(
-        value = name?.name ?: "",
-        onValueChange = { newValue ->
-            onNameChange(NameInput(newValue))
-        },
-        label = { Text("Name") }
+        isError = error,
+        supportingText = { if (error) Text("Password Invalid", color = MaterialTheme.colorScheme.error) },
+        modifier = modifier.fillMaxWidth()
     )
 }
 
+@Composable
+fun NamerForm(
+    name: NameInput?,
+    onNameChange: (NameInput) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = name?.name ?: "",
+        onValueChange = { newValue -> onNameChange(NameInput(newValue)) },
+        label = { Text("Name") },
+        modifier = modifier.fillMaxWidth()
+    )
+}
