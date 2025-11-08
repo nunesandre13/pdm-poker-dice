@@ -20,7 +20,9 @@ data class CreateState(
     val name: NameInput?,
     val email: EmailInput?,
     val password: PasswordInput?,
-    val showPassword: Boolean
+    val showPassword: Boolean,
+    val emailError: Boolean,
+    val passwordError: Boolean
 )
 data class CreateActions(
     val onNameChange: (NameInput) -> Unit,
@@ -47,27 +49,41 @@ fun ViewUserCreateStateFull(
     var password by remember { mutableStateOf<PasswordInput?>(null) }
     var showPassword by remember { mutableStateOf(false) }
 
+    var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
+
     val state = CreateState(
         topBarConfig = topBarConfig,
         name = name,
         email = email,
         password = password,
-        showPassword = showPassword
+        showPassword = showPassword,
+        emailError = emailError,
+        passwordError = passwordError
     )
 
     val actions = CreateActions(
         onNameChange = { name = it },
-        onEmailChange = { email = it },
-        onPasswordChange = { password = it },
+        onEmailChange = {
+            email = it
+            emailError = false },
+        onPasswordChange = {
+            password = it
+            passwordError = false },
         onShowPassword = { showPassword = !showPassword },
         onCreateUser = {
             if (name != null && email != null && password != null) {
                 val myName = name?.toName() ?: presentError {
-
                     return@CreateActions
                 }
-                val myEmail = email?.toEmail() ?: presentError { return@CreateActions }
-                val myPassword = password?.toPassword() ?: presentError { return@CreateActions }
+                val myEmail = email?.toEmail() ?: presentError {
+                    emailError = true
+                    return@CreateActions
+                }
+                val myPassword = password?.toPassword() ?: presentError {
+                    passwordError = true
+                    return@CreateActions
+                }
                 onCreateUser(UserCreate(myName, myEmail, myPassword))
             }
         }

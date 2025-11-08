@@ -18,7 +18,8 @@ data class LoginState(
     val email: EmailInput?,
     val password: PasswordInput?,
     val showPassword: Boolean,
-    val emailError: Boolean
+    val emailError: Boolean,
+    val passwordError: Boolean
 )
 
 data class LoginActions(
@@ -46,13 +47,15 @@ fun ViewUserLoginStateFull(
     var password by remember { mutableStateOf<PasswordInput?>(null) }
     var showPassword by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
 
     val state = LoginState(
         topBarConfig = topBarConfig,
         email = email,
         password = password,
         showPassword = showPassword,
-        emailError = emailError
+        emailError = emailError,
+        passwordError = passwordError
     )
 
     val actions = LoginActions(

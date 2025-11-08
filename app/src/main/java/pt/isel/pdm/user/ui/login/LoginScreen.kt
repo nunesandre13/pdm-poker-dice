@@ -24,6 +24,7 @@ fun LoginScreen(
     showPassword: Boolean = false,
     onShowPassword : () -> Unit = {},
     emailError: Boolean,
+    passwordError: Boolean,
     login: () -> Unit = {},
     onSignUp: () -> Unit = {},
 ) {
@@ -37,7 +38,8 @@ fun LoginScreen(
                 password = password,
                 onPasswordChange = onPasswordChange,
                 showPassword = showPassword,
-                onShowPasswordChange = { onShowPassword() }
+                onShowPasswordChange = { onShowPassword() },
+                error = passwordError
             )
         },
         {
@@ -73,5 +75,7 @@ fun LoginScreenPreview() {
         onShowPassword = {},
         emailError = false,
         login = {},
-        onSignUp = {})
+        onSignUp = {},
+        passwordError = false
+    )
 }

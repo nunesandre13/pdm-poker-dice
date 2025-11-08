@@ -30,21 +30,24 @@ fun CreateUserScreen(
     onPasswordChange: (PasswordInput) -> Unit = {},
     showPassword: Boolean = false,
     onShowPassword: () -> Unit = {},
-    onCreateUser: () -> Unit = {}
+    onCreateUser: () -> Unit = {},
+    emailError: Boolean = false,
+    passwordError: Boolean = false
 ) {
     DefaultBackGround(
         {
             NamerForm(name = userName, onNameChange = onUserNameChange)
         },
         {
-            EmailForm(email = email, false, onEmailChange = onEmailChange)
+            EmailForm(email = email,emailError ,onEmailChange = onEmailChange)
         },
         {
             PasswordForm(
                 password = password,
                 onPasswordChange = onPasswordChange,
                 showPassword = showPassword,
-                onShowPasswordChange = onShowPassword
+                onShowPasswordChange = onShowPassword,
+                error = passwordError
             )
         },
         {
@@ -59,16 +62,16 @@ fun CreateUserScreen(
     )
 }
 
-@Composable
-@Preview
-fun CreateUserScreenPreview() {
-    ChelasMultiPlayerPokerDiceTheme {
-        CreateUserScreen (TopBarConfig.Simple("Example")){
-            UserCreate(
-                name = Name("Example"),
-                email = Email(""),
-                password = Password(""),
-            )
-        }
-    }
-}
+//@Composable
+//@Preview
+//fun CreateUserScreenPreview() {
+//    ChelasMultiPlayerPokerDiceTheme {
+//        CreateUserScreen (TopBarConfig.Simple("Example")){
+//            UserCreate(
+//                name = Name("Example"),
+//                email = Email(""),
+//                password = Password(""),
+//            )
+//        }
+//    }
+//}

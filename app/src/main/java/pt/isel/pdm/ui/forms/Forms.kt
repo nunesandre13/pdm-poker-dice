@@ -10,9 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.Name
-import pt.isel.pdm.domain.Password
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.NameInput
 import pt.isel.pdm.domain.inputs.PasswordInput
@@ -48,7 +45,8 @@ fun PasswordForm(
     password: PasswordInput?,
     onPasswordChange: (PasswordInput) -> Unit,
     showPassword: Boolean,
-    onShowPasswordChange: () -> Unit
+    onShowPasswordChange: () -> Unit,
+    error: Boolean
 ) {
     OutlinedTextField(
         value = password?.passwordInput ?: "",
@@ -63,11 +61,12 @@ fun PasswordForm(
                 contentDescription = if (showPassword) "Show" else "NotShow",
                 onClick = onShowPasswordChange
             )
+        },
+        isError = password == null || error,
+        supportingText = { if (error) { Text("Password Inválida", color = MaterialTheme.colorScheme.error) }
         }
     )
 }
-
-
 @Composable
 fun NamerForm(
     name: NameInput?,

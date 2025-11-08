@@ -47,7 +47,9 @@ fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
                     onPasswordChange = actions.onPasswordChange,
                     showPassword = state.showPassword,
                     onShowPassword = actions.onShowPassword,
-                    onCreateUser = actions.onCreateUser
+                    onCreateUser = actions.onCreateUser,
+                    emailError = state.emailError,
+                    passwordError = state.passwordError
                 )
             }
         )
@@ -71,7 +73,8 @@ fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
                     onShowPassword = actions.onShowPassword,
                     login = actions.onLogin,
                     onSignUp = actions.onSignUp,
-                    emailError = state.emailError
+                    emailError = state.emailError,
+                    passwordError = state.passwordError
                 )
             }
         )
