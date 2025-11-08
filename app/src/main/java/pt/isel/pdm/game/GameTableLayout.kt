@@ -15,6 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.unit.sp
 
 private const val MY_PLAYER_WIDTH_PERCENT = 0.28f
 private const val ADVERSARY_PLAYER_WIDTH_PERCENT = 0.22f
@@ -37,6 +42,25 @@ fun GameTableLayout(me: Player, others: List<Player>) {
                 centerTo(parent)
                 width = Dimension.percent(0.78f)
                 height = Dimension.ratio("2:1")
+            }
+        )
+
+        // Título central
+        val tableTitleRef = createRef()
+        Text(
+            text = "POKER DICE GAME",
+            fontSize = 38.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFFFFD54F),
+            style = TextStyle(
+                shadow = Shadow(
+                    color = Color.Black.copy(alpha = 0.6f),
+                    offset = Offset(3f, 3f),
+                    blurRadius = 10f
+                )
+            ),
+            modifier = Modifier.constrainAs(tableTitleRef) {
+                centerTo(tableRef)
             }
         )
 
