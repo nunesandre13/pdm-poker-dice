@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -94,7 +95,7 @@ fun PlayerView(player: Player, modifier: Modifier = Modifier) {
             val fontSize = (containerWidth.value / 7f).sp
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Player: ${player.id}",
+                    text = stringResource(R.string.pVplayer_label,player.id),
                     textAlign = TextAlign.Center,
                     fontSize = fontSize,
                     fontWeight = FontWeight.SemiBold,

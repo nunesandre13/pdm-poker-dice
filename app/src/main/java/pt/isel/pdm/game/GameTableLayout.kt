@@ -14,8 +14,18 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.chelasmulti_playerpokerdice.R
+import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Player
+import pt.isel.pdm.game.playerLayouts.LayoutFor2Players
+import pt.isel.pdm.game.playerLayouts.LayoutFor3Players
+import pt.isel.pdm.game.playerLayouts.LayoutFor4Players
+import pt.isel.pdm.game.playerLayouts.LayoutFor5Players
+import pt.isel.pdm.game.playerLayouts.LayoutFor6Players
 
 private const val MY_PLAYER_WIDTH_PERCENT = 0.28f
 @Composable
@@ -25,7 +35,10 @@ fun GameTableLayout(me: Player, others: List<Player>) {
             .fillMaxSize()
             .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFF0A3D17), Color(0xFF062D12))
+                    colors = listOf(
+                        colorResource(R.color.table_bg_light),
+                        colorResource(R.color.table_bg_dark)
+                    )
                 )
             )
     ) {
@@ -41,10 +54,10 @@ fun GameTableLayout(me: Player, others: List<Player>) {
 
         val tableTitleRef = createRef()
         Text(
-            text = "POKER DICE GAME",
+            text = stringResource(R.string.table_title),
             fontSize = 38.sp,
             fontWeight = FontWeight.Black,
-            color = Color(0xFFFFD54F),
+            color = colorResource(R.color.title_gold),
             style = TextStyle(
                 shadow = Shadow(
                     color = Color.Black.copy(alpha = 0.6f),
@@ -75,5 +88,13 @@ fun GameTableLayout(me: Player, others: List<Player>) {
             5 -> LayoutFor6Players(others)
         }
     }
+}
+
+@Preview(showBackground = true, widthDp = 800, heightDp = 600)
+@Composable
+fun GameTableLayoutPreview() {
+    val me = Player(DicesHand(emptyList()),1)
+    val others = emptyList<Player>()
+    GameTableLayout(me = me, others = others)
 }
 
