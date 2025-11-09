@@ -2,4 +2,13 @@
     <string name="app_name">Chelas Multi-Player Poker Dice</string>
     <string name="description_game">Poker Dice is a dice game inspired by poker where each player rolls five dice and may re-roll up to two times to form the best hand. After all players finish, their combinations are compared and the highest hand wins. Hands rank from strongest to weakest as: Five of a Kind, Four of a Kind, Full House, Straight, Three of a Kind, Two Pair, One Pair, and Bust.</string>
     <string name="title_app">Welcome to Poker Dice!</string>
+    <!--GameTableLayout -->
+    <string name="table_title">POKER DICE GAME</string>
+
+    <!--PlayerView -->
+    <string name="pVplayer_label">Player: %1$d</string>
+
+    <!--Dices -->
+    <string name="die_face">Die Face: %1$s</string>
+
 </resources>
