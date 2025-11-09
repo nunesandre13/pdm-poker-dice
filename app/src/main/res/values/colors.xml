@@ -7,4 +7,29 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!--GameTableLayout -->
+    <color name="table_bg_light">#FF0A3D17</color>
+    <color name="table_bg_dark">#FF062D12</color>
+
+    <color name="title_gold">#FFFFD54F</color>
+
+    <color name="table_outer">#FF5D4037</color>
+
+    <color name="table_inner1">#FF2E7D32</color>
+    <color name="table_inner2">#FF1B5E20</color>
+
+    <!--PlayerView -->
+    <color name="playerview_circle">#0x552E7D32</color>
+
+    <color name="pv_backgroundBox1">#0xFF1E3A2A</color>
+    <color name="pv_backgroundBox2">#0xFF0D2017</color>
+
+    <color name="pv_backgroundBorder1">#0x0x66FFFFFF</color>
+    <color name="pv_backgroundBorder1">#0x0x22FFFFFF</color>
+
+    <color name="pv_textPlayerID">#0x0xFFE8F5E9</color>
+
+
+
 </resources>
