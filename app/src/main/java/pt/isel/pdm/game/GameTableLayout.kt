@@ -1,13 +1,10 @@
 package pt.isel.pdm.game
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -21,7 +18,6 @@ import androidx.compose.ui.unit.sp
 import pt.isel.pdm.domain.Player
 
 private const val MY_PLAYER_WIDTH_PERCENT = 0.28f
-
 @Composable
 fun GameTableLayout(me: Player, others: List<Player>) {
     ConstraintLayout(
@@ -60,7 +56,6 @@ fun GameTableLayout(me: Player, others: List<Player>) {
                 centerTo(tableRef)
             }
         )
-
         val myPlayerRef = createRef()
         PlayerView(
             player = me,

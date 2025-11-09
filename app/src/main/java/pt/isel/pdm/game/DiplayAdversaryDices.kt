@@ -24,16 +24,17 @@ fun DisplayAdversaryDices(dicesHand: DicesHand, size: Dp){
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
             dicesHand.dices.take(2).forEach { dice ->
-                StopedDice(
+                StoppedDice(
                     face = dice,
                     onClick = { /* Os dados do adversário não são clicáveis */ },
                     size = diceSize
                 )
             }
         }
+
         Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
             dicesHand.dices.drop(2).forEach { dice ->
-                StopedDice(
+                StoppedDice(
                     face = dice,
                     onClick = { /* Os dados do adversário não são clicáveis */ },
                     size = diceSize

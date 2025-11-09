@@ -8,23 +8,29 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.chelasmulti_playerpokerdice.R
 
 @Composable
 fun PokerTableSurface(modifier: Modifier = Modifier) {
+    val tableOuterColor = colorResource(id = R.color.table_outer)
+    val tableInner1Color = colorResource(id = R.color.table_inner1)
+    val tableInner2Color = colorResource(id = R.color.table_inner2)
+    val tableLineColor = colorResource(id = R.color.white).copy(alpha = 0.25f)
+
     Canvas(modifier = modifier) {
         val corner = CornerRadius(size.height / 2f, size.height / 2f)
         drawRoundRect(
-            color = Color(0xFF5D4037),
+            color = tableOuterColor,
             size = size,
             cornerRadius = corner
         )
         val inset = size.minDimension * 0.04f
         drawRoundRect(
             brush = Brush.radialGradient(
-                colors = listOf(Color(0xFF2E7D32), Color(0xFF1B5E20)),
+                colors = listOf(tableInner1Color, tableInner2Color),
                 center = center,
                 radius = size.minDimension / 1.2f
             ),
@@ -35,7 +41,7 @@ fun PokerTableSurface(modifier: Modifier = Modifier) {
 
         val lineInset = inset * 2f
         drawRoundRect(
-            color = Color.White.copy(alpha = 0.25f),
+            color = tableLineColor,
             topLeft = Offset(lineInset, lineInset),
             size = Size(size.width - lineInset * 2f, size.height - lineInset * 2f),
             cornerRadius = CornerRadius(corner.x - lineInset, corner.y - lineInset),
@@ -49,4 +55,3 @@ fun PokerTableSurface(modifier: Modifier = Modifier) {
 fun PokerTableSurfacePreview() {
     PokerTableSurface(modifier = Modifier.fillMaxSize())
 }
-

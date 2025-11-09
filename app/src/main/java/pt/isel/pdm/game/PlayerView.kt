@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,28 +17,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.chelasmulti_playerpokerdice.R
+import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Player
 
 @Composable
 fun PlayerView(player: Player, modifier: Modifier = Modifier) {
     val shape = RoundedCornerShape(18.dp)
+    val glowColor = colorResource(id = R.color.playerview_circle)
+    val backgroundGradient1 = colorResource(id = R.color.pv_backgroundBox1)
+    val backgroundGradient2 = colorResource(id = R.color.pv_backgroundBox2)
+    val borderGradient1 = colorResource(id = R.color.pv_backgroundBorder1)
+    val borderGradient2 = colorResource(id = R.color.pv_backgroundBorder2)
+    val innerBorderColor = colorResource(id = R.color.pv_backgroundBorder2)
+    val textColor = colorResource(id = R.color.pv_textPlayerID)
     Box(
         modifier = modifier
             .drawBehind {
                 val glow = size.minDimension * 0.6f
                 drawCircle(
                     brush = Brush.radialGradient(
-                        colors = listOf(Color(0x552E7D32), Color.Transparent)
+                        colors = listOf(glowColor, Color.Transparent)
                     ),
                     radius = glow,
-                    center = androidx.compose.ui.geometry.Offset(size.width / 2f, size.height)
+                    center = Offset(size.width / 2f, size.height)
                 )
             }
     ) {
@@ -49,23 +65,23 @@ fun PlayerView(player: Player, modifier: Modifier = Modifier) {
                 .clip(shape)
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF1E3A2A), Color(0xFF0D2017))
+                        colors = listOf(backgroundGradient1, backgroundGradient2)
                     )
                 )
                 .border(
                     width = 1.dp,
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0x66FFFFFF), Color(0x22FFFFFF))
+                        colors = listOf(borderGradient1, borderGradient2)
                     ),
                     shape = shape
                 )
                 .drawBehind {
                     drawRoundRect(
-                        color = Color.White.copy(alpha = 0.10f),
+                        color = innerBorderColor,
                         style = Stroke(width = 2.dp.toPx()),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx()),
-                        topLeft = androidx.compose.ui.geometry.Offset(6.dp.toPx(), 6.dp.toPx()),
-                        size = androidx.compose.ui.geometry.Size(
+                        cornerRadius = CornerRadius(16.dp.toPx()),
+                        topLeft = Offset(6.dp.toPx(), 6.dp.toPx()),
+                        size = Size(
                             width = size.width - 12.dp.toPx(),
                             height = size.height - 12.dp.toPx()
                         )
@@ -82,7 +98,7 @@ fun PlayerView(player: Player, modifier: Modifier = Modifier) {
                     textAlign = TextAlign.Center,
                     fontSize = fontSize,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFE8F5E9)
+                    color = textColor
                 )
                 DisplayAdversaryDices(
                     dicesHand = player.hand,
@@ -90,5 +106,16 @@ fun PlayerView(player: Player, modifier: Modifier = Modifier) {
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 250)
+@Composable
+fun PlayerViewPreview() {
+    val samplePlayer = Player(hand =
+        DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)),
+        5)
+    Surface {
+        PlayerView(player = samplePlayer)
     }
 }
