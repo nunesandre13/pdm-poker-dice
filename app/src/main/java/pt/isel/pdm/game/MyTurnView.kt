@@ -6,13 +6,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Player
+import pt.isel.pdm.game.gameLayout.GameTableLayoutClickable
 
 @Composable
 fun MyTurnView(players: List<Player>) {
     if (players.isEmpty()) return
     val me = players.first()
     val others = players.drop(1)
-    GameTableLayout(me = me, others = others)
+    GameTableLayoutClickable(me = me, others = others) {
+
+    }
 }
 
 @Preview(

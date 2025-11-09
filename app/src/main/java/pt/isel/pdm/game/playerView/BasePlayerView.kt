@@ -1,4 +1,4 @@
-package pt.isel.pdm.game
+package pt.isel.pdm.game.playerView
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,16 +26,18 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chelasmulti_playerpokerdice.R
-import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Player
 
 @Composable
-fun PlayerView(player: Player, modifier: Modifier = Modifier) {
+fun BasePlayerView(
+    player: Player,
+    modifier: Modifier = Modifier,
+    dicesContent: @Composable (containerWidth: Dp) -> Unit
+) {
     val shape = RoundedCornerShape(18.dp)
     val glowColor = colorResource(id = R.color.playerview_circle)
     val backgroundGradient1 = colorResource(id = R.color.pv_backgroundBox1)
@@ -101,22 +102,8 @@ fun PlayerView(player: Player, modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.SemiBold,
                     color = textColor
                 )
-                DisplayAdversaryDices(
-                    dicesHand = player.hand,
-                    size = containerWidth
-                )
+                dicesContent(containerWidth)
             }
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 250)
-@Composable
-fun PlayerViewPreview() {
-    val samplePlayer = Player(hand =
-        DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)),
-        5)
-    Surface {
-        PlayerView(player = samplePlayer)
     }
 }
