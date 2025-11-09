@@ -27,7 +27,7 @@ fun MyTurnView(players: List<Player>) {
 @Composable
 fun MyTurnPreview() {
     val samplePlayers = listOf(
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 1),
+        Player(hand = DicesHand(listOf(DiceFace.TEN,DiceFace.KING,DiceFace.JACK,DiceFace.ACE,DiceFace.NINE)), id = 1),
         Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 2),
         Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 3),
         Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 4)
