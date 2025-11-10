@@ -5,8 +5,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.domain.state.LobbyScreenState
+import pt.isel.pdm.lobby.repository.RepositoryLobbiesMock
+import pt.isel.pdm.lobby.services.LobbyServiceImp
 import pt.isel.pdm.lobby.viewmodel.LobbyViewModel
-import pt.isel.pdm.lobby.services.LobbyServiceMock
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.utils.ViewModelBase
@@ -60,7 +61,7 @@ private fun LobbyScreenError(viewModel: LobbyViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewLobbyScreen() {
-    val viewModel = LobbyViewModel(LobbyServiceMock(), UsersServiceMock(),
+    val viewModel = LobbyViewModel(LobbyServiceImp(RepositoryLobbiesMock()), UsersServiceMock(),
         ViewModelBase(LobbyScreenState.Loading,LobbyError.NoError) )
     LobbyScreen(viewModel = viewModel, goBack = {})
 }

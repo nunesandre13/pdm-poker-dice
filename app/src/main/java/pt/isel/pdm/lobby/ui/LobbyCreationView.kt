@@ -91,7 +91,7 @@ fun LobbyCreationView(
                     Button(
                         onClick = {
                             playersCount?.let {
-                                onCreateLobby(Lobby(lobbyName.trim(), it, emptyList()))
+                                onCreateLobby(Lobby(lobbyName.trim(), 1,it, emptyList()))
                             }
                         },
                         colors = ButtonDefaults.buttonColors(

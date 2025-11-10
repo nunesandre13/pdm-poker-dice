@@ -101,6 +101,7 @@ fun LobbyView(
 fun LobbyScreenPreview() {
     val fakeLobby = Lobby(
         name = "Exemplo",
+        id = 1,
         maxPlayers = 4,
         players = listOf(
             User("1233", "Alice", Email("Alice@gamail.com")),

@@ -144,9 +144,9 @@ fun LobbyListView(
 fun LobbyListPreview() {
     LobbyListView(
         listOf(
-            Lobby("Lobby 1", 4, listOf()),
-            Lobby("Lobby 2", 6, listOf()),
-            Lobby("Lobby 3", 8, listOf())
+            Lobby("Lobby 1",1, 4, listOf()),
+            Lobby("Lobby 2", 1,6, listOf()),
+            Lobby("Lobby 3", 1,8, listOf())
         ),
         onJoinClick = {},
         onBack = {},
