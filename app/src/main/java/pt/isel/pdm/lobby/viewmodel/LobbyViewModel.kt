@@ -45,22 +45,37 @@ class LobbyViewModel(
     }
 
     private fun handleNewState(newState: LobbyEvent): Lobby {
-        when(newState) {
-            is LobbyEvent.LobbyClosed -> TODO()
-            is LobbyEvent.LobbyFull -> TODO()
-            is LobbyEvent.MatchStarted -> TODO()
-            is LobbyEvent.PlayerAdded -> TODO()
-            is LobbyEvent.PlayerRemoved -> TODO()
+        return when (val screenState = stateUi.value) {
+            is LobbyScreenState.JoinedLobby -> {
+                val current = screenState.lobby
+                when (newState) {
+                    is LobbyEvent.LobbyClosed -> TODO()
+                    is LobbyEvent.LobbyFull -> TODO()
+                    is LobbyEvent.MatchStarted -> TODO()
+                    is LobbyEvent.PlayerAdded ->
+                        current.copy(players = current.players + newState.player)
+                    is LobbyEvent.PlayerRemoved ->
+                        current.copy(players = current.players.filter { it.id != newState.player.id })
+                }
+            }
+            else -> TODO()
         }
     }
 
+
     fun createLobby(lobby: Lobby) {
         viewModelScope.launch {
-            lobbyService.createNewLobby(lobby).let { response ->
-                if (response) navigateTo(LobbyScreenState.JoinedLobby(lobby)) else {
-                    emitError(LobbyError.LobbyNotFound)
+            userService.getCurrentUser()?.let { user ->
+                val lobbyWithCreator = lobby.copy(players = listOf(user))
+                lobbyService.createNewLobby(lobbyWithCreator).let { response ->
+                    if (response) {
+                        navigateTo(LobbyScreenState.JoinedLobby(lobbyWithCreator))
+                    }
+                    else {
+                        emitError(LobbyError.LobbyNotFound)
+                    }
                 }
-            }
+            } ?: emitError(LobbyError.LobbyNotFound)
         }
     }
 

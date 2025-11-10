@@ -57,7 +57,14 @@ fun LobbyListView(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            Button(onClick = { onJoinClick(lobby) }) {
+                            Button(
+                                onClick = { onJoinClick(lobby) },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    contentColor = MaterialTheme.colorScheme.onSecondary
+                                ),
+                                shape = MaterialTheme.shapes.small
+                            ) {
                                 Text("Join")
                             }
                         }
@@ -71,7 +78,11 @@ fun LobbyListView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp),
-                        shape = MaterialTheme.shapes.large
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        ),
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text("Create Lobby")
                     }

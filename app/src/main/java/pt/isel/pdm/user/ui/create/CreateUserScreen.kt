@@ -1,14 +1,12 @@
 package pt.isel.pdm.user.ui.create
 
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.Name
-import pt.isel.pdm.domain.Password
-import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.NameInput
 import pt.isel.pdm.domain.inputs.PasswordInput
@@ -51,10 +49,17 @@ fun CreateUserScreen(
             )
         },
         {
-            Button(onClick = {
-                onCreateUser()
-            }) {
-                Text(text = "Criar Conta")
+            Button(
+                onClick = {
+                    onCreateUser()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(text = "Create Account")
             }
         },
         topBarConfig = topBarConfig,
@@ -62,16 +67,10 @@ fun CreateUserScreen(
     )
 }
 
-//@Composable
-//@Preview
-//fun CreateUserScreenPreview() {
-//    ChelasMultiPlayerPokerDiceTheme {
-//        CreateUserScreen (TopBarConfig.Simple("Example")){
-//            UserCreate(
-//                name = Name("Example"),
-//                email = Email(""),
-//                password = Password(""),
-//            )
-//        }
-//    }
-//}
+@Composable
+@Preview
+fun CreateUserScreenPreview() {
+    ChelasMultiPlayerPokerDiceTheme {
+        CreateUserScreen (TopBarConfig.Simple("Example"))
+    }
+}

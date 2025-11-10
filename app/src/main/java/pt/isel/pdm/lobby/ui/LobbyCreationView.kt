@@ -15,12 +15,12 @@ fun LobbyCreationView(
     onBack: () -> Unit = {}
 ) {
     var lobbyName by remember { mutableStateOf("") }
-    var numOfPlayers by remember { mutableIntStateOf(0) }
+    var numOfPlayers by remember { mutableStateOf("") }
 
     DefaultBackGround({
         OutlinedTextField(
-            value = numOfPlayers.toString(),
-            onValueChange = { numOfPlayers = it.toInt() },
+            value = numOfPlayers,
+            onValueChange = { numOfPlayers = it},
             label = { Text("Number of Players:") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -32,9 +32,14 @@ fun LobbyCreationView(
         )
         Button(
             onClick = { onCreateLobby(Lobby(
-                lobbyName,numOfPlayers,emptyList()
+                lobbyName,numOfPlayers.toInt(),emptyList()
             )) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            ),
+            shape = MaterialTheme.shapes.small
         ) {
             Text("Create Lobby")
         }

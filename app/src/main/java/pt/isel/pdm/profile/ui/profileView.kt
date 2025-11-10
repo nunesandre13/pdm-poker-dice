@@ -37,7 +37,7 @@ fun ProfileView(
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
+                        .background(MaterialTheme.colorScheme.secondary),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -82,7 +82,12 @@ fun ProfileView(
                     StatCard("Rank", "#5")
                 }
                 Button(
-                    onLogOut
+                    onClick = onLogOut,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    ),
+                    shape = MaterialTheme.shapes.small
                 ) {
                     Text("LogOut")
                 }

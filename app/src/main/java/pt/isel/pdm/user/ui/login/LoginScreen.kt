@@ -1,7 +1,9 @@
 package pt.isel.pdm.user.ui.login
 
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,13 +46,26 @@ fun LoginScreen(
         },
         {
             Button(onClick = {
-                login()
-            }) {
+                    login()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
                 Text(text = "Login")
             }
-            Button(onClick = {
-                onSignUp()
-            }) {
+            Button(
+                onClick = {
+                    onSignUp()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
                 Text(text = "Sign up")
             }
 
