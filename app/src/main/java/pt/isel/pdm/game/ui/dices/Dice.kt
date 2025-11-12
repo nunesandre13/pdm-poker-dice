@@ -1,4 +1,4 @@
-package pt.isel.pdm.game.dices
+package pt.isel.pdm.game.ui.dices
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
@@ -21,11 +21,15 @@ fun ClickableDice(face: DiceFace, onClick: () -> Unit, size: Dp) {
 }
 
 @Composable
-fun StaticDice(face: DiceFace, size: Dp) {
+fun StaticDice(
+    face: DiceFace,
+    size: Dp,
+    modifier: Modifier = Modifier
+) {
     Image(
         painter = painterResource(id = face.resId),
         contentDescription = "Die face ${face.name}",
-        modifier = Modifier.size(size)
+        modifier = modifier.size(size)
     )
 }
 

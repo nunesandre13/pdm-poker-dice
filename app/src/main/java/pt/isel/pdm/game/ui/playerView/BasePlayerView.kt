@@ -1,4 +1,4 @@
-package pt.isel.pdm.game.playerView
+package pt.isel.pdm.game.ui.playerView
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

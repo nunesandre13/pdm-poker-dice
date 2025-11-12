@@ -1,4 +1,4 @@
-package pt.isel.pdm.game.playerLayouts
+package pt.isel.pdm.game.ui.playerLayouts
 
 import PlayerViewStatic
 import androidx.compose.runtime.Composable

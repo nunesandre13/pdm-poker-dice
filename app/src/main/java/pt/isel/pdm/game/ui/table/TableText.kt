@@ -1,4 +1,4 @@
-package pt.isel.pdm.game.table
+package pt.isel.pdm.game.ui.table
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

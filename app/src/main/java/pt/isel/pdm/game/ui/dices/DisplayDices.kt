@@ -1,4 +1,4 @@
-package pt.isel.pdm.game.dices
+package pt.isel.pdm.game.ui.dices
 
 
 import androidx.compose.foundation.layout.Arrangement

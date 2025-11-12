@@ -1,4 +1,4 @@
-package pt.isel.pdm.game.gameLayout
+package pt.isel.pdm.game.ui.gameLayout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,13 +11,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.Player
-import pt.isel.pdm.game.playerLayouts.LayoutFor2Players
-import pt.isel.pdm.game.playerLayouts.LayoutFor3Players
-import pt.isel.pdm.game.playerLayouts.LayoutFor4Players
-import pt.isel.pdm.game.playerLayouts.LayoutFor5Players
-import pt.isel.pdm.game.playerLayouts.LayoutFor6Players
-import pt.isel.pdm.game.table.PokerTableSurface
-import pt.isel.pdm.game.table.TableTitle
+import pt.isel.pdm.game.ui.playerLayouts.LayoutFor2Players
+import pt.isel.pdm.game.ui.playerLayouts.LayoutFor3Players
+import pt.isel.pdm.game.ui.playerLayouts.LayoutFor4Players
+import pt.isel.pdm.game.ui.playerLayouts.LayoutFor5Players
+import pt.isel.pdm.game.ui.playerLayouts.LayoutFor6Players
+import pt.isel.pdm.game.ui.table.PokerTableSurface
+import pt.isel.pdm.game.ui.table.TableTitle
+
 
 private const val MY_PLAYER_WIDTH_PERCENT = 0.28f
 

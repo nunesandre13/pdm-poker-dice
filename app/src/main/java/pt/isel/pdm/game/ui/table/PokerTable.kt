@@ -1,4 +1,4 @@
-package pt.isel.pdm.game.table
+package pt.isel.pdm.game.ui.table
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package pt.isel.pdm.game.playerLayouts
+package pt.isel.pdm.game.ui.playerLayouts
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
