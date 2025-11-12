@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import pt.isel.pdm.domain.Lobby
-import pt.isel.pdm.domain.LobbyResponse
+import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
 import kotlin.time.Duration.Companion.seconds
 

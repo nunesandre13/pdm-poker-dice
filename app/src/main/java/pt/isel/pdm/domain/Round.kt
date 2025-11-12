@@ -1,0 +1,26 @@
+package pt.isel.pdm.domain
+
+const val INITIAL_ANTE = 0
+
+data class Round(
+    val id: Int,
+    val players: List<PlayerRoundState>,
+    val ante: Int = INITIAL_ANTE,
+    val totalBet: Int =(INITIAL_ANTE),
+    val state: RoundState
+)
+
+sealed class RoundState {
+
+    data class Rolling(val turn: PlayerRoundState) : RoundState()
+    data class Betting(val turn: PlayerRoundState, val amount: Int, val playersBets: List<PlayerBetState>) : RoundState()
+    data class Finished(val winner: Int?) : RoundState()
+}
+
+data class PlayerBetState(val playerId: Int, val betState: BetState)
+
+enum class BetState {
+    FOLD,
+    CALL,
+    PENDING
+}

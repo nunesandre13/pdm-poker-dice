@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
-import pt.isel.pdm.domain.LobbyResponse
+import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.User
 import kotlin.time.Duration.Companion.seconds
 
