@@ -18,12 +18,13 @@ fun LobbyScreen(viewModel: LobbyViewModel, goBack: () -> Unit) {
     LobbyScreenError(viewModel)
 }
 
-
 @Composable
 private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit) {
     when (val stateUi = viewModel.stateUi.collectAsState().value) {
 
-        is LobbyScreenState.Loading -> {}
+        is LobbyScreenState.Loading -> {
+
+        }
 
         is LobbyScreenState.Creation ->
             LobbyCreationView(
@@ -31,14 +32,16 @@ private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit) {
                 onBack = {viewModel.goToLobbiesList()}
             )
 
-        is LobbyScreenState.JoinedLobby ->
-            LobbyView(
-                lobby = stateUi.lobby,
-                onLeave = {viewModel.leaveLobby(stateUi.lobby)}
-            )
+        is LobbyScreenState.JoinedLobby -> {
+            val lobby = stateUi.lobby.collectAsState().value
+                LobbyView(
+                    lobby = lobby,
+                    onLeave = { viewModel.leaveLobby(lobby) }
+                )
 
+        }
         is LobbyScreenState.LobbiesList -> {
-            val lobbyList = stateUi.lobby.collectAsState(emptyList()).value
+            val lobbyList = stateUi.lobby.collectAsState().value
             LobbyListView(
                 lobbies = lobbyList,
                 onJoinClick = {viewModel.joinLobby(it)},
@@ -52,7 +55,7 @@ private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit) {
 private fun LobbyScreenError(viewModel: LobbyViewModel) {
     when (val stateError = viewModel.errorState.collectAsState().value) {
         is LobbyError.NoError -> {}
-        is LobbyError.LobbyNotFound -> ErrorPopUp(stateError){
+        is LobbyError.LobbyNotFound, is LobbyError.LobbyFull  -> ErrorPopUp(stateError){
             viewModel.dismissError()
         }
     }

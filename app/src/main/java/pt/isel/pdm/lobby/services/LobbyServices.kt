@@ -1,17 +1,19 @@
 package pt.isel.pdm.lobby.services
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.state.LobbyError
+import pt.isel.pdm.utils.OutCome
 
 interface LobbyServices {
 
-    suspend fun joinLobby(lobby: Lobby) : StateFlow<Lobby>
+    suspend fun joinLobby(lobby: Lobby) : OutCome<StateFlow<Lobby>, LobbyError>
 
-    suspend fun createNewLobby(lobby: Lobby) : Boolean
+    suspend fun createNewLobby(lobby: Lobby) : OutCome<StateFlow<Lobby>, LobbyError>
 
-    fun listAvailableLobbies() : StateFlow<List<Lobby>>
+    fun listAvailableLobbies() : Flow<List<Lobby>>
 
-    suspend fun leaveLobby(lobby: Lobby, playerId: String) : Boolean
-
+    suspend fun leaveLobby(lobby: Lobby, playerId: String) : OutCome<Unit, LobbyError>
 
 }

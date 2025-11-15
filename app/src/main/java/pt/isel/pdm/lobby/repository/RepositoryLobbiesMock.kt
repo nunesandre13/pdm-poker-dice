@@ -16,6 +16,10 @@ import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.state.LobbyError
+import pt.isel.pdm.utils.Failure
+import pt.isel.pdm.utils.OutCome
+import pt.isel.pdm.utils.Success
 import kotlin.time.Duration.Companion.seconds
 
 class RepositoryLobbiesMock: RepositoryLobbies {
@@ -52,30 +56,34 @@ class RepositoryLobbiesMock: RepositoryLobbies {
         }
     }.shareIn(
         scope,
-        SharingStarted.WhileSubscribed(1.seconds.inWholeMilliseconds), 0
+        started = SharingStarted.WhileSubscribed(),
+        replay = 0
     )
 
 
-    override suspend fun createNewLobby(lobby: Lobby): Lobby {
+    override suspend fun createNewLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
         scope.launch {
             shFlow.emit(LobbyResponse.AddedLobby(lobby))
         }
-        return lobby
+        return Success(lobby)
     }
 
-    override suspend fun joinLobby(lobby: Lobby): Boolean {
-        scope.launch {
-            if (lobby.players.size >= lobby.maxPlayers) {
+    override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
+        if (lobby.players.size >= lobby.maxPlayers) {
+            scope.launch {
                 shFlow.emit(LobbyResponse.LobbyFull(lobby))
-            } else {
-                val updatedLobby = lobby.copy(players = lobby.players + User("newUser", "New Player", Email("new@player.com")))
-                shFlow.emit(LobbyResponse.UpdatedLobby(updatedLobby))
             }
+            return Failure(LobbyError.LobbyFull)
         }
-        return lobby.players.size < lobby.maxPlayers
+
+        val updatedLobby = lobby.copy(players = lobby.players + User("newUser", "New Player", Email("new@player.com")))
+        scope.launch {
+            shFlow.emit(LobbyResponse.UpdatedLobby(updatedLobby))
+        }
+        return Success(updatedLobby)
     }
 
-    override suspend fun leaveLobby(lobby: Lobby): Boolean {
+    override suspend fun leaveLobby(lobby: Lobby): OutCome<Unit, LobbyError> {
         scope.launch {
             val updatedPlayers = lobby.players.drop(1)
             if (updatedPlayers.isEmpty()) {
@@ -85,6 +93,6 @@ class RepositoryLobbiesMock: RepositoryLobbies {
                 shFlow.emit(LobbyResponse.UpdatedLobby(updatedLobby))
             }
         }
-        return true
+        return Success(Unit)
     }
 }

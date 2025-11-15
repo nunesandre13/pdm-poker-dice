@@ -3,7 +3,9 @@ package pt.isel.pdm.lobby.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.state.LobbyError
@@ -12,6 +14,8 @@ import pt.isel.pdm.lobby.services.LobbyServices
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
+import pt.isel.pdm.utils.onOutCome
+import pt.isel.pdm.utils.runOperation
 
 class LobbyViewModel(
     private val lobbyService: LobbyServices,
@@ -19,35 +23,59 @@ class LobbyViewModel(
     viewModelState: ViewModelState<LobbyScreenState, LobbyError>
 ) : ViewModel(), ViewModelState<LobbyScreenState, LobbyError> by viewModelState {
 
+    private val lobbiesListStateFlow : StateFlow<List<Lobby>> = lobbyService.listAvailableLobbies().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Lazily,
+        initialValue = emptyList()
+    )
+
     init {
-        getLobbies()
+        goToLobbiesList()
     }
 
     fun joinLobby(lobby: Lobby) {
         viewModelScope.launch {
-            navigateTo(LobbyScreenState.JoinedLobby(lobby))
-            lobbyService.joinLobby(lobby).collect { updatedLobby ->
-                navigateTo(LobbyScreenState.JoinedLobby(updatedLobby))
-            }
+            runOperation(stateUi.value) {
+                navigateTo(LobbyScreenState.Loading)
+                lobbyService.joinLobby(lobby).onOutCome(
+                    onSuccess = { updatedLobby ->
+                        LobbyScreenState.JoinedLobby(updatedLobby)
+                    },
+                    onFailure = { error ->
+                        emitError(error)
+                        null
+                    }
+                )
+            }.let { navigateTo(it) }
         }
     }
 
     fun createLobby(lobby: Lobby) {
         viewModelScope.launch {
-            userService.getCurrentUser()?.let { user ->
-                val lobbyWithCreator = lobby.copy(players = listOf(user))
-                if (lobbyService.createNewLobby(lobbyWithCreator)) {
-                    joinLobby(lobbyWithCreator)
-                } else {
+            runOperation(stateUi.value) {
+                navigateTo(LobbyScreenState.Loading)
+                userService.getCurrentUser()?.let { user ->
+                    val lobbyWithCreator = lobby.copy(players = listOf(user))
+                    lobbyService.createNewLobby(lobbyWithCreator).onOutCome(
+                        onSuccess = { createdLobby ->
+                            LobbyScreenState.JoinedLobby(createdLobby)
+                        },
+                        onFailure = { error ->
+                            emitError(error)
+                            null
+                        }
+                    )
+                } ?: run {
                     emitError(LobbyError.LobbyNotFound)
+                    null
                 }
-            } ?: emitError(LobbyError.LobbyNotFound)
+            }.let { navigateTo(it) }
         }
     }
 
     fun goToLobbiesList() {
         navigateTo(LobbyScreenState.Loading).also {
-            getLobbies()
+            navigateTo(LobbyScreenState.LobbiesList(lobbiesListStateFlow))
         }
     }
 
@@ -55,23 +83,25 @@ class LobbyViewModel(
         navigateTo(LobbyScreenState.Creation)
     }
 
-    private fun getLobbies(): StateFlow<List<Lobby>> {
-        return lobbyService.listAvailableLobbies().also { stateFlow ->
-            navigateTo(LobbyScreenState.LobbiesList(stateFlow))
-        }
-    }
-
     fun leaveLobby(lobby: Lobby) {
         viewModelScope.launch {
-            userService.getCurrentUser()?.let { user ->
-                if (lobbyService.leaveLobby(lobby, user.id)) {
-                    navigateTo(LobbyScreenState.Loading).also {
-                        getLobbies()
-                    }
-                } else {
+            runOperation(stateUi.value) {
+                navigateTo(LobbyScreenState.Loading)
+                userService.getCurrentUser()?.let { user ->
+                    lobbyService.leaveLobby(lobby, user.id).onOutCome(
+                        onSuccess = {
+                            LobbyScreenState.LobbiesList(lobbiesListStateFlow)
+                        },
+                        onFailure = { error ->
+                            emitError(error)
+                            null
+                        }
+                    )
+                } ?: run {
                     emitError(LobbyError.LobbyNotFound)
+                    null
                 }
-            }
+            }.let { navigateTo(it) }
         }
     }
 

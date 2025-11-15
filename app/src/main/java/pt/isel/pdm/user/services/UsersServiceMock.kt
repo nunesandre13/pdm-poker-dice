@@ -6,7 +6,10 @@ import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
-
+import pt.isel.pdm.domain.state.UserError
+import pt.isel.pdm.utils.OutCome
+import pt.isel.pdm.utils.Failure
+import pt.isel.pdm.utils.Success
 
 class UsersServiceMock : UserServices {
 
@@ -20,19 +23,18 @@ class UsersServiceMock : UserServices {
 
     override fun getCurrentUser(): User? = _currentUser.value
 
-    override suspend fun login(user: UserLogin): User? {
-        return null
+    override suspend fun login(user: UserLogin): OutCome<User, UserError> {
+        return Failure(UserError.ErrorLogin)
     }
 
-    override suspend fun logout(): Boolean {
+    override suspend fun logout(): OutCome<Unit, UserError> {
         _currentUser.value = null
-        return true
+        return Success(Unit)
     }
 
-    override suspend fun createUser(user: UserCreate): User? {
-        _currentUser.value =
-            User("122434566",user.name.name,user.email)
-        return _currentUser.value
+    override suspend fun createUser(user: UserCreate): OutCome<User, UserError> {
+        val newUser = User("122434566", user.name.name, user.email)
+        _currentUser.value = newUser
+        return Success(newUser)
     }
-
 }

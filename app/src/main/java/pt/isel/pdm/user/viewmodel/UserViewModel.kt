@@ -11,12 +11,14 @@ import pt.isel.pdm.domain.state.UserScreenState
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
+import pt.isel.pdm.utils.onOutCome
 import pt.isel.pdm.utils.runOperation
 
 class UserViewModel(
     private val userService: UserServices,
-    private val viewModelBase: ViewModelState<UserScreenState, UserError>) :
-        ViewModelState<UserScreenState, UserError> by viewModelBase, ViewModel() {
+    private val viewModelBase: ViewModelState<UserScreenState, UserError>
+) :
+    ViewModelState<UserScreenState, UserError> by viewModelBase, ViewModel() {
 
     init {
         viewModelScope.launch {
@@ -32,15 +34,16 @@ class UserViewModel(
         viewModelScope.launch {
             runOperation(stateUi.value) {
                 navigateTo(UserScreenState.Idle)
-                userService.login(userLogin)?.let { response ->
-                    return@let UserScreenState.UserLoggIn(response)
-                } ?: run {
-                    emitError(UserError.ErrorLogin)
-                    return@run null
-                }
-            }.also {
-                navigateTo(it)
-            }
+                userService.login(userLogin).onOutCome(
+                    onSuccess = { user ->
+                        UserScreenState.UserLoggIn(user)
+                    },
+                    onFailure = { error ->
+                        emitError(error)
+                        null
+                    }
+                )
+            }.let { navigateTo(it) }
         }
     }
 
@@ -49,15 +52,16 @@ class UserViewModel(
         viewModelScope.launch {
             runOperation(stateUi.value) {
                 navigateTo(UserScreenState.Idle)
-                userService.createUser(userCreate)?.let { response ->
-                    return@let UserScreenState.UserLoggIn(response)
-                } ?: run {
-                    emitError(UserError.ErrorCreateUser)
-                    return@run null
-                }
-            }.also {
-                navigateTo(it)
-            }
+                userService.createUser(userCreate).onOutCome(
+                    onSuccess = { user ->
+                        UserScreenState.UserLoggIn(user)
+                    },
+                    onFailure = { error ->
+                        emitError(error)
+                        null
+                    }
+                )
+            }.let {  navigateTo(it) }
         }
     }
 
@@ -65,9 +69,11 @@ class UserViewModel(
         fun factory(userService: UserServices) = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return UserViewModel(userService, ViewModelBase(UserScreenState.Idle, UserError.NoError)) as T
+                return UserViewModel(
+                    userService,
+                    ViewModelBase(UserScreenState.Idle, UserError.NoError)
+                ) as T
             }
         }
     }
 }
-

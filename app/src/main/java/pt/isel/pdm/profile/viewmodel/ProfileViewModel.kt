@@ -9,6 +9,8 @@ import pt.isel.pdm.domain.state.ProfileScreenState
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
+import pt.isel.pdm.utils.onOutCome
+import pt.isel.pdm.utils.runOperation
 
 class ProfileViewModel(
     private val userService: UserServices ,
@@ -27,15 +29,18 @@ class ProfileViewModel(
 
     fun logout() {
         viewModelScope.launch {
-            navigateTo(ProfileScreenState.Idle)
-            userService.logout().let { response ->
-                if (response) {
-                    navigateTo(ProfileScreenState.LoggedOut)
-                }
-                else {
-                    emitError(ProfileError.NoError)
-                }
-            }
+            runOperation(stateUi.value) {
+                navigateTo(ProfileScreenState.Idle)
+                userService.logout().onOutCome(
+                    onSuccess = {
+                        ProfileScreenState.LoggedOut
+                    },
+                    onFailure = {
+                        emitError(ProfileError.NoError)
+                        null
+                    }
+                )
+            }.let { navigateTo(it) }
         }
     }
 
