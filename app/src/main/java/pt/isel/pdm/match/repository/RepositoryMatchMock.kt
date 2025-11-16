@@ -1,6 +1,5 @@
 package pt.isel.pdm.match.repository
 
-import androidx.compose.runtime.snapshots.SnapshotApplyResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -10,10 +9,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
@@ -34,30 +31,21 @@ import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.utils.Failure
-import pt.isel.pdm.utils.getOrNull
+import kotlin.time.Duration.Companion.seconds
 
 class RepositoryMatchMock : RepositoryMatch {
-
     private val scope = CoroutineScope(Dispatchers.Default)
     private val shFlow: MutableSharedFlow<OutCome<MatchResponse, MatchError>> = MutableSharedFlow()
-
     private val actualMatchId: MutableStateFlow<Int?> = MutableStateFlow(null)
-
     @OptIn(ExperimentalCoroutinesApi::class)
     private val sseListener: SharedFlow<OutCome<MatchResponse, MatchError>> =
-        actualMatchId.flatMapLatest { id ->
-            if (id == null) {
-                emptyFlow()
-            } else {
-                createSseFlow(id).getOrNull() ?: emptyFlow()
-            }
+        actualMatchId.filterNotNull().flatMapLatest { id ->
+            createSseFlow(id)
         }.shareIn(
             scope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds),
             replay = 0
         )
-
 
     private val matchFlow: Flow<OutCome<MatchResponse, MatchError>> = flow {
         shFlow.collect {
@@ -66,21 +54,20 @@ class RepositoryMatchMock : RepositoryMatch {
     }
 
 
-    private fun createSseFlow(matchId: Int): OutCome<SharedFlow<OutCome<MatchResponse, MatchError>>, MatchError> {
-        return Success(callbackFlow {
+    private fun createSseFlow(matchId: Int): SharedFlow<OutCome<MatchResponse, MatchError>> {
+        return callbackFlow {
             launch {
                 matchFlow.collect {
                     send(it)
                 }
             }
             awaitClose {
-                // do something
+                actualMatchId.compareAndSet(matchId,null)
             }
         }.shareIn(
             scope,
             started = SharingStarted.WhileSubscribed(),
             replay = 0
-        )
         )
     }
 
@@ -175,6 +162,5 @@ class RepositoryMatchMock : RepositoryMatch {
         }
         return Success(match)
     }
-
 
 }

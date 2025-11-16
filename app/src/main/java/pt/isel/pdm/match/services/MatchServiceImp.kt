@@ -1,6 +1,7 @@
 package pt.isel.pdm.match.services
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.Match
@@ -15,20 +16,8 @@ import pt.isel.pdm.utils.onOutCome
 
 class MatchServiceImp(private val repository: RepositoryMatch) : MatchServices {
 
-    override fun getMatchUpdate(matchId: Int): Flow<OutCome<Match, MatchError>> {
-        return repository.matchSseListener(matchId).map { it ->
-                it.onOutCome(
-                    onSuccess = { resp ->
-                        when (resp) {
-                            is MatchResponse.NewMatch -> Success(resp.newMatch)
-                            is MatchResponse.MatchEnded -> Failure(MatchError.SomeError)
-                        }
-                    },
-                    onFailure = {
-                        Failure(it)
-                    }
-                )
-            }
+    override fun getMatchUpdate(matchId: Int): Flow<OutCome<MatchResponse, MatchError>> {
+        return repository.matchSseListener(matchId)
     }
 
     override suspend fun rollDice(playerId: Int, roundId: Int, dices: List<DiceFace>): OutCome<Unit, MatchError> {
