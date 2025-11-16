@@ -8,7 +8,8 @@ import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.utils.OutCome
 
 interface RepositoryMatch {
-    val matchSseListener : SharedFlow<MatchResponse>
+
+    fun matchSseListener(matchId: Int): OutCome<SharedFlow<MatchResponse>, MatchError>
     suspend fun play(command: PlayCommand):OutCome<Match, MatchError>
     suspend fun leaveMatch(match:Match):OutCome<Match, MatchError>
 
