@@ -15,7 +15,7 @@ import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Player
 import pt.isel.pdm.match.ui.animation.DiceRollAnimationOverlay
 import pt.isel.pdm.match.ui.animation.RolledDices
-import pt.isel.pdm.match.ui.gameLayout.GameTableLayoutClickable
+import pt.isel.pdm.match.ui.matchLayout.GameTableLayoutClickable
 import kotlin.time.Duration.Companion.seconds
 
 @Composable

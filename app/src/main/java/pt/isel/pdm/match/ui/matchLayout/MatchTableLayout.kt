@@ -1,4 +1,4 @@
-package pt.isel.pdm.match.ui.gameLayout
+package pt.isel.pdm.match.ui.matchLayout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize

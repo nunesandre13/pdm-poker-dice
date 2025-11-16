@@ -6,7 +6,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Player
-import pt.isel.pdm.match.ui.gameLayout.GameTableLayoutClickable
+import pt.isel.pdm.match.ui.matchLayout.GameTableLayoutClickable
 
 @Composable
 fun MyTurnView(players: List<Player>) {

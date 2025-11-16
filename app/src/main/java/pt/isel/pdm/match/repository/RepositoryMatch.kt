@@ -9,7 +9,7 @@ import pt.isel.pdm.utils.OutCome
 
 interface RepositoryMatch {
 
-    fun matchSseListener(matchId: Int): OutCome<SharedFlow<MatchResponse>, MatchError>
+    fun matchSseListener(matchId: Int): SharedFlow<OutCome<MatchResponse, MatchError>>
     suspend fun play(command: PlayCommand):OutCome<Match, MatchError>
     suspend fun leaveMatch(match:Match):OutCome<Match, MatchError>
 

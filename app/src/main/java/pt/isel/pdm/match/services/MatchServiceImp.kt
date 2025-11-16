@@ -1,10 +1,11 @@
 package pt.isel.pdm.match.services
 
-import androidx.lifecycle.flowWithLifecycle
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.Match
 import pt.isel.pdm.domain.PlayCommand
+import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.match.repository.RepositoryMatch
 import pt.isel.pdm.utils.Failure
@@ -14,9 +15,20 @@ import pt.isel.pdm.utils.onOutCome
 
 class MatchServiceImp(private val repository: RepositoryMatch) : MatchServices {
 
-
-    override fun getMatchUpdate(matchId: Int): OutCome<Flow<Match>, MatchError> {
-        return repository.matchSseListener.
+    override fun getMatchUpdate(matchId: Int): Flow<OutCome<Match, MatchError>> {
+        return repository.matchSseListener(matchId).map { it ->
+                it.onOutCome(
+                    onSuccess = { resp ->
+                        when (resp) {
+                            is MatchResponse.NewMatch -> Success(resp.newMatch)
+                            is MatchResponse.MatchEnded -> Failure(MatchError.SomeError)
+                        }
+                    },
+                    onFailure = {
+                        Failure(it)
+                    }
+                )
+            }
     }
 
     override suspend fun rollDice(playerId: Int, roundId: Int, dices: List<DiceFace>): OutCome<Unit, MatchError> {

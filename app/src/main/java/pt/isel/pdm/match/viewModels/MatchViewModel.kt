@@ -3,7 +3,7 @@ package pt.isel.pdm.match.viewModels
 import androidx.lifecycle.ViewModel
 import pt.isel.pdm.domain.DiceFace
 
-class GameViewModel() : ViewModel(), GameActions {
+class MatchViewModel() : ViewModel(), MatchActions {
 
     override suspend fun rollDice(dices: List<DiceFace>) {
         TODO("Not yet implemented")

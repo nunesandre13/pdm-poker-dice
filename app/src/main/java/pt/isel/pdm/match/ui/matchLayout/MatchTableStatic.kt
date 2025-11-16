@@ -1,34 +1,23 @@
-package pt.isel.pdm.match.ui.gameLayout
+package pt.isel.pdm.match.ui.matchLayout
 
+import PlayerViewStatic
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Player
-import pt.isel.pdm.match.ui.playerView.PlayerViewClickable
 
 
 @Composable
-fun GameTableLayoutClickable(
-    me: Player,
-    others: List<Player>,
-    onMyPlayerClick: (DiceFace) -> Unit
-) {
+fun GameTableLayoutStatic(me: Player, others: List<Player>) {
     GameTableLayout(me = me, others = others) { player, modifier ->
-        PlayerViewClickable(
-            player = player,
-            onDiceClick = onMyPlayerClick,
-            modifier = modifier
-        )
+        PlayerViewStatic(player = player, modifier = modifier)
     }
 }
 
 @Preview(showBackground = true, widthDp = 800, heightDp = 600)
 @Composable
-fun GameTableLayoutClickablePreview() {
+fun GameTableLayoutStaticPreview() {
     val me = Player(DicesHand(emptyList()), 1)
     val others = emptyList<Player>()
     GameTableLayoutStatic(me = me, others = others)
 }
-
-

@@ -40,12 +40,12 @@ import pt.isel.pdm.utils.getOrNull
 class RepositoryMatchMock : RepositoryMatch {
 
     private val scope = CoroutineScope(Dispatchers.Default)
-    private val shFlow: MutableSharedFlow<MatchResponse> = MutableSharedFlow()
+    private val shFlow: MutableSharedFlow<OutCome<MatchResponse, MatchError>> = MutableSharedFlow()
 
     private val actualMatchId: MutableStateFlow<Int?> = MutableStateFlow(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val sseListener: SharedFlow<MatchResponse> =
+    private val sseListener: SharedFlow<OutCome<MatchResponse, MatchError>> =
         actualMatchId.flatMapLatest { id ->
             if (id == null) {
                 emptyFlow()
@@ -58,14 +58,15 @@ class RepositoryMatchMock : RepositoryMatch {
             replay = 0
         )
 
-    private val matchFlow: Flow<MatchResponse> = flow {
+
+    private val matchFlow: Flow<OutCome<MatchResponse, MatchError>> = flow {
         shFlow.collect {
             emit(it)
         }
     }
 
 
-    private fun createSseFlow(matchId: Int): OutCome<SharedFlow<MatchResponse>, MatchError> {
+    private fun createSseFlow(matchId: Int): OutCome<SharedFlow<OutCome<MatchResponse, MatchError>>, MatchError> {
         return Success(callbackFlow {
             launch {
                 matchFlow.collect {
@@ -83,12 +84,9 @@ class RepositoryMatchMock : RepositoryMatch {
         )
     }
 
-    override fun matchSseListener(matchId: Int): OutCome<SharedFlow<MatchResponse>, MatchError> {
-            actualMatchId.value = matchId
-            if (matchId <= 0) {
-                return Failure(MatchError.SomeError)
-            }
-            return Success(sseListener)
+    override fun matchSseListener(matchId: Int): SharedFlow<OutCome<MatchResponse, MatchError>> {
+        actualMatchId.value = matchId
+        return sseListener
     }
 
 
@@ -172,7 +170,7 @@ class RepositoryMatchMock : RepositoryMatch {
         scope.launch {
             val updatedPlayers = match.players.drop(1)
             if (updatedPlayers.isEmpty()) {
-                shFlow.emit(MatchResponse.MatchEnded)
+                shFlow.emit(Success(MatchResponse.MatchEnded))
             }
         }
         return Success(match)

@@ -3,7 +3,7 @@ package pt.isel.pdm.match.viewModels
 import pt.isel.pdm.domain.DiceFace
 
 
-interface GameActions {
+interface MatchActions {
     suspend fun rollDice(dices: List<DiceFace>)
     suspend fun setHand()
     suspend fun raiseAnte(ante: Int)
