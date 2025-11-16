@@ -1,13 +1,27 @@
 package pt.isel.pdm.navigation
 
-enum class Screens(val route: String) {
-    ROOT("root"),
-    HOME_SCREEN("start_screen"),
-    ABOUT("about"),
-    PROFILE("profile"),
-    START_MATCH("start-match"),
-    CREATE_LOBBY("create-lobby"),
+import kotlinx.serialization.Serializable
 
-    AWAIING_GAME("awaing-game"),
-    TITLE_SCREEN("title_screen")
+@Serializable
+sealed interface Screens {
+    @Serializable
+    data object Home : Screens
+
+    @Serializable
+    data object Title : Screens
+
+    @Serializable
+    data object About : Screens
+
+    @Serializable
+    data object Profile : Screens
+
+    @Serializable
+    data object StartMatch : Screens
+
+    @Serializable
+    data object CreateLobby : Screens
+
+    @Serializable
+    data class Match(val matchId: Int): Screens
 }
