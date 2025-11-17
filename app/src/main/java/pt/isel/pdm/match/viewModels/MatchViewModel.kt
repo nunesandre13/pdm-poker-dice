@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
@@ -13,7 +15,6 @@ import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.Match
 import pt.isel.pdm.domain.MatchStatus
-import pt.isel.pdm.domain.Player
 import pt.isel.pdm.domain.RoundState
 import pt.isel.pdm.domain.State
 import pt.isel.pdm.domain.events.MatchResponse
@@ -22,6 +23,7 @@ import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.match.viewModels.interfaces.BettingActions
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 import pt.isel.pdm.match.viewModels.interfaces.RollingActions
+import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.ViewModelState
 import pt.isel.pdm.utils.errorOrNull
@@ -31,41 +33,31 @@ import kotlin.time.Duration.Companion.seconds
 class MatchViewModel(
     private val viewModelBase: ViewModelState<MatchStateUi, MatchError>,
     private val matchServices: MatchServices,
-    private val matchId: Int
-) : ViewModel(), ViewModelState<MatchStateUi, MatchError> by viewModelBase, MatchStateProvider  , RollingActions, BettingActions {
+    userRepository: UserServices,
+    matchId: Int
+) : ViewModel(), ViewModelState<MatchStateUi, MatchError> by viewModelBase, MatchStateProvider , RollingActions, BettingActions {
     private val matchUpdates = matchServices.getMatchUpdate(matchId)
 
     override val matchState: StateFlow<MatchState> = matchUpdates.transformFlowIntoMatchStateFlow()
+
+    private val player = userRepository.currentUser
 
     init {
         viewModelScope.launch { transformMatchStateIntoStateUi() }
     }
 
-    private fun getCurrentPlayer(match: Match): Player? {
-        return null // no be changed
-    }
-
     private suspend fun executePlayerAction(action: suspend (playerId: Int, roundId: Int) -> OutCome<Unit, MatchError>) {
         val currentState = matchState.value
-        if (currentState is MatchState.ActualMatch) {
-            val match = currentState.match
-            val myPlayer = getCurrentPlayer(match)
-            if (myPlayer != null) {
-                val result = action(myPlayer.id, match.actualRound.id)
-                result.errorOrNull()?.let { emitError(it) }
-            }
-        }
+        val myPlayer = player.value
+        if (currentState is MatchState.ActualMatch && myPlayer != null) {
+            action(myPlayer.id.toInt(), currentState.match.actualRound.id)
+                .errorOrNull()?.let { emitError(it) }
+        } else emitError(MatchError.InvalidPlay)
     }
 
     override suspend fun rollDice(dices: List<DiceFace>) {
-        val currentState = matchState.value
-        if (currentState is MatchState.ActualMatch) {
-            val match = currentState.match
-            val myPlayer = getCurrentPlayer(match)
-            if (myPlayer != null) {
-                val result = matchServices.rollDice(myPlayer.id, match.actualRound.id, dices)
-                result.errorOrNull()?.let { emitError(it) }
-            }
+        executePlayerAction { playerId, roundId ->
+            matchServices.rollDice(playerId, roundId, dices)
         }
     }
 
@@ -110,6 +102,7 @@ class MatchViewModel(
                             MatchState.ActualMatch(previous.match.copy(matchStatus = MatchStatus.FINISHED))
                         else previous
                     }
+
                     is MatchResponse.NewMatch -> MatchState.ActualMatch(response.newMatch)
                     null -> previous
                 }
@@ -122,31 +115,32 @@ class MatchViewModel(
     }
 
     private suspend fun transformMatchStateIntoStateUi() {
-            matchState.collect { matchState ->
+        player.filterNotNull()
+            .combine(matchState) { myPlayer, matchState ->
                 when (matchState) {
                     is MatchState.ActualMatch -> {
-                        val match = matchState.match
-                        val round = match.actualRound
+                        val round = matchState.match.actualRound
                         when (val state = round.state) {
-                            is RoundState.Betting -> navigateTo(MatchStateUi.BettingState)
+                            is RoundState.Betting -> MatchStateUi.BettingState
                             is RoundState.Rolling -> {
-                                if (true /*state.turn == myPlayer */) {
-                                    navigateTo(MatchStateUi.MyTurnState)
+                                if (state.turn == myPlayer) {
+                                    MatchStateUi.MyTurnState
                                 } else {
-                                    navigateTo(MatchStateUi.OtherPlayerTurn)
+                                    MatchStateUi.OtherPlayerTurn
                                 }
                             }
-                            else -> {
-                                // do nothing
-                            }
+                            else -> null // Nothing
                         }
                     }
-
-                    is MatchState.NoMatch -> navigateTo(MatchStateUi.Idle)
+                    is MatchState.NoMatch -> MatchStateUi.Idle
                 }
             }
-        }
+            .filterNotNull()
+            .collect { uiState ->
+                navigateTo(uiState)
+            }
     }
+}
 
 sealed interface MatchStateUi : State {
     data object Idle: MatchStateUi

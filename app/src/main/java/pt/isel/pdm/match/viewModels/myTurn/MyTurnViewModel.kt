@@ -1,14 +1,133 @@
 package pt.isel.pdm.match.viewModels.myTurn
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.launch
+import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.DomainError
+import pt.isel.pdm.domain.PlayerStatus
+import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RoundState
+import pt.isel.pdm.domain.State
+import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 import pt.isel.pdm.match.viewModels.interfaces.RollingActions
+import pt.isel.pdm.utils.ViewModelState
+
+sealed interface MyTurnActionState {
+    object Idle : MyTurnActionState
+    object Rolling : MyTurnActionState
+    object SettingHand : MyTurnActionState
+}
+
+data class MyTurnDataState(
+    val currentDice: List<DiceFace>,
+    val rollsLeft: Int
+)
+
+sealed interface MyTurnUiState : State {
+
+    interface ValidState: MyTurnUiState {
+        val data: MyTurnDataState
+        val round: Round
+    }
+    object InitialLoading : MyTurnUiState
+
+    data class Idle(override val data: MyTurnDataState, override val round: Round) : ValidState
+
+    data class Rolling(override val data: MyTurnDataState, override val round: Round ) : ValidState
+
+    data class SettingHand(override val data: MyTurnDataState, override val round: Round ) : ValidState
+}
+
+sealed interface MyTurnError: DomainError{
+
+}
 
 class MyTurnViewModel(
+    private val baseViewModel: ViewModelState<MyTurnUiState, MyTurnError>,
     private val stateProvider: MatchStateProvider,
     private val actions: RollingActions
-): ViewModel(),
+) : ViewModel(),
+    ViewModelState<MyTurnUiState, MyTurnError> by baseViewModel,
     MatchStateProvider by stateProvider,
     RollingActions by actions {
+
+        init {
+            viewModelScope.launch {
+                transformStateInUiState()
+            }
+        }
+
+    private val actualRound = stateProvider.matchState.filterIsInstance<MatchState.ActualMatch>().map { it.match.actualRound }
+    private val _actionState = MutableStateFlow<MyTurnActionState>(MyTurnActionState.Idle)
+
+    private fun RoundState.Rolling.extractDataFromRoundState(): MyTurnDataState? =
+        when(val myTurn = turn.playerStatus){
+            is PlayerStatus.PassRound, is PlayerStatus.NotStarted  -> null
+            is PlayerStatus.FinalHand, -> {
+               MyTurnDataState(
+                    currentDice = myTurn.hand.dices,
+                    rollsLeft = 0
+                )
+            }
+            is PlayerStatus.StillRolling -> {
+                MyTurnDataState(
+                    currentDice = myTurn.hand.dices,
+                    rollsLeft = myTurn.remainingRolls
+                )
+            }
+        }
+
+    private suspend fun transformStateInUiState() {
+        actualRound.mapNotNull { round ->
+            (round.state as? RoundState.Rolling)
+                ?.extractDataFromRoundState()?.let { data ->
+                    round to data
+                }
+        }.combine(_actionState) { (round, data), action ->
+            when (action) {
+                is MyTurnActionState.Idle -> MyTurnUiState.Idle(data, round)
+                is MyTurnActionState.Rolling -> MyTurnUiState.Rolling(data, round)
+                is MyTurnActionState.SettingHand -> MyTurnUiState.SettingHand(data, round)
+            }
+        }.collect { uiState ->
+            navigateTo(uiState)
+        }
+    }
+
+
+    override suspend fun rollDice(dices: List<DiceFace>) {
+        when(val state = stateUi.value){
+            MyTurnUiState.InitialLoading -> {
+                // do nothing
+            }
+            is MyTurnUiState.ValidState-> {
+                if (state.data.rollsLeft > 0 && state is MyTurnUiState.Idle ){
+                    actions.rollDice(dices)
+                    _actionState.value = MyTurnActionState.Rolling
+                }
+            }
+        }
+    }
+
+    override suspend fun setHand() {
+        when (val currentState = stateUi.value) {
+            MyTurnUiState.InitialLoading -> {
+                // do nothing
+            }
+            is MyTurnUiState.ValidState -> {
+                if (currentState is MyTurnUiState.Idle) {
+                    actions.setHand()
+                    _actionState.value = MyTurnActionState.SettingHand
+                }
+            }
+        }
+    }
 
 }
