@@ -54,9 +54,7 @@ class MyTurnViewModel(
     private val stateProvider: MatchStateProvider,
     private val actions: RollingActions
 ) : ViewModel(),
-    ViewModelState<MyTurnUiState, MyTurnError> by baseViewModel,
-    MatchStateProvider by stateProvider,
-    RollingActions by actions {
+    ViewModelState<MyTurnUiState, MyTurnError> by baseViewModel {
 
         init {
             viewModelScope.launch {
@@ -101,33 +99,38 @@ class MyTurnViewModel(
         }
     }
 
-
-    override suspend fun rollDice(dices: List<DiceFace>) {
+    fun rollDice(dices: List<DiceFace>) {
         when(val state = stateUi.value){
             MyTurnUiState.InitialLoading -> {
                 // do nothing
             }
             is MyTurnUiState.ValidState-> {
                 if (state.data.rollsLeft > 0 && state is MyTurnUiState.Idle ){
-                    actions.rollDice(dices)
-                    _actionState.value = MyTurnActionState.Rolling
+                    if (_actionState.compareAndSet(MyTurnActionState.Idle,MyTurnActionState.Rolling)){
+                        viewModelScope.launch {
+                            actions.rollDice(dices);_actionState.value =  MyTurnActionState.Idle
+                        }
+                    }
                 }
             }
         }
     }
 
-    override suspend fun setHand() {
+    fun setHand() {
         when (val currentState = stateUi.value) {
             MyTurnUiState.InitialLoading -> {
                 // do nothing
             }
             is MyTurnUiState.ValidState -> {
                 if (currentState is MyTurnUiState.Idle) {
-                    actions.setHand()
-                    _actionState.value = MyTurnActionState.SettingHand
+                    if (_actionState.compareAndSet(MyTurnActionState.Idle,MyTurnActionState.SettingHand)){
+                        viewModelScope.launch {
+                            actions.setHand() ; _actionState.value = MyTurnActionState.Idle
+                        }
+                    }
+
                 }
             }
         }
     }
-
 }
