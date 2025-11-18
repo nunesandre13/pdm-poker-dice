@@ -150,7 +150,6 @@ sealed interface MatchStateUi : State {
 }
 
 sealed interface MatchState{
-
     data object NoMatch: MatchState
     data class ActualMatch(val match: Match): MatchState
 }

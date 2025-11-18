@@ -18,6 +18,7 @@ import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 import pt.isel.pdm.match.viewModels.interfaces.RollingActions
 import pt.isel.pdm.utils.ViewModelState
+import kotlin.compareTo
 
 sealed interface MyTurnActionState {
     object Idle : MyTurnActionState
@@ -31,7 +32,6 @@ data class MyTurnDataState(
 )
 
 sealed interface MyTurnUiState : State {
-
     interface ValidState: MyTurnUiState {
         val data: MyTurnDataState
         val round: Round
@@ -100,16 +100,12 @@ class MyTurnViewModel(
     }
 
     fun rollDice(dices: List<DiceFace>) {
-        when(val state = stateUi.value){
-            MyTurnUiState.InitialLoading -> {
-                // do nothing
-            }
-            is MyTurnUiState.ValidState-> {
-                if (state.data.rollsLeft > 0 && state is MyTurnUiState.Idle ){
-                    if (_actionState.compareAndSet(MyTurnActionState.Idle,MyTurnActionState.Rolling)){
-                        viewModelScope.launch {
-                            actions.rollDice(dices);_actionState.value =  MyTurnActionState.Idle
-                        }
+        when (val state = stateUi.value) {
+            MyTurnUiState.InitialLoading -> {  /* do nothing */  }
+            is MyTurnUiState.ValidState -> {
+                if (state.data.rollsLeft > 0 && _actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.Rolling)) {
+                    runAndSetAction(MyTurnActionState.Idle){
+                        actions.rollDice(dices)
                     }
                 }
             }
@@ -117,19 +113,24 @@ class MyTurnViewModel(
     }
 
     fun setHand() {
-        when (val currentState = stateUi.value) {
-            MyTurnUiState.InitialLoading -> {
-                // do nothing
-            }
+        when (stateUi.value) {
+            MyTurnUiState.InitialLoading -> { /* do nothing */ }
             is MyTurnUiState.ValidState -> {
-                if (currentState is MyTurnUiState.Idle) {
-                    if (_actionState.compareAndSet(MyTurnActionState.Idle,MyTurnActionState.SettingHand)){
-                        viewModelScope.launch {
-                            actions.setHand() ; _actionState.value = MyTurnActionState.Idle
-                        }
+                if (_actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.SettingHand)) {
+                    runAndSetAction(MyTurnActionState.Idle){
+                        actions.setHand()
                     }
-
                 }
+            }
+        }
+    }
+
+    private fun runAndSetAction(endAction: MyTurnActionState, code: suspend ()-> Unit){
+        viewModelScope.launch {
+            try {
+                code()
+            }finally {
+                _actionState.value = endAction
             }
         }
     }
