@@ -30,7 +30,7 @@ import pt.isel.pdm.utils.errorOrNull
 import pt.isel.pdm.utils.getOrNull
 import kotlin.time.Duration.Companion.seconds
 
-class MatchViewModel(
+open class MatchViewModel(
     private val viewModelBase: ViewModelState<MatchStateUi, MatchError>,
     private val matchServices: MatchServices,
     userRepository: UserServices,

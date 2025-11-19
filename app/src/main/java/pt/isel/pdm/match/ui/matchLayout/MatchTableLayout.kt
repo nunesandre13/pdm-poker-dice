@@ -23,7 +23,6 @@ import pt.isel.pdm.match.ui.table.TableTitle
 private const val MY_PLAYER_WIDTH_PERCENT = 0.28f
 
 
-
 @Composable
 fun GameTableLayout(
     me: Player,

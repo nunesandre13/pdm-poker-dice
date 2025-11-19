@@ -95,6 +95,8 @@ class BettingViewModel(
                     runAndSetAction(BettingActionState.BettingDone) {
                         actions.fold()
                     }
+                }else {
+                    // emit some error
                 }
             }
         }
