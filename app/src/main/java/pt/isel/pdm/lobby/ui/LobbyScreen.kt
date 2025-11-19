@@ -1,6 +1,7 @@
 package pt.isel.pdm.lobby.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.state.LobbyError
@@ -13,13 +14,13 @@ import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.utils.ViewModelBase
 
 @Composable
-fun LobbyScreen(viewModel: LobbyViewModel, goBack: () -> Unit) {
-    LobbyScreenContent(viewModel, goBack)
+fun LobbyScreen(viewModel: LobbyViewModel, goBack: () -> Unit, onUp: () -> Unit) {
+    LobbyScreenContent(viewModel, goBack,onUp)
     LobbyScreenError(viewModel)
 }
 
 @Composable
-private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit) {
+private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit, onUp: ()-> Unit) {
     when (val stateUi = viewModel.stateUi.collectAsState().value) {
 
         is LobbyScreenState.Loading -> {
@@ -34,10 +35,15 @@ private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit) {
 
         is LobbyScreenState.JoinedLobby -> {
             val lobby = stateUi.lobby.collectAsState().value
-                LobbyView(
-                    lobby = lobby,
-                    onLeave = { viewModel.leaveLobby(lobby) }
-                )
+            LaunchedEffect(lobby) {
+                if (lobby.maxPlayers == lobby.players.size) {
+                    onUp()
+                }
+            }
+            LobbyView(
+                lobby = lobby,
+                onLeave = { viewModel.leaveLobby(lobby) }
+            )
 
         }
         is LobbyScreenState.LobbiesList -> {
@@ -66,5 +72,5 @@ private fun LobbyScreenError(viewModel: LobbyViewModel) {
 fun PreviewLobbyScreen() {
     val viewModel = LobbyViewModel(LobbyServiceImp(RepositoryLobbiesMock()), UsersServiceMock(),
         ViewModelBase(LobbyScreenState.Loading,LobbyError.NoError) )
-    LobbyScreen(viewModel = viewModel, goBack = {})
+    LobbyScreen(viewModel = viewModel, goBack = {}, onUp = {})
 }

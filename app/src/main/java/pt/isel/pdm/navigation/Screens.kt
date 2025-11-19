@@ -20,8 +20,5 @@ sealed interface Screens {
     data object StartMatch : Screens
 
     @Serializable
-    data object CreateLobby : Screens
-
-    @Serializable
     data class Match(val matchId: Int): Screens
 }

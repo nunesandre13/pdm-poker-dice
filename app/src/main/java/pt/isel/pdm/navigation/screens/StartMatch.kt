@@ -24,7 +24,8 @@ fun NavGraphBuilder.startMatch(
 
         LobbyScreen(
             viewModel = lobbyVm,
-            goBack = {onNavigation(NavigationEvent.Back)}
+            goBack = {onNavigation(NavigationEvent.Back)},
+            onUp = {}
         )
     }
 }

@@ -1,4 +1,4 @@
-package pt.isel.pdm.match.viewModels.screens
+package pt.isel.pdm.match.screens
 
 import kotlinx.serialization.Serializable
 

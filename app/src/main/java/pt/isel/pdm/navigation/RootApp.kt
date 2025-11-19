@@ -5,7 +5,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import pt.isel.pdm.configuration.DependenciesContainer
 import pt.isel.pdm.navigation.screens.about
-import pt.isel.pdm.navigation.screens.createLobby
 import pt.isel.pdm.navigation.screens.home
 import pt.isel.pdm.navigation.screens.match
 import pt.isel.pdm.navigation.screens.profile
@@ -15,7 +14,6 @@ import pt.isel.pdm.navigation.screens.title
 @Composable
 fun RootApp(appConfiguration: DependenciesContainer) {
     val navController = rememberNavController()
-
     NavHost(
         navController = navController,
         startDestination = Screens.Home
@@ -24,7 +22,6 @@ fun RootApp(appConfiguration: DependenciesContainer) {
         title(navController::onNavigateEvent)
         about(navController::onNavigateEvent)
         startMatch(appConfiguration, navController::onNavigateEvent)
-        createLobby(navController::onNavigateEvent)
         profile(appConfiguration, navController::onNavigateEvent)
         match(navController::onNavigateEvent)
     }
