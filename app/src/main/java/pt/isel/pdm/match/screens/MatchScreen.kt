@@ -247,17 +247,9 @@ private fun BettingScreen(vm: BettingViewModel) {
     when (val state = uiState) {
         BettingUiState.InitialLoading -> TODO()
         is BettingUiState.ValidState -> TODO()
-        is 
     }
 }
-interface ValidState: BettingUiState {
-    val round: Round
-}
-object InitialLoading : BettingUiState
-data class AwaitingBetting(override val round: Round) : ValidState
-data class Betting(override val round: Round) : ValidState
 
-data class BettingDone(override val round: Round) : ValidState
 
 
 
