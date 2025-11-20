@@ -12,7 +12,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.DicesHand
-import pt.isel.pdm.domain.Player
+import pt.isel.pdm.domain.PlayerRoundState
+import pt.isel.pdm.domain.PlayerStatus
 import pt.isel.pdm.match.ui.animation.DiceRollAnimationOverlay
 import pt.isel.pdm.match.ui.animation.RolledDices
 import pt.isel.pdm.match.ui.matchLayout.GameTableLayoutClickable
@@ -20,8 +21,8 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun GameScreen(
-    me: Player,
-    others: List<Player>,
+    me: PlayerRoundState,
+    others: List<PlayerRoundState>,
     onRollFinished: () -> Unit
 ) {
 
@@ -29,6 +30,12 @@ fun GameScreen(
 
     var showRolledDices by remember { mutableStateOf(false) }
 
+    val dices: List<DiceFace> = when (val status = me.playerStatus) {
+        is PlayerStatus.StillRolling -> status.hand.dices
+        is PlayerStatus.FinalHand -> status.hand.dices
+        PlayerStatus.NotStarted,
+        PlayerStatus.PassRound -> emptyList()
+    }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         GameTableLayoutClickable(
@@ -61,9 +68,8 @@ fun GameScreen(
 
         if (showRolledDices) {
             RolledDices(
-                dices = me.hand.dices,
-                modifier = Modifier.size(width = 170.dp, height = 100.dp)
-                    .offset((-50).dp, (-50).dp)
+                dices = dices,
+                modifier = Modifier.size(width = 170.dp, height = 100.dp).offset((-50).dp, (-50).dp)
             )
         }
     }
@@ -72,34 +78,38 @@ fun GameScreen(
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview() {
-    val me = Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 1)
-    val others = listOf(
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 2),
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 3),
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 4))
-    GameScreen(
-        me = me,
-        others = others,
-        onRollFinished = {}
+    val me = PlayerRoundState(
+        playerId = 1,
+        coins = 100,
+        playerStatus = PlayerStatus.StillRolling(
+            hand = DicesHand(listOf(DiceFace.ACE, DiceFace.KING, DiceFace.QUEEN, DiceFace.JACK, DiceFace.TEN)),
+            remainingRolls = 2
+        )
     )
+    val others = listOf(
+        PlayerRoundState(2, 0, PlayerStatus.NotStarted),
+        PlayerRoundState(3, 0, PlayerStatus.NotStarted),
+        PlayerRoundState(4, 0, PlayerStatus.NotStarted)
+    )
+    GameScreen(me = me, others = others, onRollFinished = {})
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GameScreenRollingPreview() {
-    val me = Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.KING,DiceFace.QUEEN,DiceFace.JACK,DiceFace.NINE)), id = 1)
-    val others = listOf(
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 2),
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 3),
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 4),
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 2),
-        Player(hand = DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)), id = 3))
-
-    val isRolling = remember { mutableStateOf(true) }
-
-    GameScreen(
-        me = me,
-        others = others,
-        onRollFinished = { isRolling.value = false }
+    val me = PlayerRoundState(
+        playerId = 1,
+        coins = 85,
+        playerStatus = PlayerStatus.StillRolling(
+            hand = DicesHand(listOf(DiceFace.ACE, DiceFace.ACE, DiceFace.KING, DiceFace.QUEEN, DiceFace.JACK)),
+            remainingRolls = 1
+        )
     )
+    val others = listOf(
+        PlayerRoundState(2, 0, PlayerStatus.NotStarted),
+        PlayerRoundState(3, 0, PlayerStatus.NotStarted),
+        PlayerRoundState(4, 0, PlayerStatus.NotStarted),
+        PlayerRoundState(5, 0, PlayerStatus.NotStarted)
+    )
+    GameScreen(me = me, others = others, onRollFinished = {})
 }

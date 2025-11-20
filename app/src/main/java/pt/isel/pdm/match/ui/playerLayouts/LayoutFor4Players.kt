@@ -11,8 +11,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
 import pt.isel.pdm.domain.Player
+import pt.isel.pdm.domain.PlayerRoundState
+import pt.isel.pdm.domain.PlayerStatus
+
 @Composable
-fun ConstraintLayoutScope.LayoutFor4Players(others: List<Player>) {
+fun ConstraintLayoutScope.LayoutFor4Players(others: List<PlayerRoundState>) {
     val constraints: List<ConstrainScope.(List<ConstrainedLayoutReference>) -> Unit> = listOf(
         {
             centerVerticallyTo(parent)
@@ -32,11 +35,27 @@ fun ConstraintLayoutScope.LayoutFor4Players(others: List<Player>) {
     )
     PlaceOtherPlayers(players = others, constraintBlocks = constraints)
 }
-
 @Preview(showBackground = true, widthDp = 800, heightDp = 400)
 @Composable
-private fun LayoutFor5PlayersPreview() {
+private fun LayoutFor4PlayersPreview() {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        LayoutFor5Players(others = mockPlayers.take(3))
+        val other1 = PlayerRoundState(
+            playerId = 2,
+            coins = 0,
+            playerStatus = PlayerStatus.NotStarted
+        )
+        val other2 = PlayerRoundState(
+            playerId = 3,
+            coins = 0,
+            playerStatus = PlayerStatus.NotStarted
+        )
+        val other3 = PlayerRoundState(
+            playerId = 4,
+            coins = 0,
+            playerStatus = PlayerStatus.NotStarted
+        )
+
+        LayoutFor4Players(others = listOf(other1, other2, other3))
     }
 }
+

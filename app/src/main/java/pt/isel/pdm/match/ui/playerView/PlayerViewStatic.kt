@@ -4,32 +4,52 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.DicesHand
-import pt.isel.pdm.domain.Player
+import pt.isel.pdm.domain.PlayerRoundState
+import pt.isel.pdm.domain.PlayerStatus
 import pt.isel.pdm.match.ui.dices.DisplayStaticDices
 import pt.isel.pdm.match.ui.playerView.BasePlayerView
 
 @Composable
 fun PlayerViewStatic(
-    player: Player,
+    player: PlayerRoundState,
     modifier: Modifier = Modifier
 ) {
+    val hand: DicesHand? = when (val status = player.playerStatus) {
+        is PlayerStatus.StillRolling -> status.hand
+        is PlayerStatus.FinalHand -> status.hand
+        PlayerStatus.NotStarted,
+        PlayerStatus.PassRound -> null
+    }
     BasePlayerView(player = player, modifier = modifier) { containerWidth ->
-        DisplayStaticDices(
-            dicesHand = player.hand,
-            size = containerWidth
-        )
+        hand?.let {
+            DisplayStaticDices(
+                dicesHand = it,
+                size = containerWidth
+            )
+        }
     }
 }
 
 @Preview(showBackground = true, widthDp = 250)
 @Composable
-fun PlayerViewStaticPreview() {
-    val samplePlayer = Player(hand =
-        DicesHand(listOf(DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE,DiceFace.ACE)),
-        5)
+private fun PlayerViewStaticPreview() {
+    val samplePlayer = PlayerRoundState(
+        playerId = 5,
+        coins = 0,
+        playerStatus = PlayerStatus.StillRolling(
+            hand = DicesHand(
+                listOf(
+                    DiceFace.ACE,
+                    DiceFace.ACE,
+                    DiceFace.ACE,
+                    DiceFace.ACE,
+                    DiceFace.ACE
+                )
+            ),
+            remainingRolls = 2
+        )
+    )
     Surface {
         PlayerViewStatic(player = samplePlayer)
     }
 }
-
-

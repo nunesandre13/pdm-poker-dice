@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import pt.isel.pdm.domain.Player
+import pt.isel.pdm.domain.PlayerRoundState
 import pt.isel.pdm.match.ui.playerLayouts.LayoutFor2Players
 import pt.isel.pdm.match.ui.playerLayouts.LayoutFor3Players
 import pt.isel.pdm.match.ui.playerLayouts.LayoutFor4Players
@@ -19,9 +19,9 @@ private const val MY_PLAYER_WIDTH_PERCENT = 0.28f
 
 @Composable
 fun GameTableLayout(
-    me: Player,
-    others: List<Player>,
-    myPlayerContent: @Composable (player: Player, modifier: Modifier) -> Unit
+    me: PlayerRoundState,
+    others: List<PlayerRoundState>,
+    myPlayerContent: @Composable (player: PlayerRoundState, modifier: Modifier) -> Unit
 ) {
     ConstraintLayout(
         modifier = Modifier

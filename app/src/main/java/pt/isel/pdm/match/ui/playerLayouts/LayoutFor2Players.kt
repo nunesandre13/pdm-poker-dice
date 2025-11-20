@@ -11,9 +11,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
 import pt.isel.pdm.domain.Player
+import pt.isel.pdm.domain.PlayerRoundState
+import pt.isel.pdm.domain.PlayerStatus
 
 @Composable
-fun ConstraintLayoutScope.LayoutFor2Players(others: List<Player>) {
+fun ConstraintLayoutScope.LayoutFor2Players(others: List<PlayerRoundState>) {
     val constraints: List<ConstrainScope.(List<ConstrainedLayoutReference>) -> Unit> = listOf {
             top.linkTo(parent.top, margin = 16.dp)
             centerHorizontallyTo(parent)
@@ -25,8 +27,13 @@ fun ConstraintLayoutScope.LayoutFor2Players(others: List<Player>) {
 
 @Preview(showBackground = true, widthDp = 800, heightDp = 400)
 @Composable
-private fun LayoutFor3PlayersPreview() {
+private fun LayoutFor2PlayersPreview() {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        LayoutFor3Players(others = mockPlayers.take(1))
+        val other = PlayerRoundState(
+            playerId = 2,
+            coins = 0,
+            playerStatus = PlayerStatus.NotStarted
+        )
+        LayoutFor2Players(others = listOf(other))
     }
 }

@@ -31,10 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.Player
+import pt.isel.pdm.domain.PlayerRoundState
 
 @Composable
 fun BasePlayerView(
-    player: Player,
+    player: PlayerRoundState,
     modifier: Modifier = Modifier,
     dicesContent: @Composable (containerWidth: Dp) -> Unit
 ) {
@@ -96,7 +97,7 @@ fun BasePlayerView(
             val fontSize = (containerWidth.value / 7f).sp
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = stringResource(R.string.pVplayer_label,player.id),
+                    text = stringResource(R.string.pVplayer_label,player.playerId),
                     textAlign = TextAlign.Center,
                     fontSize = fontSize,
                     fontWeight = FontWeight.SemiBold,

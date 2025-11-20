@@ -11,8 +11,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
 import pt.isel.pdm.domain.Player
+import pt.isel.pdm.domain.PlayerRoundState
+import pt.isel.pdm.domain.PlayerStatus
+
 @Composable
-fun ConstraintLayoutScope.LayoutFor6Players(others: List<Player>) {
+fun ConstraintLayoutScope.LayoutFor6Players(others: List<PlayerRoundState>) {
     val startGuideline = createGuidelineFromStart(fraction = 0.1f)
     val endGuideline = createGuidelineFromEnd(fraction = 0.1f)
 
@@ -51,7 +54,14 @@ fun ConstraintLayoutScope.LayoutFor6Players(others: List<Player>) {
 @Preview(showBackground = true, widthDp = 800, heightDp = 400)
 @Composable
 private fun LayoutFor6PlayersPreview() {
+    val mockOthers = listOf(
+        PlayerRoundState(2,0,PlayerStatus.NotStarted),
+        PlayerRoundState(3,0,PlayerStatus.NotStarted),
+        PlayerRoundState(4,0,PlayerStatus.NotStarted),
+        PlayerRoundState(5,0,PlayerStatus.NotStarted),
+        PlayerRoundState(6,0,PlayerStatus.NotStarted)
+    )
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        LayoutFor6Players(others = mockPlayers.take(5))
+        LayoutFor6Players(others = mockOthers)
     }
 }

@@ -33,15 +33,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.chelasmulti_playerpokerdice.R
 import kotlinx.coroutines.flow.MutableStateFlow
+import pt.isel.pdm.domain.Round
 import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.match.repository.RepositoryMatchMock
 import pt.isel.pdm.match.services.MatchServiceImp
+import pt.isel.pdm.match.ui.GameScreen
 import pt.isel.pdm.match.ui.table.PokerTableSurface
 import pt.isel.pdm.match.viewModels.MatchStateUi
 import pt.isel.pdm.match.viewModels.MatchViewModel
+import pt.isel.pdm.match.viewModels.betting.BettingUiState
 import pt.isel.pdm.match.viewModels.betting.BettingViewModel
 import pt.isel.pdm.match.viewModels.interfaces.BettingActions
+import pt.isel.pdm.match.viewModels.myTurn.MyTurnUiState
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
+import pt.isel.pdm.match.viewModels.otherPlayers.OtherPlayerTurnUiState
 import pt.isel.pdm.match.viewModels.otherPlayers.OtherPlayerTurnViewModel
 import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.utils.ViewModelBase
@@ -181,18 +186,78 @@ private fun PokerTableBase(matchViewModel: MatchViewModel,navController: NavHost
 
 @Composable
 private fun OtherPlayerTurnScreen(vm: OtherPlayerTurnViewModel) {
-   TODO()
+    val uiState by vm.stateUi.collectAsStateWithLifecycle()
+
+    when (val state = uiState) {
+        is OtherPlayerTurnUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color.Black)
+            }
+        }
+        is OtherPlayerTurnUiState.ShowingTurn -> {
+            val players = state.round.players
+            if (players.isNotEmpty()) {
+                GameScreen(
+                    me = players.first(),
+                    others = players.drop(1),
+                    onRollFinished = {}
+                )
+            }
+        }
+    }
 }
 
 @Composable
 private fun MyTurnScreen(vm: MyTurnViewModel) {
-    TODO()
+
+    val uiState by vm.stateUi.collectAsStateWithLifecycle()
+    when (val state = uiState) {
+        is MyTurnUiState.InitialLoading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color.Black)
+            }
+        }
+
+        is MyTurnUiState.Idle,
+        is MyTurnUiState.Rolling,
+        is MyTurnUiState.SettingHand -> {
+            val players = state.round.players
+
+            if (players.isNotEmpty()) {
+                val me = players.first()
+                val others = players.drop(1)
+
+                GameScreen(
+                    me = me,
+                    others = others,
+                    onRollFinished = {
+                        vm.setHand()
+                    }
+                )
+            }
+        }
+
+        is MyTurnUiState.ValidState -> TODO()
+    }
 }
 
 @Composable
 private fun BettingScreen(vm: BettingViewModel) {
-   TODO()
+    val uiState by vm.stateUi.collectAsStateWithLifecycle()
+    when (val state = uiState) {
+        BettingUiState.InitialLoading -> TODO()
+        is BettingUiState.ValidState -> TODO()
+        is 
+    }
 }
+interface ValidState: BettingUiState {
+    val round: Round
+}
+object InitialLoading : BettingUiState
+data class AwaitingBetting(override val round: Round) : ValidState
+data class Betting(override val round: Round) : ValidState
+
+data class BettingDone(override val round: Round) : ValidState
 
 
 
