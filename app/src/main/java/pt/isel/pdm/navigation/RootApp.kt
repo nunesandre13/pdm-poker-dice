@@ -8,7 +8,7 @@ import pt.isel.pdm.navigation.screens.about
 import pt.isel.pdm.navigation.screens.home
 import pt.isel.pdm.navigation.screens.match
 import pt.isel.pdm.navigation.screens.profile
-import pt.isel.pdm.navigation.screens.startMatch
+import pt.isel.pdm.navigation.screens.lobby
 import pt.isel.pdm.navigation.screens.title
 
 @Composable
@@ -21,7 +21,7 @@ fun RootApp(appConfiguration: DependenciesContainer) {
         home(appConfiguration, navController::onNavigateEvent)
         title(navController::onNavigateEvent)
         about(navController::onNavigateEvent)
-        startMatch(appConfiguration, navController::onNavigateEvent)
+        lobby(appConfiguration, navController::onNavigateEvent)
         profile(appConfiguration, navController::onNavigateEvent)
         match(navController::onNavigateEvent)
     }

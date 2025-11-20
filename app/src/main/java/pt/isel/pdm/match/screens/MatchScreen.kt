@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,7 +39,10 @@ import pt.isel.pdm.match.services.MatchServiceImp
 import pt.isel.pdm.match.ui.table.PokerTableSurface
 import pt.isel.pdm.match.viewModels.MatchStateUi
 import pt.isel.pdm.match.viewModels.MatchViewModel
+import pt.isel.pdm.match.viewModels.betting.BettingViewModel
 import pt.isel.pdm.match.viewModels.interfaces.BettingActions
+import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
+import pt.isel.pdm.match.viewModels.otherPlayers.OtherPlayerTurnViewModel
 import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.utils.ViewModelBase
 
@@ -46,6 +51,7 @@ fun MatchScreen(
     matchViewModel: MatchViewModel,
     navController: NavHostController = rememberNavController()
 ) {
+
     var showMatchDetails by remember { mutableStateOf(false) }
 
     val pokerTableContent = remember(matchViewModel, navController) {
@@ -54,19 +60,31 @@ fun MatchScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(brush = Brush.linearGradient(
-        colors = listOf(
-            colorResource(R.color.table_bg_light),
-            colorResource(R.color.table_bg_dark))))) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        colorResource(R.color.table_bg_light),
+                        colorResource(R.color.table_bg_dark)
+                    )
+                )
+            )
+    ) {
         if (showMatchDetails) {
             Row(modifier = Modifier.fillMaxSize()) {
-                Box(modifier = Modifier.weight(0.2f).fillMaxHeight()
-                    .background(Color.Cyan)) {
+                Box(
+                    modifier = Modifier.weight(0.2f)
+                        .fillMaxHeight()
+                        .background(Color.Cyan)
+                )
 
-                }
-                Box(modifier = Modifier.weight(0.8f).fillMaxHeight()) {
-                    pokerTableContent()
-                }
+                Box(
+                    modifier = Modifier.weight(0.8f)
+                        .fillMaxHeight()) {
+                            pokerTableContent()
+                        }
             }
         } else {
             pokerTableContent()
@@ -78,21 +96,22 @@ fun MatchScreen(
                 .align(Alignment.TopStart)
                 .padding(16.dp)
         ) {
-            Text(if (showMatchDetails) "Fechar detalhes" else "Mostrar detalhes")
+            Text(if (showMatchDetails) "Close Details" else "Open Details")
         }
     }
 }
 
 @Composable
 private fun PokerTableBase(matchViewModel: MatchViewModel,navController: NavHostController ){
-    Box(modifier =
-        Modifier.fillMaxSize(),
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.Center) {
-        PokerTableSurface(
-            modifier = Modifier
-                .fillMaxWidth(0.78f)
-                .aspectRatio(2f)
-        )
+            PokerTableSurface(
+                modifier = Modifier
+                    .fillMaxWidth(0.78f)
+                    .aspectRatio(2f)
+            )
         {
             val uiState by matchViewModel.stateUi.collectAsStateWithLifecycle()
 
@@ -115,21 +134,64 @@ private fun PokerTableBase(matchViewModel: MatchViewModel,navController: NavHost
                 startDestination = MatchRoute.Idle
             ) {
                 composable<MatchRoute.Idle> {
-
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = Color.Black
+                        )
+                    }
                 }
-                composable<MatchRoute.MyTurn> {
-
-
+                composable<MatchRoute.OtherPlayerTurn> { backStackEntry ->
+                    val vmOtherPlayerTurnViewModel: OtherPlayerTurnViewModel = viewModel(
+                        viewModelStoreOwner = backStackEntry,
+                        factory = OtherPlayerTurnViewModel.factory(
+                            stateProvider = matchViewModel
+                        )
+                    )
+                    OtherPlayerTurnScreen(vm = vmOtherPlayerTurnViewModel)
                 }
-                composable<MatchRoute.OtherPlayerTurn> {
-
+                composable<MatchRoute.MyTurn> { backStackEntry ->
+                    val vmMyTurnViewModel: MyTurnViewModel = viewModel(
+                        viewModelStoreOwner = backStackEntry,
+                        factory = MyTurnViewModel.factory(
+                            stateProvider = matchViewModel,
+                            actions = matchViewModel
+                        )
+                    )
+                    MyTurnScreen(vm = vmMyTurnViewModel)
                 }
-                composable<MatchRoute.Betting> {
+                composable<MatchRoute.Betting> { backStackEntry ->
                     val bettingActions: BettingActions = matchViewModel
+                    val vmBettingViewModel: BettingViewModel = viewModel(
+                        viewModelStoreOwner = backStackEntry,
+                        factory = BettingViewModel.factory(
+                            stateProvider = matchViewModel,
+                            actions = matchViewModel
+                        )
+                    )
+                    BettingScreen(vm = vmBettingViewModel)
+
                 }
             }
         }
     }
+}
+
+@Composable
+private fun OtherPlayerTurnScreen(vm: OtherPlayerTurnViewModel) {
+   TODO()
+}
+
+@Composable
+private fun MyTurnScreen(vm: MyTurnViewModel) {
+    TODO()
+}
+
+@Composable
+private fun BettingScreen(vm: BettingViewModel) {
+   TODO()
 }
 
 

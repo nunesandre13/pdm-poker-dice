@@ -9,7 +9,7 @@ import pt.isel.pdm.lobby.viewmodel.LobbyViewModel
 import pt.isel.pdm.navigation.NavigationEvent
 import pt.isel.pdm.navigation.Screens
 
-fun NavGraphBuilder.startMatch(
+fun NavGraphBuilder.lobby(
     appConfiguration: DependenciesContainer,
     onNavigation: (NavigationEvent) -> Unit
 ) {

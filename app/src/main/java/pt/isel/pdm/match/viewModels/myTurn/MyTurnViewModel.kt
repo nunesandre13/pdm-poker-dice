@@ -1,6 +1,7 @@
 package pt.isel.pdm.match.viewModels.myTurn
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -17,8 +18,8 @@ import pt.isel.pdm.domain.State
 import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 import pt.isel.pdm.match.viewModels.interfaces.RollingActions
+import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
-import kotlin.compareTo
 
 sealed interface MyTurnActionState {
     object Idle : MyTurnActionState
@@ -45,8 +46,10 @@ sealed interface MyTurnUiState : State {
     data class SettingHand(override val data: MyTurnDataState, override val round: Round ) : ValidState
 }
 
-sealed interface MyTurnError: DomainError{
-
+sealed class MyTurnError(
+    override val message: String?
+): DomainError {
+    data object SomeError: MyTurnError(null)
 }
 
 class MyTurnViewModel(
@@ -134,4 +137,23 @@ class MyTurnViewModel(
             }
         }
     }
+
+    companion object {
+        fun factory(
+            stateProvider: MatchStateProvider,
+            actions: RollingActions,
+            base: ViewModelState<MyTurnUiState, MyTurnError> =
+                ViewModelBase(MyTurnUiState.InitialLoading, MyTurnError.SomeError)
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return MyTurnViewModel(
+                    baseViewModel = base,
+                    stateProvider = stateProvider,
+                    actions = actions
+                ) as T
+            }
+        }
+    }
+
 }

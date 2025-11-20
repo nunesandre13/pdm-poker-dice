@@ -1,6 +1,7 @@
 package pt.isel.pdm.match.viewModels.betting
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -16,6 +17,7 @@ import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.betting.BettingUiState.*
 import pt.isel.pdm.match.viewModels.interfaces.BettingActions
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
+import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 
 sealed interface BettingActionState {
@@ -36,8 +38,10 @@ sealed interface BettingUiState : State {
     data class BettingDone(override val round: Round) : ValidState
 }
 
-sealed interface BettingError: DomainError {
-
+sealed class BettingError(
+    override val message: String?
+): DomainError {
+    data object SomeError: BettingError(null)
 }
 
 
@@ -108,6 +112,24 @@ class BettingViewModel(
                 code()
             } finally {
                 _actionState.value = endAction
+            }
+        }
+    }
+
+    companion object {
+        fun factory(
+            stateProvider: MatchStateProvider,
+            actions: BettingActions,
+            base: ViewModelState<BettingUiState, BettingError> =
+                ViewModelBase(InitialLoading, BettingError.SomeError)
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return BettingViewModel(
+                    baseViewModel = base,
+                    stateProvider = stateProvider,
+                    actions = actions
+                ) as T
             }
         }
     }

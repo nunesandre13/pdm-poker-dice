@@ -1,6 +1,7 @@
 package pt.isel.pdm.match.viewModels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,6 +26,7 @@ import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 import pt.isel.pdm.match.viewModels.interfaces.RollingActions
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.OutCome
+import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 import pt.isel.pdm.utils.errorOrNull
 import pt.isel.pdm.utils.getOrNull
@@ -140,6 +142,27 @@ open class MatchViewModel(
                 navigateTo(uiState)
             }
     }
+
+    companion object {
+        fun factory(
+            matchServices: MatchServices,
+            userService: UserServices,
+            matchId: Int,
+            base: ViewModelState<MatchStateUi, MatchError> =
+                ViewModelBase(MatchStateUi.Idle, MatchError.SomeError)
+        ) = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return MatchViewModel(
+                    viewModelBase = base,
+                    matchServices = matchServices,
+                    userRepository = userService,
+                    matchId = matchId
+                ) as T
+            }
+        }
+    }
+
 }
 
 sealed interface MatchStateUi : State {
