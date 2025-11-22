@@ -40,7 +40,6 @@ android {
 }
 dependencies {
 
-
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
@@ -50,6 +49,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 
     implementation(platform("androidx.compose:compose-bom:2025.11.00"))
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
     androidTestImplementation(platform("androidx.compose:compose-bom:2025.11.00"))
 
     implementation("androidx.compose.ui:ui")

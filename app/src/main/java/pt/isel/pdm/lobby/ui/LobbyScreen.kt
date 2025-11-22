@@ -52,7 +52,8 @@ private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit, on
                 lobbies = lobbyList,
                 onJoinClick = {viewModel.joinLobby(it)},
                 onBack = {goBack()},
-                onCreateLobby = {viewModel.goToCreation()})
+                onCreateLobby = {viewModel.goToCreation()}
+            )
         }
     }
 }

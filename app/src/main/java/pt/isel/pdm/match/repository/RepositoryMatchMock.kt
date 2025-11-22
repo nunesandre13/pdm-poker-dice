@@ -1,9 +1,12 @@
 package pt.isel.pdm.match.repository
 
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +18,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
 import pt.isel.pdm.domain.BetState
 import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Match
@@ -36,6 +40,64 @@ import kotlin.time.Duration.Companion.seconds
 class RepositoryMatchMock : RepositoryMatch {
     private val scope = CoroutineScope(Dispatchers.Default)
     private val shFlow: MutableSharedFlow<OutCome<MatchResponse, MatchError>> = MutableSharedFlow()
+
+    init {
+        scope.launch {
+
+            val dummyHand = DicesHand(
+                dices = persistentListOf(
+                    DiceFace.ACE,
+                    DiceFace.KING,
+                    DiceFace.ACE,
+                    DiceFace.TEN,
+                    DiceFace.NINE
+                )
+            )
+
+            val p1RoundState = PlayerRoundState(
+                playerId = 101,
+                coins = 90,
+                playerStatus = PlayerStatus.StillRolling(
+                    hand = dummyHand,
+                    remainingRolls = 1
+                )
+            )
+            val p2RoundState = PlayerRoundState(102, 90, PlayerStatus.NotStarted)
+            val p3RoundState = PlayerRoundState(103, 90, PlayerStatus.NotStarted)
+            val p4RoundState = PlayerRoundState(104, 90, PlayerStatus.NotStarted)
+
+            val roundPlayers = listOf(p1RoundState, p2RoundState, p3RoundState, p4RoundState)
+            val currentRound = Round(
+                id = 1,
+                players = roundPlayers,
+                ante = 10,
+                totalBet = 40,
+                state = RoundState.Rolling(turn = p1RoundState)
+            )
+
+            val matchPlayers = listOf(
+                PlayerMatchState(101, 90),
+                PlayerMatchState(102, 90),
+                PlayerMatchState(103, 90),
+                PlayerMatchState(104, 90)
+            )
+
+            val dummyMatch = Match(
+                id = 500,
+                players = matchPlayers,
+                owner = 101,
+                actualRound = currentRound,
+                initialCoins = 100,
+                remainingRounds = 5,
+                matchStatus = MatchStatus.ELAPSED
+            )
+
+            while (true){
+                shFlow.emit(Success(MatchResponse.NewMatch(dummyMatch)))
+                delay(5.seconds)
+            }
+        }
+    }
     private val actualMatchId: MutableStateFlow<Int?> = MutableStateFlow(null)
     @OptIn(ExperimentalCoroutinesApi::class)
     private val sseListener: SharedFlow<OutCome<MatchResponse, MatchError>> =
@@ -76,7 +138,6 @@ class RepositoryMatchMock : RepositoryMatch {
         return sseListener
     }
 
-
     override suspend fun play(command: PlayCommand): OutCome<Match, MatchError> {
         val fakeMatch = Match(
             id = 1,
@@ -99,7 +160,7 @@ class RepositoryMatchMock : RepositoryMatch {
                                     DiceFace.JACK,
                                     DiceFace.QUEEN,
                                     DiceFace.KING
-                                )
+                                ).toImmutableList()
                             ),
                             remainingRolls = 1
                         )
@@ -115,7 +176,7 @@ class RepositoryMatchMock : RepositoryMatch {
                                     DiceFace.JACK,
                                     DiceFace.QUEEN,
                                     DiceFace.KING
-                                )
+                                ).toImmutableList()
                             )
                         )
                     )
@@ -134,7 +195,7 @@ class RepositoryMatchMock : RepositoryMatch {
                                     DiceFace.JACK,
                                     DiceFace.QUEEN,
                                     DiceFace.KING
-                                )
+                                ).toImmutableList()
                             ),
                             remainingRolls = 1
                         )

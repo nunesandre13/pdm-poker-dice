@@ -10,18 +10,17 @@ import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
-import pt.isel.pdm.domain.Player
-import pt.isel.pdm.domain.PlayerRoundState
-import pt.isel.pdm.domain.PlayerStatus
+
 
 @Composable
-fun ConstraintLayoutScope.LayoutFor2Players(others: List<PlayerRoundState>) {
+fun <T> ConstraintLayoutScope.LayoutFor2Players(others: List<T>, playersComposable: PlayerComposable<T>) {
     val constraints: List<ConstrainScope.(List<ConstrainedLayoutReference>) -> Unit> = listOf {
-            top.linkTo(parent.top, margin = 16.dp)
-            centerHorizontallyTo(parent)
-            width = Dimension.percent(ADVERSARY_PLAYER_WIDTH_PERCENT)
+        top.linkTo(parent.top, margin = 16.dp)
+        centerHorizontallyTo(parent)
+        width = Dimension.percent(ADVERSARY_PLAYER_WIDTH_PERCENT)
+        height = Dimension.percent(ADVERSARY_PLAYER_HEIGHT_PERCENT)
         }
-    PlaceOtherPlayers(players = others, constraintBlocks = constraints)
+    PlaceOtherPlayers(players = others, constraintBlocks = constraints, playersComposable)
 }
 
 
@@ -29,11 +28,6 @@ fun ConstraintLayoutScope.LayoutFor2Players(others: List<PlayerRoundState>) {
 @Composable
 private fun LayoutFor2PlayersPreview() {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val other = PlayerRoundState(
-            playerId = 2,
-            coins = 0,
-            playerStatus = PlayerStatus.NotStarted
-        )
-        LayoutFor2Players(others = listOf(other))
+        //LayoutFor2Players(others = listOf(), {})
     }
 }

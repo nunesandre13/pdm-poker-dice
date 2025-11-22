@@ -10,52 +10,39 @@ import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
-import pt.isel.pdm.domain.Player
-import pt.isel.pdm.domain.PlayerRoundState
-import pt.isel.pdm.domain.PlayerStatus
+
+typealias PlayerComposable<T> = @Composable (player: T, modifier: Modifier) -> Unit
 
 @Composable
-fun ConstraintLayoutScope.LayoutFor4Players(others: List<PlayerRoundState>) {
+fun <T>ConstraintLayoutScope.LayoutFor4Players(others: List<T>,  playersComposable: PlayerComposable<T>) {
     val constraints: List<ConstrainScope.(List<ConstrainedLayoutReference>) -> Unit> = listOf(
         {
             centerVerticallyTo(parent)
             start.linkTo(parent.start, margin = 16.dp)
             width = Dimension.percent(ADVERSARY_PLAYER_WIDTH_PERCENT)
+            height = Dimension.percent(ADVERSARY_PLAYER_HEIGHT_PERCENT)
         },
         {
             top.linkTo(parent.top, margin = 16.dp)
             centerHorizontallyTo(parent)
             width = Dimension.percent(ADVERSARY_PLAYER_WIDTH_PERCENT)
+            height = Dimension.percent(ADVERSARY_PLAYER_HEIGHT_PERCENT)
         },
         {
             centerVerticallyTo(parent)
             end.linkTo(parent.end, margin = 16.dp)
             width = Dimension.percent(ADVERSARY_PLAYER_WIDTH_PERCENT)
+            height = Dimension.percent(ADVERSARY_PLAYER_HEIGHT_PERCENT)
         }
     )
-    PlaceOtherPlayers(players = others, constraintBlocks = constraints)
+    PlaceOtherPlayers(players = others, constraintBlocks = constraints,playersComposable)
 }
+
 @Preview(showBackground = true, widthDp = 800, heightDp = 400)
 @Composable
 private fun LayoutFor4PlayersPreview() {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val other1 = PlayerRoundState(
-            playerId = 2,
-            coins = 0,
-            playerStatus = PlayerStatus.NotStarted
-        )
-        val other2 = PlayerRoundState(
-            playerId = 3,
-            coins = 0,
-            playerStatus = PlayerStatus.NotStarted
-        )
-        val other3 = PlayerRoundState(
-            playerId = 4,
-            coins = 0,
-            playerStatus = PlayerStatus.NotStarted
-        )
-
-        LayoutFor4Players(others = listOf(other1, other2, other3))
+        //LayoutFor4Players(others = listOf(1, 2, 3))
     }
 }
 

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.toImmutableList
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.DicesHand
 
@@ -29,7 +30,7 @@ fun PreviewDisplayPlayerDices() {
                 DiceFace.QUEEN,
                 DiceFace.JACK,
                 DiceFace.NINE
-            )
+            ).toImmutableList()
         ),
         size = 200.dp
     )

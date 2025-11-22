@@ -30,6 +30,7 @@ import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 import pt.isel.pdm.utils.errorOrNull
 import pt.isel.pdm.utils.getOrNull
+import kotlin.jvm.Throws
 import kotlin.time.Duration.Companion.seconds
 
 open class MatchViewModel(
@@ -37,12 +38,14 @@ open class MatchViewModel(
     private val matchServices: MatchServices,
     userRepository: UserServices,
     matchId: Int
-) : ViewModel(), ViewModelState<MatchStateUi, MatchError> by viewModelBase, MatchStateProvider , RollingActions, BettingActions {
+) : ViewModel(),
+    ViewModelState<MatchStateUi, MatchError> by viewModelBase,
+    MatchStateProvider , RollingActions, BettingActions {
     private val matchUpdates = matchServices.getMatchUpdate(matchId)
 
     override val matchState: StateFlow<MatchState> = matchUpdates.transformFlowIntoMatchStateFlow()
 
-    private val player = userRepository.currentUser
+    open val player = userRepository.currentUser
 
     init {
         viewModelScope.launch { transformMatchStateIntoStateUi() }

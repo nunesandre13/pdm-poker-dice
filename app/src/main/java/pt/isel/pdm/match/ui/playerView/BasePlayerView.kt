@@ -4,12 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,21 +21,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.chelasmulti_playerpokerdice.R
-import pt.isel.pdm.domain.Player
-import pt.isel.pdm.domain.PlayerRoundState
 
 @Composable
 fun BasePlayerView(
-    player: PlayerRoundState,
     modifier: Modifier = Modifier,
-    dicesContent: @Composable (containerWidth: Dp) -> Unit
+    content: @Composable () -> Unit = {}
 ) {
     val shape = RoundedCornerShape(18.dp)
     val glowColor = colorResource(id = R.color.playerview_circle)
@@ -46,7 +36,6 @@ fun BasePlayerView(
     val borderGradient1 = colorResource(id = R.color.pv_backgroundBorder1)
     val borderGradient2 = colorResource(id = R.color.pv_backgroundBorder2)
     val innerBorderColor = colorResource(id = R.color.pv_backgroundBorder2)
-    val textColor = colorResource(id = R.color.pv_textPlayerID)
     Box(
         modifier = modifier
             .drawBehind {
@@ -93,18 +82,20 @@ fun BasePlayerView(
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {
-            val containerWidth = maxWidth * 0.6f
-            val fontSize = (containerWidth.value / 7f).sp
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = stringResource(R.string.pVplayer_label,player.playerId),
-                    textAlign = TextAlign.Center,
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.SemiBold,
-                    color = textColor
-                )
-                dicesContent(containerWidth)
-            }
+           content()
         }
     }
 }
+
+//val containerWidth = maxWidth * 0.6f
+//val fontSize = (containerWidth.value / 7f).sp
+//Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//    Text(
+//        text = stringResource(R.string.pVplayer_label,player.playerId),
+//        textAlign = TextAlign.Center,
+//        fontSize = fontSize,
+//        fontWeight = FontWeight.SemiBold,
+//        color = textColor
+//    )
+//    dicesContent(containerWidth)
+//}

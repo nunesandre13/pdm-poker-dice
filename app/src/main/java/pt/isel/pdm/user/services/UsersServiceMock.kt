@@ -3,6 +3,7 @@ package pt.isel.pdm.user.services
 import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
@@ -17,7 +18,7 @@ class UsersServiceMock : UserServices {
         Log.d("UsersServiceMock", "init")
     }
 
-    private val _currentUser = MutableStateFlow<User?>(null)
+    private val _currentUser = MutableStateFlow<User?>(User("1","guilherme", Email("andre@gmail")))
 
     override val currentUser: StateFlow<User?> = _currentUser
 
