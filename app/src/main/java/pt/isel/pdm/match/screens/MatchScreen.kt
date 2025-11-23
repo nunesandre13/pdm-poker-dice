@@ -1,6 +1,7 @@
 package pt.isel.pdm.match.screens
 
 import RoundScreen
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -84,11 +85,16 @@ fun MatchScreen(
     }
 }
 
-@Preview(showBackground = true)
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview(showBackground = true, name = "Other Player's Turn Test")
 @Composable
-fun MatchScreenPreview() {
-
-    val fakeViewModel = MatchViewModel(ViewModelBase(MatchStateUi.Idle, MatchError.SomeError),
-        MatchServiceImp(RepositoryMatchMock()), UsersServiceMock(),1234)
+fun MatchScreenPreviewOtherTurn() {
+    val fakeViewModel = MatchViewModel(
+        ViewModelBase(MatchStateUi.OtherPlayerTurn, MatchError.SomeError),
+        MatchServiceImp(RepositoryMatchMock()),
+        UsersServiceMock(),
+        1234
+    )
     MatchScreen(matchViewModel = fakeViewModel, navController = rememberNavController())
 }
+

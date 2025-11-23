@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.take
@@ -43,6 +44,7 @@ fun RoundScreen(matchViewModel: MatchViewModel, navController: NavHostController
                 value = validSetup
             }
     }
+    val roundNavController = rememberNavController()
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -80,7 +82,11 @@ fun RoundScreen(matchViewModel: MatchViewModel, navController: NavHostController
             }
 
 
-            // RoundNavigation(...)
+            RoundNavigation(
+                matchViewModel = matchViewModel,
+                navController = roundNavController,
+                playersPosition = playerPositionRegistry.build()
+            )
         } else {
             // Opcional: Colocar um Loading Spinner aqui enquanto espera pelos dados
         }

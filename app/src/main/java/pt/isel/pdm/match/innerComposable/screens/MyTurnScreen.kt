@@ -17,22 +17,20 @@ import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
 fun MyTurnScreen(vm: MyTurnViewModel) {
 
     val uiState by vm.stateUi.collectAsStateWithLifecycle()
+
     when (val state = uiState) {
         is MyTurnUiState.InitialLoading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Color.Black)
             }
         }
-
-        is MyTurnUiState.Idle,
-        is MyTurnUiState.Rolling,
-        is MyTurnUiState.SettingHand -> {
+        is MyTurnUiState.ValidState -> {
             val players = state.round.players
 
             if (players.isNotEmpty()) {
+
                 val me = players.first()
                 val others = players.drop(1)
-
                 GameScreen(
                     me = me,
                     others = others,
@@ -42,7 +40,5 @@ fun MyTurnScreen(vm: MyTurnViewModel) {
                 )
             }
         }
-
-        is MyTurnUiState.ValidState -> TODO()
     }
 }
