@@ -1,3 +1,4 @@
+package pt.isel.pdm.match.innerComposable.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -5,10 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import pt.isel.pdm.match.innerComposable.Navigation.betting
-import pt.isel.pdm.match.innerComposable.Navigation.idle
-import pt.isel.pdm.match.innerComposable.Navigation.myTurn
-import pt.isel.pdm.match.innerComposable.Navigation.otherPlayerTurn
 import pt.isel.pdm.match.innerComposable.PlayerRegistry
 import pt.isel.pdm.match.screens.MatchRoute
 import pt.isel.pdm.match.viewModels.MatchStateUi
@@ -29,10 +26,12 @@ fun RoundNavigation(matchViewModel: MatchViewModel, navController: NavHostContro
             launchSingleTop = true
         }
     }
+
     NavHost(navController = navController, startDestination = MatchRoute.Idle) {
         idle()
-        otherPlayerTurn(matchViewModel)
-        myTurn(matchViewModel)
-        betting(matchViewModel)
+        otherPlayerTurn(matchViewModel,playersPosition)
+        myTurn(matchViewModel,playersPosition)
+        betting(matchViewModel,playersPosition)
     }
+
 }

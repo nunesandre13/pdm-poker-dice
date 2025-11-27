@@ -1,4 +1,4 @@
-package pt.isel.pdm.match.innerComposable.Navigation
+package pt.isel.pdm.match.innerComposable.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import pt.isel.pdm.match.innerComposable.PlayerRegistry
 import pt.isel.pdm.match.innerComposable.screens.BettingScreen
 import pt.isel.pdm.match.innerComposable.screens.MyTurnScreen
 import pt.isel.pdm.match.innerComposable.screens.OtherPlayerTurnScreen
@@ -18,7 +19,7 @@ import pt.isel.pdm.match.viewModels.betting.BettingViewModel
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
 import pt.isel.pdm.match.viewModels.otherPlayers.OtherPlayerTurnViewModel
 
-fun NavGraphBuilder.betting(matchViewModel: MatchViewModel) {
+fun NavGraphBuilder.betting(matchViewModel: MatchViewModel,playersPosition:PlayerRegistry) {
     composable<MatchRoute.Betting> { backStackEntry ->
         val vmBettingViewModel: BettingViewModel = viewModel(
             viewModelStoreOwner = backStackEntry,
@@ -27,11 +28,11 @@ fun NavGraphBuilder.betting(matchViewModel: MatchViewModel) {
                 actions = matchViewModel
             )
         )
-        BettingScreen(vm = vmBettingViewModel)
+        BettingScreen(vm = vmBettingViewModel, playersPosition = playersPosition)
     }
 }
 
-fun NavGraphBuilder.myTurn(matchViewModel: MatchViewModel) {
+fun NavGraphBuilder.myTurn(matchViewModel: MatchViewModel,playersPosition:PlayerRegistry) {
     composable<MatchRoute.MyTurn> { backStackEntry ->
         val vmMyTurnViewModel: MyTurnViewModel = viewModel(
             viewModelStoreOwner = backStackEntry,
@@ -40,11 +41,11 @@ fun NavGraphBuilder.myTurn(matchViewModel: MatchViewModel) {
                 actions = matchViewModel
             )
         )
-        MyTurnScreen(vm = vmMyTurnViewModel)
+        MyTurnScreen(vm = vmMyTurnViewModel, playersPosition = playersPosition)
     }
 }
 
-fun NavGraphBuilder.otherPlayerTurn(matchViewModel: MatchViewModel) {
+fun NavGraphBuilder.otherPlayerTurn(matchViewModel: MatchViewModel, playersPosition:PlayerRegistry) {
     composable<MatchRoute.OtherPlayerTurn> { backStackEntry ->
         val vmOtherPlayerTurnViewModel: OtherPlayerTurnViewModel = viewModel(
             viewModelStoreOwner = backStackEntry,
@@ -52,10 +53,9 @@ fun NavGraphBuilder.otherPlayerTurn(matchViewModel: MatchViewModel) {
                 stateProvider = matchViewModel
             )
         )
-        OtherPlayerTurnScreen(vm = vmOtherPlayerTurnViewModel)
+        OtherPlayerTurnScreen(vm = vmOtherPlayerTurnViewModel, playersPosition = playersPosition)
     }
 }
-
 
 fun NavGraphBuilder.idle() {
     composable<MatchRoute.Idle> {

@@ -9,12 +9,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import pt.isel.pdm.match.innerComposable.PlayerRegistry
 import pt.isel.pdm.match.ui.GameScreen
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnUiState
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
 
 @Composable
-fun MyTurnScreen(vm: MyTurnViewModel) {
+fun MyTurnScreen(vm: MyTurnViewModel, playersPosition: PlayerRegistry) {
 
     val uiState by vm.stateUi.collectAsStateWithLifecycle()
 

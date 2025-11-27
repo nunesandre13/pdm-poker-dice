@@ -1,6 +1,5 @@
 package pt.isel.pdm.match.screens
 
-import RoundScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,6 +26,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.state.MatchError
+import pt.isel.pdm.match.innerComposable.RoundScreen
 import pt.isel.pdm.match.repository.RepositoryMatchMock
 import pt.isel.pdm.match.services.MatchServiceImp
 import pt.isel.pdm.match.viewModels.MatchStateUi

@@ -24,6 +24,8 @@ sealed interface PlayerRegistry {
 class PlayerRegistryBuilder {
     private val positions = mutableMapOf<Int, Rect>()
 
+    val isEmpty get() =  positions.isEmpty()
+
     fun register(playerId: Int, coordinates: LayoutCoordinates) {
         if (!coordinates.isAttached) return
         val position = coordinates.positionInRoot()

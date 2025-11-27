@@ -72,7 +72,7 @@ class RepositoryMatchMock : RepositoryMatch {
                 players = roundPlayers,
                 ante = 10,
                 totalBet = 40,
-                state = RoundState.Rolling(turn = p1RoundState)
+                state = RoundState.Rolling(turn = p2RoundState)
             )
 
             val matchPlayers = listOf(

@@ -128,7 +128,7 @@ open class MatchViewModel(
                         when (val state = round.state) {
                             is RoundState.Betting -> MatchStateUi.BettingState
                             is RoundState.Rolling -> {
-                                if (state.turn == myPlayer) {
+                                if (state.turn.playerId == myPlayer.id.toInt()) {
                                     MatchStateUi.MyTurnState
                                 } else {
                                     MatchStateUi.OtherPlayerTurn

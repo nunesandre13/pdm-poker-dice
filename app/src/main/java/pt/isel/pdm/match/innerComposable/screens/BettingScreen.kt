@@ -20,12 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pt.isel.pdm.domain.RoundState
+import pt.isel.pdm.match.innerComposable.PlayerRegistry
 import pt.isel.pdm.match.ui.GameScreen
 import pt.isel.pdm.match.viewModels.betting.BettingUiState
 import pt.isel.pdm.match.viewModels.betting.BettingViewModel
 
 @Composable
-fun BettingScreen(vm: BettingViewModel) {
+fun BettingScreen(vm: BettingViewModel,playersPosition:PlayerRegistry) {
     val uiState by vm.stateUi.collectAsStateWithLifecycle()
 
     when (val state = uiState) {
