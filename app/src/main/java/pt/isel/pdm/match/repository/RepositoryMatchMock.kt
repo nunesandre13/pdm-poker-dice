@@ -54,6 +54,16 @@ class RepositoryMatchMock : RepositoryMatch {
                 )
             )
 
+            val dummyHand2 = DicesHand(
+                dices = persistentListOf(
+                    DiceFace.ACE,
+                    DiceFace.KING,
+                    DiceFace.ACE,
+                    DiceFace.TEN,
+                    DiceFace.NINE
+                )
+            )
+
             val p1RoundState = PlayerRoundState(
                 playerId = 101,
                 coins = 90,
@@ -62,7 +72,11 @@ class RepositoryMatchMock : RepositoryMatch {
                     remainingRolls = 1
                 )
             )
-            val p2RoundState = PlayerRoundState(102, 90, PlayerStatus.NotStarted)
+            val p2RoundState = PlayerRoundState(102, 90,playerStatus = PlayerStatus.StillRolling(
+                hand = dummyHand2,
+                remainingRolls = 1
+            ))
+
             val p3RoundState = PlayerRoundState(103, 90, PlayerStatus.NotStarted)
             val p4RoundState = PlayerRoundState(104, 90, PlayerStatus.NotStarted)
 

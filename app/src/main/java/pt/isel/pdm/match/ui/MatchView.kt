@@ -74,41 +74,52 @@ fun GameScreen(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun GameScreenPreview() {
-//    val me = PlayerRoundState(
-//        playerId = 1,
-//        coins = 100,
-//        playerStatus = PlayerStatus.StillRolling(
-//            hand = DicesHand(listOf(DiceFace.ACE, DiceFace.KING, DiceFace.QUEEN, DiceFace.JACK, DiceFace.TEN)),
-//            remainingRolls = 2
-//        )
-//    )
-//    val others = listOf(
-//        PlayerRoundState(2, 0, PlayerStatus.NotStarted),
-//        PlayerRoundState(3, 0, PlayerStatus.NotStarted),
-//        PlayerRoundState(4, 0, PlayerStatus.NotStarted)
-//    )
-//    GameScreen(me = me, others = others, onRollFinished = {})
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GameScreenRollingPreview() {
-//    val me = PlayerRoundState(
-//        playerId = 1,
-//        coins = 85,
-//        playerStatus = PlayerStatus.StillRolling(
-//            hand = DicesHand(listOf(DiceFace.ACE, DiceFace.ACE, DiceFace.KING, DiceFace.QUEEN, DiceFace.JACK)),
-//            remainingRolls = 1
-//        )
-//    )
-//    val others = listOf(
-//        PlayerRoundState(2, 0, PlayerStatus.NotStarted),
-//        PlayerRoundState(3, 0, PlayerStatus.NotStarted),
-//        PlayerRoundState(4, 0, PlayerStatus.NotStarted),
-//        PlayerRoundState(5, 0, PlayerStatus.NotStarted)
-//    )
-//    GameScreen(me = me, others = others, onRollFinished = {})
-//}
+
+@Preview(showBackground = true, name = "GameScreen Preview")
+@Composable
+fun GameScreenPreview() {
+
+    val sampleHandRolling = DicesHand(
+        dices = kotlinx.collections.immutable.persistentListOf(
+            DiceFace.ACE,
+            DiceFace.NINE,
+            DiceFace.JACK,
+            DiceFace.KING,
+            DiceFace.ACE
+        )
+    )
+    val sampleHandFinal = DicesHand(
+        dices = kotlinx.collections.immutable.persistentListOf(
+            DiceFace.ACE,
+            DiceFace.NINE,
+            DiceFace.JACK,
+            DiceFace.KING,
+            DiceFace.ACE
+        )
+    )
+
+    val me = PlayerRoundState(
+        playerId = 1,
+        coins = 12,
+        playerStatus = PlayerStatus.StillRolling(sampleHandRolling)
+    )
+
+    val otherFinal = PlayerRoundState(
+        playerId = 2,
+        coins = 9,
+        playerStatus = PlayerStatus.FinalHand(sampleHandFinal)
+
+    )
+
+    val otherWaiting = PlayerRoundState(
+        playerId = 3,
+        coins = 15,
+        playerStatus = PlayerStatus.NotStarted
+    )
+
+    GameScreen(
+        me = me,
+        others = listOf(otherFinal, otherWaiting),
+        onRollFinished = {}
+    )
+}
