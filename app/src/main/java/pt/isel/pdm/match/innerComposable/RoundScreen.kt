@@ -44,6 +44,7 @@ fun RoundScreen(matchViewModel: MatchViewModel, navController: NavHostController
                 value = validSetup
             }
     }
+
     val roundNavController = rememberNavController()
 
     Box(
@@ -80,7 +81,6 @@ fun RoundScreen(matchViewModel: MatchViewModel, navController: NavHostController
                     }
                 )
             }
-
 
             RoundNavigation(
                 matchViewModel = matchViewModel,

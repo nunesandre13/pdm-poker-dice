@@ -1,5 +1,6 @@
 package pt.isel.pdm.match.ui.playerView
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
+
 
 @Composable
 fun BasePlayerView(
@@ -82,7 +84,7 @@ fun BasePlayerView(
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {
-           content()
+            content()
         }
     }
 }

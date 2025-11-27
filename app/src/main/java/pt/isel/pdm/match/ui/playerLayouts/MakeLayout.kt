@@ -10,7 +10,6 @@ import androidx.constraintlayout.compose.Dimension
 private const val MY_PLAYER_WIDTH_PERCENT = 0.30f
 private const val MY_PLAYER_HEIGHT_PERCENT = 0.35f
 
-
 @Composable
 fun <T> MakeLayout(me: T,others: List<T>, myPlayerComposable: PlayerComposable<T>, otherPlayersComposable: PlayerComposable<T> ){
     ConstraintLayout(
