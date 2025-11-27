@@ -26,6 +26,8 @@ class PlayerRegistryBuilder {
 
     val isEmpty get() =  positions.isEmpty()
 
+    val size get() = positions.size
+
     fun register(playerId: Int, coordinates: LayoutCoordinates) {
         if (!coordinates.isAttached) return
         val position = coordinates.positionInRoot()
@@ -41,9 +43,10 @@ class PlayerRegistryBuilder {
     }
 }
 
-fun Modifier.registerBounds(playerId: Int, registryBuilder: PlayerRegistryBuilder): Modifier =
+fun Modifier.registerBounds(playerId: Int, registryBuilder: PlayerRegistryBuilder, onFinish: ()-> Unit = {}): Modifier =
     this.onGloballyPositioned { coordinates ->
         registryBuilder.register(playerId, coordinates)
+        onFinish()
     }
 
 private data object EmptyPlayerRegistry : PlayerRegistry {

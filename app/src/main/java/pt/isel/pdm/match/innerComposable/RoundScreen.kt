@@ -62,16 +62,15 @@ fun RoundScreen(matchViewModel: MatchViewModel, navController: NavHostController
         val actualMatchSetUp = matchSetUp
         if (actualMatchSetUp != null) {
             val (myId, otherIds) = actualMatchSetUp
-
+            val onFinished: ()-> Unit = {
+                if (playerPositionRegistryBuilder.size ==  otherIds.size + 1 ){
+                    playerRegistry = playerPositionRegistryBuilder.build()
+                }
+            }
             PokerTableSurface(
                 modifier = Modifier
                     .fillMaxWidth(0.78f)
                     .aspectRatio(2f)
-                    .onGloballyPositioned {
-                        if (playerRegistry === PlayerRegistry.Empty && !playerPositionRegistryBuilder.isEmpty) {
-                            playerRegistry = playerPositionRegistryBuilder.build()
-                        }
-                    }
             ) {
                 MakeLayout(
                     me = myId,
@@ -80,14 +79,14 @@ fun RoundScreen(matchViewModel: MatchViewModel, navController: NavHostController
                         BasePlayerView(
                             modifier
                                 .fillMaxSize()
-                                .registerBounds(player, playerPositionRegistryBuilder)
+                                .registerBounds(player, playerPositionRegistryBuilder, onFinished)
                         )
                     },
                     otherPlayersComposable = { player, modifier ->
                         BasePlayerView(
                             modifier
                                 .fillMaxSize()
-                                .registerBounds(player, playerPositionRegistryBuilder)
+                                .registerBounds(player, playerPositionRegistryBuilder, onFinished)
                         )
                     }
                 )
