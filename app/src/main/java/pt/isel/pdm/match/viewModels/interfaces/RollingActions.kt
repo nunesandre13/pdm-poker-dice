@@ -5,4 +5,5 @@ import pt.isel.pdm.domain.DiceFace
 interface RollingActions {
     suspend fun rollDice(dices: List<DiceFace>)
     suspend fun setHand()
+    suspend fun raiseAnte(ante: Int)
 }

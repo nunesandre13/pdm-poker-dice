@@ -18,6 +18,7 @@ import pt.isel.pdm.domain.State
 import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 import pt.isel.pdm.match.viewModels.interfaces.RollingActions
+import pt.isel.pdm.match.viewModels.myTurn.MyTurnUiState.*
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 
@@ -25,6 +26,7 @@ sealed interface MyTurnActionState {
     object Idle : MyTurnActionState
     object Rolling : MyTurnActionState
     object SettingHand : MyTurnActionState
+    object RaisingAnte : MyTurnActionState
 }
 
 data class MyTurnDataState(
@@ -33,17 +35,16 @@ data class MyTurnDataState(
 )
 
 sealed interface MyTurnUiState : State {
-    interface ValidState: MyTurnUiState {
+    sealed interface ValidState: MyTurnUiState {
         val data: MyTurnDataState
         val round: Round
     }
     object InitialLoading : MyTurnUiState
 
     data class Idle(override val data: MyTurnDataState, override val round: Round) : ValidState
-
     data class Rolling(override val data: MyTurnDataState, override val round: Round ) : ValidState
-
     data class SettingHand(override val data: MyTurnDataState, override val round: Round ) : ValidState
+    data class RaisingAnte(override val data: MyTurnDataState, override val round: Round ) : ValidState
 }
 
 sealed class MyTurnError(
@@ -93,9 +94,10 @@ class MyTurnViewModel(
                 }
         }.combine(_actionState) { (round, data), action ->
             when (action) {
-                is MyTurnActionState.Idle -> MyTurnUiState.Idle(data, round)
-                is MyTurnActionState.Rolling -> MyTurnUiState.Rolling(data, round)
-                is MyTurnActionState.SettingHand -> MyTurnUiState.SettingHand(data, round)
+                is MyTurnActionState.Idle -> Idle(data,round)
+                is MyTurnActionState.Rolling -> Rolling(data,round)
+                is MyTurnActionState.SettingHand -> SettingHand(data,round)
+                is MyTurnActionState.RaisingAnte -> RaisingAnte(data,round)
             }
         }.collect { uiState ->
             navigateTo(uiState)
@@ -104,8 +106,8 @@ class MyTurnViewModel(
 
     fun rollDice(dices: List<DiceFace>) {
         when (val state = stateUi.value) {
-            MyTurnUiState.InitialLoading -> {  /* do nothing */  }
-            is MyTurnUiState.ValidState -> {
+            InitialLoading -> {  /* do nothing */  }
+            is ValidState -> {
                 if (state.data.rollsLeft > 0 && _actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.Rolling)) {
                     runAndSetAction(MyTurnActionState.Idle){
                         actions.rollDice(dices)
@@ -117,11 +119,24 @@ class MyTurnViewModel(
 
     fun setHand() {
         when (stateUi.value) {
-            MyTurnUiState.InitialLoading -> { /* do nothing */ }
-            is MyTurnUiState.ValidState -> {
+            InitialLoading -> { /* do nothing */ }
+            is ValidState -> {
                 if (_actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.SettingHand)) {
                     runAndSetAction(MyTurnActionState.Idle){
                         actions.setHand()
+                    }
+                }
+            }
+        }
+    }
+
+    fun raiseAnte(ante: Int) {
+        when(stateUi.value) {
+            InitialLoading -> { /* do nothing */ }
+            is ValidState -> {
+                if (_actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.RaisingAnte)) {
+                    runAndSetAction(MyTurnActionState.Idle){
+                        actions.raiseAnte(ante)
                     }
                 }
             }
@@ -143,7 +158,7 @@ class MyTurnViewModel(
             stateProvider: MatchStateProvider,
             actions: RollingActions,
             base: ViewModelState<MyTurnUiState, MyTurnError> =
-                ViewModelBase(MyTurnUiState.InitialLoading, MyTurnError.SomeError)
+                ViewModelBase(InitialLoading, MyTurnError.SomeError)
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

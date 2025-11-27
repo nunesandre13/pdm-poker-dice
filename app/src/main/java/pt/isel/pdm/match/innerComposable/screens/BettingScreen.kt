@@ -19,81 +19,67 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import pt.isel.pdm.domain.RoundState
 import pt.isel.pdm.match.innerComposable.PlayerRegistry
-import pt.isel.pdm.match.ui.GameScreen
 import pt.isel.pdm.match.viewModels.betting.BettingUiState
 import pt.isel.pdm.match.viewModels.betting.BettingViewModel
 
 @Composable
-fun BettingScreen(vm: BettingViewModel,playersPosition:PlayerRegistry) {
+fun BettingScreen(vm: BettingViewModel, playersPosition:PlayerRegistry) {
     val uiState by vm.stateUi.collectAsStateWithLifecycle()
 
     when (val state = uiState) {
         BettingUiState.InitialLoading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
-
         is BettingUiState.ValidState -> {
-            val round = state.round
+            BettingContent(state = state, vm = vm, playersPosition = playersPosition)
+        }
+    }
+}
 
 
-            val me = round.players.first()
-            val others = round.players.drop(1)
-            val bettingState = round.state as? RoundState.Betting
 
-            Box(modifier = Modifier.fillMaxSize()) {
-
-                GameScreen(
-                    me = me,
-                    others = others,
-                    onRollFinished = {}
-                )
-
-                if (bettingState != null && bettingState.turn.playerId == me.playerId) {
-                    Column(
+@Composable
+fun BettingContent(
+    state: BettingUiState.ValidState,
+    vm: BettingViewModel,
+    playersPosition: PlayerRegistry
+) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        when (state) {
+            is BettingUiState.AwaitingBetting -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text("É a sua vez de apostar.", style = MaterialTheme.typography.headlineMedium)
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Row(
                         modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 32.dp)
-                            .fillMaxWidth(0.8f),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Text(
-                            text = "É a sua vez de apostar. Aposta atual: ${bettingState.amount} moedas.",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            // Botão FOLD
-                            Button(onClick = { vm.fold() }) {
-                                Text("FOLD")
-                            }
-                            // Botão CALL
-                            Button(onClick = { /* vm.call() */ }) {
-                                Text("CALL (${bettingState.amount} moedas)")
-                            }
-                            // Botão RAISE
-                            Button(onClick = { /* vm.raise() */ }) {
-                                Text("RAISE")
-                            }
+                        Button(onClick = { vm.call() }) {
+                            Text("Call")
+                        }
+                        Button(onClick = { vm.fold() }) {
+                            Text("Fold")
                         }
                     }
-                } else if (bettingState != null) {
-                    Text(
-                        text = "Aguardando aposta do Jogador ${bettingState.turn.playerId}...",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 32.dp)
-                    )
                 }
+            }
+            is BettingUiState.Betting -> {
+                CircularProgressIndicator()
+                Text(text = "A processar a sua aposta...")
+            }
+            is BettingUiState.BettingDone -> {
+                Text(text = "Aposta submetida. A aguardar pelos outros jogadores.")
             }
         }
     }
 }
+
