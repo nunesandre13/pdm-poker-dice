@@ -59,6 +59,13 @@ dependencies {
     implementation("androidx.activity:activity-compose")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("com.lightspark:compose-qr-code:1.0.1")
+    implementation("io.ktor:ktor-client-core:3.3.0")
+    implementation("io.ktor:ktor-client-cio:3.3.0")
+    implementation("io.ktor:ktor-client-content-negotiation:3.3.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.0")
+    implementation(platform("io.ktor:ktor-bom:3.3.0"))
+
+
 
     implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")

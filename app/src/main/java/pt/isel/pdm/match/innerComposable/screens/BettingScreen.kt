@@ -39,8 +39,6 @@ fun BettingScreen(vm: BettingViewModel, playersPosition:PlayerRegistry) {
     }
 }
 
-
-
 @Composable
 fun BettingContent(
     state: BettingUiState.ValidState,

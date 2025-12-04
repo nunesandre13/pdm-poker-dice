@@ -114,7 +114,7 @@ open class MatchViewModel(
             }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds),
+                started = SharingStarted.Eagerly,
                 initialValue = MatchState.NoMatch
             )
     }

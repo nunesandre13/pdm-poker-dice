@@ -3,6 +3,7 @@ package pt.isel.pdm.navigation.screens
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import pt.isel.pdm.match.foreGround.RememberForegroundService
 import pt.isel.pdm.navigation.NavigationEvent
 import pt.isel.pdm.navigation.Screens
 
@@ -11,6 +12,6 @@ fun NavGraphBuilder.match(
 ) {
     composable<Screens.Match> { backStackEntry ->
         val matchId = backStackEntry.toRoute<Screens.Match>().matchId
-
+        RememberForegroundService(matchId)
     }
 }

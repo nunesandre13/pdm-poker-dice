@@ -5,10 +5,13 @@ import android.util.Log
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
 import pt.isel.pdm.lobby.repository.RepositoryLobbiesMock
 import pt.isel.pdm.lobby.services.LobbyServiceImp
+import pt.isel.pdm.match.repository.RepositoryMatch
+import pt.isel.pdm.match.repository.RepositoryMatchMock
+import pt.isel.pdm.match.services.MatchServiceImp
+import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.user.services.UsersServiceMock
 
 
-// podia ser um singleton
 class MockConfiguration : Application(), DependenciesContainer {
 
 
@@ -27,4 +30,13 @@ class MockConfiguration : Application(), DependenciesContainer {
     override val lobbyServices by lazy{
         LobbyServiceImp(repoLobby)
     }
+
+    override val matchRepo: RepositoryMatch by lazy {
+        RepositoryMatchMock()
+    }
+
+    override val matchService: MatchServices by lazy {
+        MatchServiceImp(matchRepo)
+    }
+
 }
