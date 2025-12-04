@@ -49,7 +49,7 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
     private fun startSseListener() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                client.sse("$baseUrl/lobbies/events") {
+                client.sse("$baseUrl/lobbies/events?clientId=?") {
                     incoming.collect { event ->
                         event.data?.let { data ->
                             val lobbyResponse = Json.decodeFromString<LobbyResponse>(data)
@@ -77,7 +77,7 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
         return try {
-            val response = client.post("$baseUrl/lobbies/${lobby.id}/join") {
+            val response = client.post("$baseUrl/lobbies/join/${lobby.id}") {
                 contentType(ContentType.Application.Json)
             }
             val joinedLobby = response.body<Lobby>()
@@ -89,7 +89,7 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
 
     override suspend fun leaveLobby(lobby: Lobby): OutCome<Unit, LobbyError> {
         return try {
-            client.post("$baseUrl/lobbies/${lobby.id}/leave") {
+            client.post("$baseUrl/lobbies/leave/${lobby.id}") {
                 contentType(ContentType.Application.Json)
             }
             Success(Unit)

@@ -38,7 +38,7 @@ class UserServicesHttp : UserServices {
 
     override suspend fun login(user: UserLogin): OutCome<User, UserError> {
         return try {
-            val response = client.post("$baseUrl/auth/login") {
+            val response = client.post("$baseUrl/users/token") {
                 contentType(ContentType.Application.Json)
                 setBody(user)
             }
@@ -52,7 +52,7 @@ class UserServicesHttp : UserServices {
 
     override suspend fun logout(): OutCome<Unit, UserError> {
         return try {
-            client.post("$baseUrl/auth/logout")
+            client.post("$baseUrl/logout")
             _currentUser.value = null
             Success(Unit)
         } catch (e: Exception) {
