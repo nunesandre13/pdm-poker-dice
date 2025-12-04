@@ -59,7 +59,7 @@ fun TitleScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "♠ Poker Dice ♣",
+                        text = "Poker Dice",
                         fontSize = 32.sp,
                         color = Color(0xFFFFD700),
                         fontWeight = FontWeight.ExtraBold,
@@ -82,7 +82,7 @@ fun TitleScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             PokerButton(
-                                text = "🎲 Start Match",
+                                text = "Start Match",
                                 onClick = onStartMatchClick,
                                 background = Brush.horizontalGradient(
                                     listOf(Color(0xFFD4AF37), Color(0xFFFFD700))
@@ -90,7 +90,7 @@ fun TitleScreen(
                                 textColor = Color.Black
                             )
                             PokerButton(
-                                text = "ℹ️ About",
+                                text = "About",
                                 onClick = onAboutClick,
                                 background = Brush.horizontalGradient(
                                     listOf(Color(0xFFB22222), Color(0xFF8B0000))
