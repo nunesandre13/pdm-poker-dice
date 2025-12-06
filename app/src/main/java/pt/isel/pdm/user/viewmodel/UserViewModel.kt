@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.domain.state.UserError
@@ -48,11 +49,11 @@ class UserViewModel(
     }
 
 
-    fun createUser(userCreate: UserCreate) {
+    fun createUser(userCreate: UserCreate,inviteCode: InviteCode) {
         viewModelScope.launch {
             runOperation(stateUi.value) {
                 navigateTo(UserScreenState.Idle)
-                userService.createUser(userCreate).onOutCome(
+                userService.createUser(userCreate,inviteCode).onOutCome(
                     onSuccess = { user ->
                         UserScreenState.UserLoggIn(user)
                     },

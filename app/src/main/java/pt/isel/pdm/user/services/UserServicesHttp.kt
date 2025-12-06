@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
+import pt.isel.pdm.domain.AuthenticatedUser
+import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
@@ -60,9 +62,9 @@ class UserServicesHttp : UserServices {
         }
     }
 
-    override suspend fun createUser(user: UserCreate): OutCome<User, UserError> {
+    override suspend fun createUser(user: UserCreate,inviteCode: InviteCode): OutCome<User, UserError> {
         return try {
-            val response = client.post("$baseUrl/users") {
+            val response = client.post("$baseUrl/users/$inviteCode") {
                 contentType(ContentType.Application.Json)
                 setBody(user)
             }
@@ -71,5 +73,9 @@ class UserServicesHttp : UserServices {
         } catch (e: Exception) {
             Failure(UserError.NetworkError)
         }
+    }
+
+    override suspend fun inviteCode(user: AuthenticatedUser): InviteCode {
+        TODO()
     }
 }

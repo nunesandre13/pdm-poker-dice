@@ -30,7 +30,9 @@ fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
     when (stateUi) {
 
         is UserScreenState.CreatingUser -> ViewUserCreateStateFull(
-            onCreateUser = { viewModel.createUser(it) },
+            onCreateUser = { userCreated, invite ->
+                viewModel.createUser(userCreated,invite)
+                           },
             topBarConfig = TopBarConfig.WithBack("Create User") {
                 viewModel.navigateTo(
                     UserScreenState.UserLoggedOut
@@ -49,7 +51,9 @@ fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
                     onShowPassword = actions.onShowPassword,
                     onCreateUser = actions.onCreateUser,
                     emailError = state.emailError,
-                    passwordError = state.passwordError
+                    passwordError = state.passwordError,
+                    inviteCode = state.inviteCode,
+                    onInviteChange = actions.onInviteCodeChange
                 )
             }
         )
@@ -89,6 +93,7 @@ private fun UserScreenError(viewModel: UserViewModel) {
             viewModel.dismissError()
         }
         is UserError.NoError -> {}
+        UserError.NetworkError -> TODO()
     }
 }
 

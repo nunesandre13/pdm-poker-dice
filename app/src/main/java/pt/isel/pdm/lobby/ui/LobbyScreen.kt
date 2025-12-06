@@ -1,5 +1,6 @@
 package pt.isel.pdm.lobby.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -65,9 +66,11 @@ private fun LobbyScreenError(viewModel: LobbyViewModel) {
         is LobbyError.LobbyNotFound, is LobbyError.LobbyFull  -> ErrorPopUp(stateError){
             viewModel.dismissError()
         }
+        LobbyError.NetWorkError -> TODO()
     }
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun PreviewLobbyScreen() {

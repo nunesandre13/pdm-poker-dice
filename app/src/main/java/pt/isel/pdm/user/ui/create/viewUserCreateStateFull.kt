@@ -5,11 +5,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.inputs.EmailInput
+import pt.isel.pdm.domain.inputs.InviteInput
 import pt.isel.pdm.domain.inputs.NameInput
 import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.domain.toEmail
+import pt.isel.pdm.domain.toInviteCode
 import pt.isel.pdm.domain.toName
 import pt.isel.pdm.domain.toPassword
 import pt.isel.pdm.ui.topBar.TopBarConfig
@@ -20,6 +23,7 @@ data class CreateState(
     val name: NameInput?,
     val email: EmailInput?,
     val password: PasswordInput?,
+    val inviteCode: InviteInput?,
     val showPassword: Boolean,
     val emailError: Boolean,
     val passwordError: Boolean
@@ -28,7 +32,9 @@ data class CreateActions(
     val onNameChange: (NameInput) -> Unit,
     val onEmailChange: (EmailInput) -> Unit,
     val onPasswordChange: (PasswordInput) -> Unit,
+    val onInviteCodeChange:(InviteInput) -> Unit,
     val onShowPassword: () -> Unit,
+
     val onCreateUser: () -> Unit
 )
 
@@ -40,13 +46,14 @@ typealias CreateView = @Composable (
 
 @Composable
 fun ViewUserCreateStateFull(
-    onCreateUser: (UserCreate) -> Unit,
+    onCreateUser: (UserCreate, InviteCode) -> Unit,
     createView: CreateView,
     topBarConfig: TopBarConfig,
 ) {
     var name by remember { mutableStateOf<NameInput?>(null) }
     var email by remember { mutableStateOf<EmailInput?>(null) }
     var password by remember { mutableStateOf<PasswordInput?>(null) }
+    var inviteCode by remember { mutableStateOf<InviteInput?>(null) }
     var showPassword by remember { mutableStateOf(false) }
 
     var emailError by remember { mutableStateOf(false) }
@@ -57,6 +64,7 @@ fun ViewUserCreateStateFull(
         name = name,
         email = email,
         password = password,
+        inviteCode = inviteCode,
         showPassword = showPassword,
         emailError = emailError,
         passwordError = passwordError
@@ -70,9 +78,12 @@ fun ViewUserCreateStateFull(
         onPasswordChange = {
             password = it
             passwordError = false },
+        onInviteCodeChange = {
+            inviteCode = it
+                             },
         onShowPassword = { showPassword = !showPassword },
         onCreateUser = {
-            if (name != null && email != null && password != null) {
+            if (name != null && email != null && password != null && inviteCode!= null) {
                 val myName = name?.toName() ?: presentError {
                     return@CreateActions
                 }
@@ -84,7 +95,8 @@ fun ViewUserCreateStateFull(
                     passwordError = true
                     return@CreateActions
                 }
-                onCreateUser(UserCreate(myName, myEmail, myPassword))
+                val myInviteCode= inviteCode?.toInviteCode()
+                onCreateUser(UserCreate(myName, myEmail, myPassword), InviteCode(myInviteCode!!.code))
             }
         }
     )

@@ -3,7 +3,9 @@ package pt.isel.pdm.user.services
 import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import pt.isel.pdm.domain.AuthenticatedUser
 import pt.isel.pdm.domain.Email
+import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserCreate
 import pt.isel.pdm.domain.UserLogin
@@ -33,9 +35,13 @@ class UsersServiceMock : UserServices {
         return Success(Unit)
     }
 
-    override suspend fun createUser(user: UserCreate): OutCome<User, UserError> {
+    override suspend fun createUser(user: UserCreate,inviteCode: InviteCode): OutCome<User, UserError> {
         val newUser = User("122434566", user.name.name, user.email)
         _currentUser.value = newUser
         return Success(newUser)
+    }
+
+    override suspend fun inviteCode(user: AuthenticatedUser): InviteCode {
+        TODO("Not yet implemented")
     }
 }

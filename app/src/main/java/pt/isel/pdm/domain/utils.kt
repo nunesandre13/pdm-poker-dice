@@ -1,6 +1,7 @@
 package pt.isel.pdm.domain
 
 import pt.isel.pdm.domain.inputs.EmailInput
+import pt.isel.pdm.domain.inputs.InviteInput
 import pt.isel.pdm.domain.inputs.NameInput
 import pt.isel.pdm.domain.inputs.PasswordInput
 
@@ -13,3 +14,8 @@ fun NameInput.toName(): Name? =
 
 fun PasswordInput.toPassword(): Password? =
     if (passwordInput.isNotBlank() && passwordInput.length >= 5 && passwordInput.any { it in Password.specialChars }) Password(passwordInput) else null
+
+
+fun InviteInput.toInviteCode() : InviteCode? =
+    if (invite.isNotBlank()) InviteCode(invite) else null
+

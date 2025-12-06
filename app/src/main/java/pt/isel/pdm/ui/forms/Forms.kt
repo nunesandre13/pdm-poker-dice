@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.inputs.EmailInput
+import pt.isel.pdm.domain.inputs.InviteInput
 import pt.isel.pdm.domain.inputs.NameInput
 import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.ui.clickable.ClickableIcon
@@ -87,6 +88,23 @@ fun NamerForm(
         onValueChange = { newValue -> onNameChange(NameInput(newValue)) },
         isError = name == null,
         label = { Text("Name") },
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
+
+@Composable
+fun InviteForm(
+    invite: InviteInput?,
+    onInviteCodeChange: (InviteInput) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = invite ?: "",
+        onValueChange = { newValue ->
+            onInviteCodeChange(InviteInput(newValue))
+        },
+        label = { Text("Invite") },
         modifier = modifier.fillMaxWidth()
     )
 }

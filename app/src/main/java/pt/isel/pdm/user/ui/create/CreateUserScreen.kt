@@ -19,11 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.inputs.EmailInput
+import pt.isel.pdm.domain.inputs.InviteInput
 import pt.isel.pdm.domain.inputs.NameInput
 import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.forms.EmailForm
+import pt.isel.pdm.ui.forms.InviteForm
 import pt.isel.pdm.ui.forms.NamerForm
 import pt.isel.pdm.ui.forms.PasswordForm
 import pt.isel.pdm.ui.topBar.TopBarConfig
@@ -36,6 +39,8 @@ fun CreateUserScreen(
     userName: NameInput? = null,
     onUserNameChange: (NameInput) -> Unit = {},
     password: PasswordInput? = null,
+    inviteCode: InviteInput? =null,
+    onInviteChange:(InviteInput)-> Unit = {},
     onPasswordChange: (PasswordInput) -> Unit = {},
     showPassword: Boolean = false,
     onShowPassword: () -> Unit = {},
@@ -68,6 +73,8 @@ fun CreateUserScreen(
                 NamerForm(name = userName, onNameChange = onUserNameChange)
                 Spacer(modifier = Modifier.height(12.dp))
                 EmailForm(email = email, emailError, onEmailChange = onEmailChange)
+                Spacer(modifier = Modifier.height(12.dp))
+                InviteForm(invite = inviteCode, onInviteCodeChange = onInviteChange)
             }
         },
         {
@@ -138,5 +145,6 @@ fun CreateUserScreenPreview() {
         onCreateUser = {},
         emailError = false,
         passwordError = false,
+        inviteCode = InviteInput("")
     )
 }
