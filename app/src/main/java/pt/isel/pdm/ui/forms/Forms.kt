@@ -100,7 +100,7 @@ fun InviteForm(
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
-        value = invite ?: "",
+        value = invite?.invite ?: "",
         onValueChange = { newValue ->
             onInviteCodeChange(InviteInput(newValue))
         },
