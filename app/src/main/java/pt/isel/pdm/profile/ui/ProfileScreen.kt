@@ -19,7 +19,10 @@ fun  ProfileScreenContent(viewModel: ProfileViewModel, onLogOut: () -> Unit) {
         ProfileScreenState.Idle -> {}
         ProfileScreenState.LoggedOut -> onLogOut()
         is ProfileScreenState.OnProfileView -> ProfileView(
-            user = stateUi.user,{}, { viewModel.logout() }
+            user = stateUi.user,
+            onBack = {},
+            onLogOut={ viewModel.logout() },
+            onGenerateInviteCode = {viewModel.generateInviteCode() }
         )
     }
 }
@@ -27,7 +30,7 @@ fun  ProfileScreenContent(viewModel: ProfileViewModel, onLogOut: () -> Unit) {
 @Composable
 private fun ProfileScreenError(viewModel: ProfileViewModel) {
     when (val stateError = viewModel.errorState.collectAsState().value) {
-        ProfileError.LogoutError-> ErrorPopUp(stateError){
+        ProfileError.LogoutError, ProfileError.InviteCodeError -> ErrorPopUp(stateError){
             viewModel.dismissError()
         }
         ProfileError.NoError -> {}

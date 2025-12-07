@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 import pt.isel.pdm.domain.AuthenticatedUser
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.User
@@ -20,6 +21,7 @@ import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
+import kotlin.collections.get
 
 class UserServicesHttp : UserServices {
     private val baseUrl = "https://api/"
@@ -62,7 +64,7 @@ class UserServicesHttp : UserServices {
         }
     }
 
-    override suspend fun createUser(user: UserCreate,inviteCode: InviteCode): OutCome<User, UserError> {
+    override suspend fun createUser(user: UserCreate, inviteCode: InviteCode): OutCome<User, UserError> {
         return try {
             val response = client.post("$baseUrl/users/$inviteCode") {
                 contentType(ContentType.Application.Json)
@@ -76,6 +78,26 @@ class UserServicesHttp : UserServices {
     }
 
     override suspend fun inviteCode(user: AuthenticatedUser): InviteCode {
-        TODO()
+        return try {
+            val response = client.post("$baseUrl/users/invite") {
+                contentType(ContentType.Application.Json)
+                setBody(user)
+            }
+
+            val bodyText: String = response.body()
+
+            val path = try {
+                val jsonElem = Json.parseToJsonElement(bodyText)
+                val str = if (jsonElem is JsonPrimitive && jsonElem.isString) jsonElem.content else ""
+                str.substringAfterLast('/')
+            } catch (e: Exception) {
+                ""
+            }
+
+            val code = path.ifEmpty { "" }
+            InviteCode(code)
+        } catch (e: Exception) {
+            InviteCode("")
+        }
     }
 }

@@ -12,4 +12,6 @@ sealed class ProfileScreenState: State {
 sealed class ProfileError(override val message: String?): DomainError {
     data object NoError: ProfileError(null)
     data object LogoutError: ProfileError("Error doing the logout")
+
+    data object InviteCodeError:ProfileError("Error generating invite code")
 }

@@ -24,7 +24,8 @@ import pt.isel.pdm.ui.topBar.TopBarConfig
 fun ProfileView(
     user: User,
     onBack: () -> Unit = {},
-    onLogOut:() -> Unit = {}
+    onLogOut:() -> Unit = {},
+    onGenerateInviteCode: () -> Unit = {},
 ) {
     DefaultBackGround(
         {
@@ -80,6 +81,16 @@ fun ProfileView(
                     StatCard("Games", "24")
                     StatCard("Wins", "12")
                     StatCard("Rank", "#5")
+                }
+                Button(
+                    onClick = onGenerateInviteCode,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text("Generate Invite Code")
                 }
                 Button(
                     onClick = onLogOut,

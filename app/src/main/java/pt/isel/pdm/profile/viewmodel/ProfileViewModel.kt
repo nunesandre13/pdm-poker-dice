@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import pt.isel.pdm.domain.AuthenticatedUser
+import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.state.ProfileError
 import pt.isel.pdm.domain.state.ProfileScreenState
 import pt.isel.pdm.user.services.UserServices
@@ -42,6 +44,30 @@ class ProfileViewModel(
                 )
             }.let { navigateTo(it) }
         }
+    }
+
+    fun generateInviteCode() {
+        viewModelScope.launch {
+            (stateUi.value as? ProfileScreenState.OnProfileView)?.user?.let { user ->
+                val authenticatedUser = user.toAuthenticatedUser()
+                navigateTo(ProfileScreenState.Idle)
+                val inviteCode = userService.inviteCode(authenticatedUser)
+
+                if (inviteCode.code.isEmpty()) {
+                    emitError(ProfileError.InviteCodeError)
+                    navigateTo(ProfileScreenState.OnProfileView(user))
+                } else {
+                    navigateTo(ProfileScreenState.OnProfileView(user))
+                }
+            }
+        }
+    }
+
+    fun User.toAuthenticatedUser(): AuthenticatedUser {
+        return AuthenticatedUser(
+            user =User(id = this.id, name = this.name, email = this.email),
+            token = ""
+        )
     }
 
     companion object {
