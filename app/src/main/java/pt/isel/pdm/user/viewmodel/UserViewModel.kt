@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.InviteCode
-import pt.isel.pdm.domain.UserCreate
-import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.domain.state.UserScreenState
+import pt.isel.pdm.dto.user.UserCreateTokenInputModel
+import pt.isel.pdm.dto.user.UserInput
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
@@ -31,13 +31,15 @@ class UserViewModel(
         }
     }
 
-    fun login(userLogin: UserLogin) {
+    fun login(userLogin: UserCreateTokenInputModel) {
         viewModelScope.launch {
             runOperation(stateUi.value) {
                 navigateTo(UserScreenState.Idle)
                 userService.login(userLogin).onOutCome(
-                    onSuccess = { user ->
-                        UserScreenState.UserLoggIn(user)
+                    onSuccess = {
+                        userService.getCurrentUser()?.let { loggedUser ->
+                            UserScreenState.UserLoggIn(loggedUser)
+                        }
                     },
                     onFailure = { error ->
                         emitError(error)
@@ -49,7 +51,7 @@ class UserViewModel(
     }
 
 
-    fun createUser(userCreate: UserCreate,inviteCode: InviteCode) {
+    fun createUser(userCreate: UserInput,inviteCode: InviteCode) {
         viewModelScope.launch {
             runOperation(stateUi.value) {
                 navigateTo(UserScreenState.Idle)

@@ -11,20 +11,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonPrimitive
 import pt.isel.pdm.domain.AuthenticatedUser
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.User
-import pt.isel.pdm.domain.UserCreate
-import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.domain.state.UserError
+import pt.isel.pdm.dto.user.InvitationUrlModel
+import pt.isel.pdm.dto.user.UserCreateTokenInputModel
+import pt.isel.pdm.dto.user.UserCreateTokenOutputModel
+import pt.isel.pdm.dto.user.UserInput
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
-import kotlin.collections.get
+import pt.isel.pdm.utils.onOutCome
 
 class UserServicesHttp : UserServices {
-    private val baseUrl = "https://api/"
+    private val baseUrl = "https://localhost:4000/api"
+    private var token: String? = null
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -37,22 +39,29 @@ class UserServicesHttp : UserServices {
 
     private val _currentUser = MutableStateFlow<User?>(null)
     override val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
-
     override fun getCurrentUser(): User? = currentUser.value
 
-    override suspend fun login(user: UserLogin): OutCome<User, UserError> {
-        return try {
+    override suspend fun login(user: UserCreateTokenInputModel): OutCome<UserCreateTokenOutputModel, UserError> =
+        try {
             val response = client.post("$baseUrl/users/token") {
                 contentType(ContentType.Application.Json)
                 setBody(user)
             }
-            val loggedUser = response.body<User>()
-            _currentUser.value = loggedUser
-            Success(loggedUser)
+            val tokenModel = response.body<UserCreateTokenOutputModel>()
+            token = tokenModel.token
+
+            val logged = client.get("$baseUrl/me") {
+                token?.let { token ->
+                    this.header("Authorization", "Bearer $token")
+                }
+
+            }.body<User>()
+
+            _currentUser.value = logged
+            Success(tokenModel)
         } catch (e: Exception) {
             Failure(UserError.NetworkError)
         }
-    }
 
     override suspend fun logout(): OutCome<Unit, UserError> {
         return try {
@@ -64,40 +73,44 @@ class UserServicesHttp : UserServices {
         }
     }
 
-    override suspend fun createUser(user: UserCreate, inviteCode: InviteCode): OutCome<User, UserError> {
+    override suspend fun createUser(
+        user: UserInput,
+        inviteCode: InviteCode
+    ): OutCome<User, UserError> {
         return try {
-            val response = client.post("$baseUrl/users/$inviteCode") {
+            val response = client.post("$baseUrl/users/${inviteCode.code}") {
                 contentType(ContentType.Application.Json)
                 setBody(user)
             }
-            val createdUser = response.body<User>()
-            Success(createdUser)
+
+            if (response.status == HttpStatusCode.Created) {
+                val loginInput = UserCreateTokenInputModel(user.email, user.password.password)
+                return login(loginInput).onOutCome(
+                    onSuccess = {
+                        Success(currentUser.value!!)
+                    },
+                    onFailure = {
+                        Failure(UserError.ErrorLogin)
+                    }
+                )
+            } else {
+                Failure(UserError.ErrorCreateUser)
+            }
         } catch (e: Exception) {
             Failure(UserError.NetworkError)
         }
     }
 
-    override suspend fun inviteCode(user: AuthenticatedUser): InviteCode {
-        return try {
-            val response = client.post("$baseUrl/users/invite") {
-                contentType(ContentType.Application.Json)
-                setBody(user)
-            }
 
-            val bodyText: String = response.body()
 
-            val path = try {
-                val jsonElem = Json.parseToJsonElement(bodyText)
-                val str = if (jsonElem is JsonPrimitive && jsonElem.isString) jsonElem.content else ""
-                str.substringAfterLast('/')
-            } catch (e: Exception) {
-                ""
-            }
-
-            val code = path.ifEmpty { "" }
+    override suspend fun inviteCode(user: AuthenticatedUser): InviteCode =
+        try {
+            val response = client.post("$baseUrl/users/invite")
+            val responseUrl = response.body<InvitationUrlModel>()
+            val code = responseUrl.url.substringAfterLast('/')
             InviteCode(code)
         } catch (e: Exception) {
             InviteCode("")
         }
-    }
+
 }

@@ -10,6 +10,7 @@ import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.domain.toEmail
 import pt.isel.pdm.domain.toPassword
+import pt.isel.pdm.dto.user.UserCreateTokenInputModel
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.utils.presentError
 
@@ -39,7 +40,7 @@ typealias LoginView = @Composable (
 
 @Composable
 fun ViewUserLoginStateFull(
-    onLogin: (UserLogin) -> Unit,
+    onLogin: (UserCreateTokenInputModel) -> Unit,
     onSignUp: () -> Unit,
     loginView: LoginView,
     topBarConfig: TopBarConfig,
@@ -73,7 +74,7 @@ fun ViewUserLoginStateFull(
                     emailError = true
                     return@LoginActions
                 }
-                onLogin(UserLogin(myEmail,myPassword))
+                onLogin(UserCreateTokenInputModel(myEmail.email,myPassword.password))
             }
         },
         onSignUp = onSignUp

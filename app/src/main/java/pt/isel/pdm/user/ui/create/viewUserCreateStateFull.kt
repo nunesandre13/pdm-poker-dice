@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.UserCreate
+import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.InviteInput
 import pt.isel.pdm.domain.inputs.NameInput
@@ -15,6 +16,7 @@ import pt.isel.pdm.domain.toEmail
 import pt.isel.pdm.domain.toInviteCode
 import pt.isel.pdm.domain.toName
 import pt.isel.pdm.domain.toPassword
+import pt.isel.pdm.dto.user.UserInput
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.utils.presentError
 
@@ -46,7 +48,7 @@ typealias CreateView = @Composable (
 
 @Composable
 fun ViewUserCreateStateFull(
-    onCreateUser: (UserCreate, InviteCode) -> Unit,
+    onCreateUser: (UserInput, InviteCode) -> Unit,
     createView: CreateView,
     topBarConfig: TopBarConfig,
 ) {
@@ -96,7 +98,7 @@ fun ViewUserCreateStateFull(
                     return@CreateActions
                 }
                 val myInviteCode= inviteCode?.toInviteCode()
-                onCreateUser(UserCreate(myName, myEmail, myPassword), InviteCode(myInviteCode!!.code))
+                onCreateUser(UserInput(myName.name, myEmail.email, myPassword), InviteCode(myInviteCode!!.code))
             }
         }
     )
