@@ -79,7 +79,7 @@ fun ProfileView(
                     inviteCode?.let { code ->
                         ProfileCard(
                             icon = { Icon(Icons.Default.Share, contentDescription = "Invite Code") },
-                            title = "Invite Code (Tap to Copy)", // Indica a ação
+                            title = "Invite Code (Tap to Copy)",
                             value = code,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -94,8 +94,8 @@ fun ProfileView(
                 Button(
                     onClick = onGenerateInviteCode,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
                     ),
                     shape = MaterialTheme.shapes.small
                 ) {

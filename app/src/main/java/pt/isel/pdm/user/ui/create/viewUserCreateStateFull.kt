@@ -100,7 +100,7 @@ fun ViewUserCreateStateFull(
                 }
                 val myInviteCode= inviteCode?.toInviteCode()
                 Log.d("USER_DATA_CHECK", "Name: ${myName.name}, Email: ${myEmail.email}, InviteCode: ${myInviteCode!!.code}, Password: ${myPassword.password}")
-                onCreateUser(UserInput(myName.name, myEmail.email, myPassword), InviteCode(myInviteCode!!.code))
+                onCreateUser(UserInput(myName.name, myEmail.email, myPassword.password), InviteCode(myInviteCode!!.code))
             }
         }
     )

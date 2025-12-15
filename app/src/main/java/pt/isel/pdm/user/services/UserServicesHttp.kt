@@ -12,11 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
-import pt.isel.pdm.domain.AuthenticatedUser
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.state.UserError
-import pt.isel.pdm.dto.user.InvitationUrlModel
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel
 import pt.isel.pdm.dto.user.UserCreateTokenOutputModel
 import pt.isel.pdm.dto.user.UserInput
@@ -46,7 +44,6 @@ class UserServicesHttp : UserServices {
 
     override suspend fun login(user: UserCreateTokenInputModel): OutCome<UserCreateTokenOutputModel, UserError> =
         try {
-            logger("entering on the login")
             val response = client.post("$baseUrl/users/token") {
                 contentType(ContentType.Application.Json)
                 setBody(user)
@@ -60,11 +57,9 @@ class UserServicesHttp : UserServices {
                 }
 
             }.body<UserOut>()
-
             _currentUser.value = logged.toDomain()
             Success(tokenModel)
         } catch (e: Exception) {
-            logger(e.message ?: "SOME ERROR")
             Failure(UserError.NetworkError)
         }
 
@@ -83,21 +78,14 @@ class UserServicesHttp : UserServices {
         inviteCode: InviteCode
     ): OutCome<User, UserError> {
         return try {
-            logger("created onninvite")
-
-            val fullUrl = "$baseUrl/users/${inviteCode.code}"
-
-            logger("POST URL Completo: $fullUrl")
-            logger("Dados Enviados - Email: ${user.email}, Name: ${user.name}, Password Length: ${user.password.password}")
-
-
-            val response = client.post(fullUrl) {
+            val url = "$baseUrl/users/${inviteCode.code}"
+            val response = client.post(url) {
                 contentType(ContentType.Application.Json)
                 setBody(user)
             }
 
             if (response.status == HttpStatusCode.Created) {
-                val loginInput = UserCreateTokenInputModel(user.email, user.password.password)
+                val loginInput = UserCreateTokenInputModel(user.email, user.password)
                 return login(loginInput).onOutCome(
                     onSuccess = {
                         Success(currentUser.value!!)
@@ -107,32 +95,23 @@ class UserServicesHttp : UserServices {
                     }
                 )
             } else {
-                logger("CREATE FAILED. HTTP Status: ${response.status.value}")
                 Failure(UserError.ErrorCreateUser)
             }
         } catch (e: Exception) {
-            logger(e.message ?: "SOME ERROR")
             Failure(UserError.NetworkError)
         }
     }
 
-    override suspend fun inviteCode(): InviteCode =
-        try {
-            logger("enter onninvite")
+    override suspend fun inviteCode(): InviteCode = try {
             val response = client.post("$baseUrl/users/invite") {
                 token?.let { token ->
                     header("Authorization", "Bearer $token")
                 }
             }
-            val responseUrlString = response.body<String>()
+            val responseUrlString = response.body<String>().trim('"')
             val code = responseUrlString.substringAfterLast('/')
             InviteCode(code)
         } catch (e: Exception) {
-            logger(e.message ?: "SOME ERROR")
             InviteCode("")
         }
-
-    private fun logger(str: String) {
-        Log.v("HTTP_USERS", str)
-    }
 }
