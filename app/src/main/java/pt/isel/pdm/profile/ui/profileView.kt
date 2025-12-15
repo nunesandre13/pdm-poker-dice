@@ -1,16 +1,22 @@
 package pt.isel.pdm.profile.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.domain.User
@@ -23,10 +29,13 @@ import pt.isel.pdm.ui.topBar.TopBarConfig
 @Composable
 fun ProfileView(
     user: User,
+    inviteCode: String? = null,
     onBack: () -> Unit = {},
     onLogOut:() -> Unit = {},
     onGenerateInviteCode: () -> Unit = {},
 ) {
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
     DefaultBackGround(
         {
             Column(
@@ -67,21 +76,21 @@ fun ProfileView(
                         value = user.email.email,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    inviteCode?.let { code ->
+                        ProfileCard(
+                            icon = { Icon(Icons.Default.Share, contentDescription = "Invite Code") },
+                            title = "Invite Code (Tap to Copy)", // Indica a ação
+                            value = code,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    clipboardManager.setText(AnnotatedString(code))
+                                    Toast.makeText(context, "Invite Code copied!", Toast.LENGTH_SHORT).show()
+                                }
+                        )
+                    }
                 }
-                Text(
-                    text = "Statistics",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    StatCard("Games", "24")
-                    StatCard("Wins", "12")
-                    StatCard("Rank", "#5")
-                }
                 Button(
                     onClick = onGenerateInviteCode,
                     colors = ButtonDefaults.buttonColors(

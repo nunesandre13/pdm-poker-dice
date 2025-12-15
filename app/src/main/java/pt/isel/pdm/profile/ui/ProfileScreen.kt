@@ -20,6 +20,7 @@ fun  ProfileScreenContent(viewModel: ProfileViewModel, onLogOut: () -> Unit) {
         ProfileScreenState.LoggedOut -> onLogOut()
         is ProfileScreenState.OnProfileView -> ProfileView(
             user = stateUi.user,
+            inviteCode = stateUi.inviteCode,
             onBack = {},
             onLogOut={ viewModel.logout() },
             onGenerateInviteCode = {viewModel.generateInviteCode() }

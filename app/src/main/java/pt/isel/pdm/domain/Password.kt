@@ -1,5 +1,8 @@
 package pt.isel.pdm.domain
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Password(val password: String) {
     companion object {
         val specialChars = setOf(

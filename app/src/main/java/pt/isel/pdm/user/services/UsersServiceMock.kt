@@ -46,7 +46,7 @@ class UsersServiceMock : UserServices {
         return Success(newUser)
     }
 
-    override suspend fun inviteCode(user: AuthenticatedUser): InviteCode {
+    override suspend fun inviteCode(): InviteCode {
         TODO("Not yet implemented")
     }
 }

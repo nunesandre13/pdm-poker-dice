@@ -22,7 +22,7 @@ class ProfileViewModel(
     init {
         viewModelScope.launch {
             userService.getCurrentUser()?.let { user ->
-                navigateTo(ProfileScreenState.OnProfileView(user))
+                navigateTo(ProfileScreenState.OnProfileView(user,))
             } ?: run {
                 navigateTo(ProfileScreenState.LoggedOut)
             }
@@ -48,17 +48,19 @@ class ProfileViewModel(
 
     fun generateInviteCode() {
         viewModelScope.launch {
-            (stateUi.value as? ProfileScreenState.OnProfileView)?.user?.let { user ->
-                val authenticatedUser = user.toAuthenticatedUser()
-                navigateTo(ProfileScreenState.Idle)
-                val inviteCode = userService.inviteCode(authenticatedUser)
+            (stateUi.value as? ProfileScreenState.OnProfileView)?.let { currentState ->
+                val user = currentState.user
 
-                if (inviteCode.code.isEmpty()) {
+                navigateTo(ProfileScreenState.Idle)
+                val inviteCode = userService.inviteCode()
+
+                val newState = if (inviteCode.code.isEmpty()) {
                     emitError(ProfileError.InviteCodeError)
-                    navigateTo(ProfileScreenState.OnProfileView(user))
+                    ProfileScreenState.OnProfileView(user, currentState.inviteCode)
                 } else {
-                    navigateTo(ProfileScreenState.OnProfileView(user))
+                    ProfileScreenState.OnProfileView(user, inviteCode = inviteCode.code)
                 }
+                navigateTo(newState)
             }
         }
     }

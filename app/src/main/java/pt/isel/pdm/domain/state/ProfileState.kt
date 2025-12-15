@@ -6,7 +6,7 @@ import pt.isel.pdm.domain.User
 
 sealed class ProfileScreenState: State {
     data object Idle: ProfileScreenState()
-    data class OnProfileView(val user: User): ProfileScreenState()
+    data class OnProfileView(val user: User,val inviteCode: String? = null): ProfileScreenState()
     data object LoggedOut: ProfileScreenState()
 }
 sealed class ProfileError(override val message: String?): DomainError {

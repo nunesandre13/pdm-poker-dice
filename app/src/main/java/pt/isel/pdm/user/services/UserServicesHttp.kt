@@ -83,7 +83,15 @@ class UserServicesHttp : UserServices {
         inviteCode: InviteCode
     ): OutCome<User, UserError> {
         return try {
-            val response = client.post("$baseUrl/users/${inviteCode.code}") {
+            logger("created onninvite")
+
+            val fullUrl = "$baseUrl/users/${inviteCode.code}"
+
+            logger("POST URL Completo: $fullUrl")
+            logger("Dados Enviados - Email: ${user.email}, Name: ${user.name}, Password Length: ${user.password.password}")
+
+
+            val response = client.post(fullUrl) {
                 contentType(ContentType.Application.Json)
                 setBody(user)
             }
@@ -99,6 +107,7 @@ class UserServicesHttp : UserServices {
                     }
                 )
             } else {
+                logger("CREATE FAILED. HTTP Status: ${response.status.value}")
                 Failure(UserError.ErrorCreateUser)
             }
         } catch (e: Exception) {
@@ -107,13 +116,19 @@ class UserServicesHttp : UserServices {
         }
     }
 
-    override suspend fun inviteCode(user: AuthenticatedUser): InviteCode =
+    override suspend fun inviteCode(): InviteCode =
         try {
-            val response = client.post("$baseUrl/users/invite")
-            val responseUrl = response.body<InvitationUrlModel>()
-            val code = responseUrl.url.substringAfterLast('/')
+            logger("enter onninvite")
+            val response = client.post("$baseUrl/users/invite") {
+                token?.let { token ->
+                    header("Authorization", "Bearer $token")
+                }
+            }
+            val responseUrlString = response.body<String>()
+            val code = responseUrlString.substringAfterLast('/')
             InviteCode(code)
         } catch (e: Exception) {
+            logger(e.message ?: "SOME ERROR")
             InviteCode("")
         }
 

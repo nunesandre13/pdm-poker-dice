@@ -21,6 +21,6 @@ interface UserServices {
     suspend fun login(user: UserCreateTokenInputModel): OutCome<UserCreateTokenOutputModel, UserError>
     suspend fun logout(): OutCome<Unit, UserError>
     suspend fun createUser(user: UserInput,inviteCode: InviteCode): OutCome<User, UserError>
-    suspend fun inviteCode(user: AuthenticatedUser): InviteCode
+    suspend fun inviteCode(): InviteCode
 
 }

@@ -1,5 +1,6 @@
 package pt.isel.pdm.user.ui.create
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -98,6 +99,7 @@ fun ViewUserCreateStateFull(
                     return@CreateActions
                 }
                 val myInviteCode= inviteCode?.toInviteCode()
+                Log.d("USER_DATA_CHECK", "Name: ${myName.name}, Email: ${myEmail.email}, InviteCode: ${myInviteCode!!.code}, Password: ${myPassword.password}")
                 onCreateUser(UserInput(myName.name, myEmail.email, myPassword), InviteCode(myInviteCode!!.code))
             }
         }
