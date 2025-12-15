@@ -9,6 +9,7 @@ import pt.isel.pdm.match.repository.RepositoryMatch
 import pt.isel.pdm.match.repository.RepositoryMatchMock
 import pt.isel.pdm.match.services.MatchServiceImp
 import pt.isel.pdm.match.services.MatchServices
+import pt.isel.pdm.user.services.UserServicesHttp
 import pt.isel.pdm.user.services.UsersServiceMock
 
 
@@ -24,7 +25,7 @@ class MockConfiguration : Application(), DependenciesContainer {
     }
 
     override val userServices by lazy{
-        UsersServiceMock()
+        UserServicesHttp()
     }
 
     override val lobbyServices by lazy{

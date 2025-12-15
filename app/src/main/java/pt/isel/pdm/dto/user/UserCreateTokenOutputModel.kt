@@ -1,8 +1,8 @@
 package pt.isel.pdm.dto.user
 
-import kotlinx.serialization.Serializer
+import kotlinx.serialization.Serializable
 
-@Serializer
+@Serializable
 data class UserCreateTokenOutputModel(
     val token: String,
 )

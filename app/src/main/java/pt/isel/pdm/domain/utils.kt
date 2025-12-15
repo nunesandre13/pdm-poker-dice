@@ -12,8 +12,8 @@ fun NameInput.toName(): Name? =
     if (name.isNotBlank() ) Name(name) else null
 
 
-fun PasswordInput.toPassword(): Password? =
-    if (passwordInput.isNotBlank() && passwordInput.length >= 5 && passwordInput.any { it in Password.specialChars }) Password(passwordInput) else null
+fun PasswordInput.toPassword(): Password? = Password(passwordInput)
+//    if (passwordInput.isNotBlank() && passwordInput.length >= 5 && passwordInput.any { it in Password.specialChars }) Password(passwordInput) else null
 
 
 fun InviteInput.toInviteCode() : InviteCode? =

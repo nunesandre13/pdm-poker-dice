@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
@@ -104,8 +105,8 @@ fun LobbyScreenPreview() {
         id = 1,
         maxPlayers = 4,
         players = listOf(
-            User("1233", "Alice", Email("Alice@gamail.com")),
-            User("1234444", "Bob", Email("Bob@gmail.com"))
+            User("1233", Name("Alice"), Email("Alice@gamail.com")),
+            User("1234444", Name("Bob"), Email("Bob@gmail.com"))
         )
     )
     LobbyView(

@@ -32,7 +32,7 @@ fun PlayerItem(user: User) {
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val initials = (user.name.split(" ").mapNotNull { it.firstOrNull()?.toString() }.take(2).joinToString("")).uppercase()
+        val initials = (user.name.name.split(" ").mapNotNull { it.firstOrNull()?.toString() }.take(2).joinToString("")).uppercase()
         Box(
             modifier = Modifier
                 .size(44.dp)
@@ -47,7 +47,7 @@ fun PlayerItem(user: User) {
             }
         }
         Column(modifier = Modifier.weight(1f)) {
-            Text(user.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+            Text(user.name.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
         }
     }
 }

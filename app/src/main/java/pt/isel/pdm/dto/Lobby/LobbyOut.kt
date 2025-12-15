@@ -3,7 +3,7 @@ package pt.isel.pdm.dto.Lobby
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LobbyIn(
+data class LobbyOut(
     val name: String,
     val description: String,
     val maxPlayer: Int,

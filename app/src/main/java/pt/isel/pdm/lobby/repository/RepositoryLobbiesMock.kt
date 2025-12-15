@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.state.LobbyError
@@ -44,7 +45,7 @@ class RepositoryLobbiesMock: RepositoryLobbies {
             while (true){
                 delay(3.seconds)
                 send(LobbyResponse.AddedLobby(Lobby("Lobby_number $id",id,2,listOf(
-                    User("1","Gui", Email("gui@gmail"))
+                    User("1", Name("Gui"), Email("gui@gmail"))
                 ))))
                 id++
             }
@@ -76,7 +77,7 @@ class RepositoryLobbiesMock: RepositoryLobbies {
             return Failure(LobbyError.LobbyFull)
         }
 
-        val updatedLobby = lobby.copy(players = lobby.players + User("newUser", "New Player", Email("new@player.com")))
+        val updatedLobby = lobby.copy(players = lobby.players + User("newUser", Name("New Player"), Email("new@player.com")))
         scope.launch {
             shFlow.emit(LobbyResponse.UpdatedLobby(updatedLobby))
         }

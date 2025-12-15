@@ -42,13 +42,13 @@ fun ProfileView(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = user.name.first().uppercase(),
+                        text = user.name.name.first().uppercase(),
                         style = MaterialTheme.typography.headlineLarge,
                         color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center
                     )
                 }
-                Text(text = user.name, style = MaterialTheme.typography.titleLarge)
+                Text(text = user.name.name, style = MaterialTheme.typography.titleLarge)
 
 
                 Column(
@@ -58,7 +58,7 @@ fun ProfileView(
                     ProfileCard(
                         icon = { Icon(Icons.Default.Person, contentDescription = "Name") },
                         title = "Name",
-                        value = user.name,
+                        value = user.name.name,
                         modifier = Modifier.fillMaxWidth()
                     )
                     ProfileCard(

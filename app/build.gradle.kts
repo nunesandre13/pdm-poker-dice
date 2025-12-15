@@ -62,7 +62,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:3.3.0")
     implementation("io.ktor:ktor-client-cio:3.3.0")
     implementation("io.ktor:ktor-client-content-negotiation:3.3.0")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.3")
     implementation(platform("io.ktor:ktor-bom:3.3.0"))
 
 

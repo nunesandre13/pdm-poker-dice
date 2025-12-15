@@ -11,10 +11,10 @@ data class Password(val password: String) {
         const val MIN_CHARACTERS = 5
     }
     init {
-        val hasSpecial = password.any { it in specialChars }
-
-        require(password.isNotBlank() && password.length >= MIN_CHARACTERS && hasSpecial) {
-            "A password tem de ter pelo menos $MIN_CHARACTERS caracteres e conter pelo menos um carácter especial"
-        }
+//        val hasSpecial = password.any { it in specialChars }
+//
+//        require(password.isNotBlank() && password.length >= MIN_CHARACTERS && hasSpecial) {
+//            "A password tem de ter pelo menos $MIN_CHARACTERS caracteres e conter pelo menos um carácter especial"
+//        }
     }
 }

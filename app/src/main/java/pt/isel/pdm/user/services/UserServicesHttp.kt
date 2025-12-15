@@ -1,5 +1,6 @@
 package pt.isel.pdm.user.services
 
+import android.util.Log
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -19,13 +20,15 @@ import pt.isel.pdm.dto.user.InvitationUrlModel
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel
 import pt.isel.pdm.dto.user.UserCreateTokenOutputModel
 import pt.isel.pdm.dto.user.UserInput
+import pt.isel.pdm.dto.user.UserOut
+import pt.isel.pdm.dto.user.toDomain
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import pt.isel.pdm.utils.onOutCome
 
 class UserServicesHttp : UserServices {
-    private val baseUrl = "https://localhost:4000/api"
+    private val baseUrl = "http://10.0.2.2:4000/api"
     private var token: String? = null
 
     private val client = HttpClient(CIO) {
@@ -43,6 +46,7 @@ class UserServicesHttp : UserServices {
 
     override suspend fun login(user: UserCreateTokenInputModel): OutCome<UserCreateTokenOutputModel, UserError> =
         try {
+            logger("entering on the login")
             val response = client.post("$baseUrl/users/token") {
                 contentType(ContentType.Application.Json)
                 setBody(user)
@@ -55,11 +59,12 @@ class UserServicesHttp : UserServices {
                     this.header("Authorization", "Bearer $token")
                 }
 
-            }.body<User>()
+            }.body<UserOut>()
 
-            _currentUser.value = logged
+            _currentUser.value = logged.toDomain()
             Success(tokenModel)
         } catch (e: Exception) {
+            logger(e.message ?: "SOME ERROR")
             Failure(UserError.NetworkError)
         }
 
@@ -97,11 +102,10 @@ class UserServicesHttp : UserServices {
                 Failure(UserError.ErrorCreateUser)
             }
         } catch (e: Exception) {
+            logger(e.message ?: "SOME ERROR")
             Failure(UserError.NetworkError)
         }
     }
-
-
 
     override suspend fun inviteCode(user: AuthenticatedUser): InviteCode =
         try {
@@ -113,4 +117,7 @@ class UserServicesHttp : UserServices {
             InviteCode("")
         }
 
+    private fun logger(str: String) {
+        Log.v("HTTP_USERS", str)
+    }
 }
