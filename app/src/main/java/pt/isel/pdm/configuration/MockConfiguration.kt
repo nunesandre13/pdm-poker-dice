@@ -3,6 +3,7 @@ package pt.isel.pdm.configuration
 import android.app.Application
 import android.util.Log
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
+import pt.isel.pdm.lobby.repository.RepositoryLobbiesHttp
 import pt.isel.pdm.lobby.repository.RepositoryLobbiesMock
 import pt.isel.pdm.lobby.services.LobbyServiceImp
 import pt.isel.pdm.match.repository.RepositoryMatch
@@ -21,7 +22,7 @@ class MockConfiguration : Application(), DependenciesContainer {
     }
 
     override val repoLobby: RepositoryLobbies by lazy {
-        RepositoryLobbiesMock()
+        RepositoryLobbiesHttp()
     }
 
     override val userServices by lazy{

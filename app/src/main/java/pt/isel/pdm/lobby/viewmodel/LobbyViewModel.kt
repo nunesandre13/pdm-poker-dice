@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Lobby
@@ -16,6 +17,7 @@ import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 import pt.isel.pdm.utils.onOutCome
 import pt.isel.pdm.utils.runOperation
+import kotlin.toString
 
 class LobbyViewModel(
     private val lobbyService: LobbyServices,
@@ -31,6 +33,11 @@ class LobbyViewModel(
 
     init {
         goToLobbiesList()
+        viewModelScope.launch { userService.currentUser.filterNotNull()
+                .collect { user ->
+                    lobbyService.setClientId(user.id)
+                }
+        }
     }
 
     fun joinLobby(lobby: Lobby) {

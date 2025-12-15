@@ -11,6 +11,8 @@ interface RepositoryLobbies {
 
     val lobbySseListener: SharedFlow<LobbyResponse>
 
+    fun setClientId(id: String)
+
     suspend fun createNewLobby(lobby: Lobby): OutCome<Lobby, LobbyError>
 
     suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError>

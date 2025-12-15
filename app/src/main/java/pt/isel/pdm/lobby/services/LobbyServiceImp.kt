@@ -41,6 +41,8 @@ class LobbyServiceImp(private val repository: RepositoryLobbies) : LobbyServices
         )
     }
 
+    override fun setClientId(id: String) = repository.setClientId(id)
+
     override suspend fun joinLobby(lobby: Lobby): OutCome<StateFlow<Lobby>, LobbyError> {
         return repository.joinLobby(lobby).onOutCome(
             onSuccess = { Success(it.lobbyUpdate()) },

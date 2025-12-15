@@ -34,9 +34,9 @@ sealed interface LobbyEvent {
 }
 
 fun LobbyEvent.toDomain(): LobbyResponse = when(this){
-    is LobbyEvent.AddedLobbyResponse -> TODO()
-    is LobbyEvent.LobbyIsInGame -> TODO()
-    is LobbyEvent.LobbyResponseList -> TODO()
-    is LobbyEvent.RemovedLobbyResponse -> TODO()
-    is LobbyEvent.UpdatedLobbyResponse -> TODO()
+    is LobbyEvent.AddedLobbyResponse -> LobbyResponse.AddedLobby(lobby.toDomain())
+    is LobbyEvent.LobbyIsInGame -> LobbyResponse.LobbyFull(lobby.toDomain())
+    is LobbyEvent.LobbyResponseList -> LobbyResponse.Lobbies(listLobbies.map { it.toDomain() })
+    is LobbyEvent.RemovedLobbyResponse -> LobbyResponse.RemovedLobby(lobby.toDomain())
+    is LobbyEvent.UpdatedLobbyResponse -> LobbyResponse.UpdatedLobby(lobby.toDomain())
 }
