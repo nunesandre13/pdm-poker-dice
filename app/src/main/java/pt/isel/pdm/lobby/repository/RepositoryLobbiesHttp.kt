@@ -22,12 +22,14 @@ import kotlinx.serialization.json.Json
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
+import pt.isel.pdm.dto.Lobby.LobbyEvent
+import pt.isel.pdm.dto.Lobby.toDomain
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 
 class RepositoryLobbiesHttp : RepositoryLobbies {
-    private val baseUrl = "https://"
+    private val baseUrl = "https://localhost:4000/api"
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -52,8 +54,8 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
                 client.sse("$baseUrl/lobbies/events?clientId=?") {
                     incoming.collect { event ->
                         event.data?.let { data ->
-                            val lobbyResponse = Json.decodeFromString<LobbyResponse>(data)
-                            _lobbySseListener.emit(lobbyResponse)
+                            val lobbyResponse = Json.decodeFromString<LobbyEvent>(data)
+                            _lobbySseListener.emit(lobbyResponse.toDomain())
                         }
                     }
                 }
