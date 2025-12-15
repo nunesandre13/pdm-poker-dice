@@ -1,6 +1,5 @@
 package pt.isel.pdm.lobby.repository
 
-
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -14,10 +13,13 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.serialization.json.Json
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.events.LobbyResponse
@@ -41,28 +43,33 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
         install(SSE)
     }
 
-    private val _lobbySseListener = MutableSharedFlow<LobbyResponse>()
-    override val lobbySseListener: SharedFlow<LobbyResponse> = _lobbySseListener.asSharedFlow()
+    private val scope = CoroutineScope(Dispatchers.IO)
 
-    init {
-        startSseListener()
-    }
-
-    private fun startSseListener() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                client.sse("$baseUrl/lobbies/events?clientId=?") {
-                    incoming.collect { event ->
-                        event.data?.let { data ->
+    override val lobbySseListener: SharedFlow<LobbyResponse> = flow {
+        client.sse("$baseUrl/lobbies/events?clientId=?") {
+            incoming.collect { event ->
+                if (event.event == "LOBBY_EVENT") {
+                    event.data?.let { data ->
+                        try {
                             val lobbyResponse = Json.decodeFromString<LobbyEvent>(data)
-                            _lobbySseListener.emit(lobbyResponse.toDomain())
+                            emit(lobbyResponse.toDomain())
+                        } catch (e: Exception) {
+
                         }
                     }
                 }
-            } catch (e: Exception) {
             }
         }
-    }
+    }.retry(2){ cause ->
+            delay(2000)
+            true
+        }
+        .flowOn(Dispatchers.IO)
+        .shareIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+            replay = 0
+        )
 
     override suspend fun createNewLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
         return try {
