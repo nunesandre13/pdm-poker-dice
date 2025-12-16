@@ -10,6 +10,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
@@ -21,10 +22,10 @@ import pt.isel.pdm.domain.PlayerStatus
 import pt.isel.pdm.match.innerComposable.DisplayOtherPlayersStatusOverlay
 import pt.isel.pdm.match.innerComposable.DrawCup
 import pt.isel.pdm.match.innerComposable.PlayerRegistry
-import pt.isel.pdm.match.ui.dices.DisplayClickableDices
-import pt.isel.pdm.match.ui.dices.DisplayStaticDices
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnUiState
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
+import androidx.compose.runtime.mutableStateOf
+
 @Composable
 fun MyTurnScreen(vm: MyTurnViewModel, playersPosition: PlayerRegistry) {
     val uiState by vm.stateUi.collectAsStateWithLifecycle()
@@ -51,13 +52,13 @@ fun MyTurnContent(
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when (state) {
             is MyTurnUiState.Idle -> {
+                val dices by remember { mutableStateOf(emptyList<DiceFace>()) }
                 DisplayOtherPlayersStatusOverlay(
                     players = players,
-                    playersPosition = playersPosition
+                    playersPosition = playersPosition,
+                    collectMyDices = {diceFace ->  if (diceFace in dices) dices - diceFace else dices + diceFace }
                 )
-                Box(modifier = Modifier.clickable(onClick = { vm.rollDice(emptyList())}).fillMaxSize()){
-                    DrawCup()
-                }
+                Box(modifier = Modifier.clickable(onClick = { vm.rollDice(dices)}).fillMaxSize()){ DrawCup() }
                 Button(
                     onClick = { TODO()},
                     modifier = Modifier

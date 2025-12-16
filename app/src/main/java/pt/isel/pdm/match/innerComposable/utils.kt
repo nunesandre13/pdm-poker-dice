@@ -32,6 +32,7 @@ import pt.isel.pdm.domain.PlayerRoundState
 import pt.isel.pdm.domain.PlayerStatus
 import pt.isel.pdm.match.ui.animation.DiceRollAnimationOverlay
 import pt.isel.pdm.match.ui.animation.RolledDices
+import pt.isel.pdm.match.ui.dices.DisplayClickableDices
 import pt.isel.pdm.match.ui.dices.DisplayStaticDices
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnUiState
 import kotlin.time.Duration.Companion.seconds
@@ -72,7 +73,8 @@ fun Modifier.applyBounds(bounds: Rect): Modifier {
 @Composable
 fun DisplayOtherPlayersStatusOverlay(
     players: List<PlayerRoundState>,
-    playersPosition: PlayerRegistry
+    playersPosition: PlayerRegistry,
+    collectMyDices: ((DiceFace) -> Unit)? = null
 ) {
     DrawOnPlayers(
         players = players,
@@ -85,19 +87,16 @@ fun DisplayOtherPlayersStatusOverlay(
                     color = Color.White,
                     style = MaterialTheme.typography.bodySmall
                 )
-
                 val hand = when (val s = playerState.playerStatus) {
                     is PlayerStatus.StillRolling -> s.hand
                     is PlayerStatus.FinalHand -> s.hand
-                    PlayerStatus.NotStarted,
-                    PlayerStatus.PassRound -> null
+                    PlayerStatus.NotStarted, PlayerStatus.PassRound -> null
                 }
 
                 if (hand?.dices?.isNotEmpty() == true) {
-                    DisplayStaticDices(
-                        dicesHand = hand,
-                        size = 80.dp
-                    )
+                    collectMyDices?.let {
+                        DisplayClickableDices(dicesHand = hand, onClick = collectMyDices, size = 80.dp)
+                    } ?: DisplayStaticDices(dicesHand = hand, size = 80.dp)
                 }
             }
         }

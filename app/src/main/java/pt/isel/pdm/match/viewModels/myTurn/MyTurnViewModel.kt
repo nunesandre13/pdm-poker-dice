@@ -98,14 +98,11 @@ class MyTurnViewModel(
 
     private suspend fun transformStateInUiState() {
         actualRound.mapNotNull { round ->
-            logger("mapping round in MyTurnViewModel: $round")
             (round.state as? RoundState.Rolling)
                 ?.extractDataFromRoundState()?.let { data ->
-                    logger("emitting round state in MyTurnViewModel: $round")
                     round to data
                 }
         }.combine(_actionState) { (round, data), action ->
-            logger("combining round $round with action $action")
             when (action) {
                 is MyTurnActionState.Idle -> Idle(data,round)
                 is MyTurnActionState.Rolling -> Rolling(data,round)
@@ -113,7 +110,6 @@ class MyTurnViewModel(
                 is MyTurnActionState.RaisingAnte -> RaisingAnte(data,round)
             }
         }.collect { uiState ->
-            logger("navigate to $uiState")
             navigateTo(uiState)
         }
     }
@@ -122,12 +118,9 @@ class MyTurnViewModel(
         when (val state = stateUi.value) {
             InitialLoading -> {  /* do nothing */  }
             is ValidState -> {
-                logger("trying to roll dices: $dices with state: $state")
                 if (state.data.rollsLeft > 0 && _actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.Rolling)) {
                     viewModelScope.launch {
-                        logger("rolling dices: $dices")
                         if (actions.rollDice(dices)) {
-                            logger("started Animation")
                             starRollingAnimation = true
                         }
                     }
@@ -140,7 +133,6 @@ class MyTurnViewModel(
         private set
 
     fun stopRollingAnimation(){
-        logger("Stopping Animation")
         starRollingAnimation = false
         if (_actionState.value == MyTurnActionState.Rolling){
             _actionState.value = MyTurnActionState.Idle
@@ -151,10 +143,8 @@ class MyTurnViewModel(
         when (stateUi.value) {
             InitialLoading -> { /* do nothing */ }
             is ValidState -> {
-                logger("trying to set hand with state: $stateUi")
                 if (_actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.SettingHand)) {
                     runAndSetAction(MyTurnActionState.Idle){
-                        logger("setting hand")
                         actions.setHand()
                     }
                 }
