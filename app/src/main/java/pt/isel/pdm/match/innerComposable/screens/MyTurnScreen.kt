@@ -55,9 +55,9 @@ fun MyTurnContent(
                     players = players,
                     playersPosition = playersPosition
                 )
-                Box(modifier = Modifier.clickable(onClick = { vm.rollDice(emptyList())}),
-                    contentAlignment = Alignment.BottomEnd
-                ) {DrawCup()}
+                Box(modifier = Modifier.clickable(onClick = { vm.rollDice(emptyList())}).fillMaxSize()){
+                    DrawCup()
+                }
                 Button(
                     onClick = { TODO()},
                     modifier = Modifier

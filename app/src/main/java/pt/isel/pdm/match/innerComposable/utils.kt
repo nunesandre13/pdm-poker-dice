@@ -118,22 +118,20 @@ fun DrawCup(
         is PlayerStatus.StillRolling -> status.hand
     }
 
-    var rollDices by remember { mutableStateOf(startAnimmation) }
-
     var showRolledDices by remember { mutableStateOf(false) }
 
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
         DiceRollAnimationOverlay(
-            startAnimation = rollDices,
+            startAnimation = startAnimmation,
             onAnimationFinished = {
                 onRollFinished()
             },
             onClick = onClick
         )
 
-        LaunchedEffect(rollDices) {
-            if (rollDices) {
+        LaunchedEffect(startAnimmation) {
+            if (startAnimmation) {
                 delay(1.6.seconds)
                 showRolledDices = true
                 delay(2.seconds)
@@ -154,13 +152,15 @@ fun DrawCup(
 fun DrawCup(
     modifier: Modifier = Modifier
 ) {
-    Image(
-        painter = painterResource(id = R.drawable.cup),
-        contentDescription = "Dice cup",
-        modifier = modifier
-            .padding(16.dp)
-            .size(130.dp)
-    )
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
+        Image(
+            painter = painterResource(id = R.drawable.cup),
+            contentDescription = "Dice cup",
+            modifier = modifier
+                .padding(16.dp)
+                .size(130.dp)
+        )
+    }
 }
 
 @Preview(showBackground = true)
