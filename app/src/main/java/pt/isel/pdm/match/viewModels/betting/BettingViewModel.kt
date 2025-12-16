@@ -52,12 +52,6 @@ class BettingViewModel(
 ) : ViewModel(),
     ViewModelState<BettingUiState, BettingError> by baseViewModel {
 
-    init {
-        viewModelScope.launch {
-            transformStateInUiState()
-        }
-    }
-
     private val actualRound = stateProvider.matchState
         .filterIsInstance<MatchState.ActualMatch>()
         .map { it.match.actualRound }
@@ -113,6 +107,12 @@ class BettingViewModel(
             } finally {
                 _actionState.value = endAction
             }
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            transformStateInUiState()
         }
     }
 

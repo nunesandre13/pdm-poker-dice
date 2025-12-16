@@ -52,11 +52,11 @@ fun BettingContent(
             players = players,
             playersPosition = playersPosition
         )
+
         DrawCup(modifier = Modifier.align(Alignment.BottomEnd))
 
         when (state) {
-            is BettingUiState.AwaitingBetting -> {}
-            is BettingUiState.Betting -> {
+            is BettingUiState.AwaitingBetting -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxSize()
@@ -73,6 +73,9 @@ fun BettingContent(
                         }
                     }
                 }
+            }
+            is BettingUiState.Betting -> {
+
             }
             is BettingUiState.BettingDone -> {
                 Column(

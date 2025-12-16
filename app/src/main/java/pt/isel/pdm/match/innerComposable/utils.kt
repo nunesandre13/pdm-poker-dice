@@ -119,7 +119,6 @@ fun DrawCup(
 
     var showRolledDices by remember { mutableStateOf(false) }
 
-
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
         DiceRollAnimationOverlay(
             startAnimation = startAnimmation,
@@ -151,15 +150,13 @@ fun DrawCup(
 fun DrawCup(
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
-        Image(
-            painter = painterResource(id = R.drawable.cup),
-            contentDescription = "Dice cup",
-            modifier = modifier
-                .padding(16.dp)
-                .size(130.dp)
-        )
-    }
+    Image(
+        painter = painterResource(id = R.drawable.cup),
+        contentDescription = "Dice cup",
+        modifier = modifier
+            .padding(16.dp)
+            .size(130.dp)
+    )
 }
 
 @Preview(showBackground = true)
