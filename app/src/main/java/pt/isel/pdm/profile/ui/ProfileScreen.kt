@@ -8,20 +8,20 @@ import pt.isel.pdm.profile.viewmodel.ProfileViewModel
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel, onLogOut: () -> Unit) {
-    ProfileScreenContent(viewModel, onLogOut)
+fun ProfileScreen(viewModel: ProfileViewModel, onLogOut: () -> Unit,onBack: () -> Unit) {
+    ProfileScreenContent(viewModel, onLogOut,onBack)
     ProfileScreenError(viewModel)
 }
 
 @Composable
-fun  ProfileScreenContent(viewModel: ProfileViewModel, onLogOut: () -> Unit) {
+fun  ProfileScreenContent(viewModel: ProfileViewModel, onLogOut: () -> Unit,onBack: () -> Unit) {
     when (val stateUi = viewModel.stateUi.collectAsState().value) {
         ProfileScreenState.Idle -> {}
         ProfileScreenState.LoggedOut -> onLogOut()
         is ProfileScreenState.OnProfileView -> ProfileView(
             user = stateUi.user,
             inviteCode = stateUi.inviteCode,
-            onBack = {},
+            onBack = onBack,
             onLogOut={ viewModel.logout() },
             onGenerateInviteCode = {viewModel.generateInviteCode() }
         )

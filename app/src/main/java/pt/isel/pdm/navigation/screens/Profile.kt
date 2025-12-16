@@ -21,7 +21,8 @@ fun NavGraphBuilder.profile(
         )
         ProfileScreen(
             viewModel = profileVm,
-            onLogOut = { onNavigation(NavigationEvent.Navigate(Screens.Home)) }
+            onLogOut = { onNavigation(NavigationEvent.Navigate(Screens.Home)) },
+            onBack = { onNavigation(NavigationEvent.Navigate(Screens.Title)) }
         )
     }
 }
