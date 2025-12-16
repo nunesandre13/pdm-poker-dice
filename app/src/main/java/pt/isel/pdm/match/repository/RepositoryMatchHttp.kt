@@ -35,7 +35,6 @@ import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.domain.toDto
 import pt.isel.pdm.dto.Match.MatchEvent
 import pt.isel.pdm.dto.Match.MatchIn
-import pt.isel.pdm.dto.Match.toDomain
 import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
