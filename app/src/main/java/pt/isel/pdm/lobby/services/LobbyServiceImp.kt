@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
@@ -65,7 +66,8 @@ class LobbyServiceImp(private val repository: RepositoryLobbies, private val use
             when (value) {
                 is LobbyResponse.Lobbies -> value.lobbies
                 is LobbyResponse.AddedLobby -> acc + value.lobby
-                is LobbyResponse.RemovedLobby -> acc.filterNot { it.id == value.lobby.id && it.players.none { player -> player.id == user() } }
+                is LobbyResponse.RemovedLobby -> acc.filterNot {
+                    it.id == value.lobby.id && (it.players.none { player -> player.id == user() } || it.lobbyStatus == LobbyStatus.CLOSED) }
                 is LobbyResponse.UpdatedLobby -> acc.map { if (it.id == value.lobby.id) value.lobby else it }
                 else -> acc
             }

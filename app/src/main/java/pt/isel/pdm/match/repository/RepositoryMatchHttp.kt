@@ -1,11 +1,14 @@
-package pt.isel.pdm.lobby.repository
+package pt.isel.pdm.match.repository
 
 import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.sse.SSE
 import io.ktor.client.plugins.sse.sse
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -15,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
@@ -24,25 +28,21 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.serialization.json.Json
-import pt.isel.pdm.domain.Lobby
-import pt.isel.pdm.domain.events.LobbyResponse
-import pt.isel.pdm.domain.state.LobbyError
-import pt.isel.pdm.dto.Lobby.LobbyEvent
-import pt.isel.pdm.dto.Lobby.toDomain
+import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.PlayCommand
+import pt.isel.pdm.domain.events.MatchResponse
+import pt.isel.pdm.domain.state.MatchError
+import pt.isel.pdm.domain.toDto
+import pt.isel.pdm.dto.Match.MatchEvent
+import pt.isel.pdm.dto.Match.MatchIn
+import pt.isel.pdm.dto.Match.toDomain
+import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
-import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.request.header
-import kotlinx.coroutines.flow.distinctUntilChanged
-import pt.isel.pdm.domain.LobbyCreation
-import pt.isel.pdm.domain.toDto
-import pt.isel.pdm.dto.Lobby.LobbyIn
-import pt.isel.pdm.user.UserPreferences
 import java.util.concurrent.TimeUnit
 
-class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : RepositoryLobbies {
+class RepositoryMatchHttp(private val userPreferences: UserPreferences) : RepositoryMatch {
     private val baseUrl = "http://10.0.2.2:4000/api"
 
     private val client = HttpClient(OkHttp) {
@@ -64,27 +64,30 @@ class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : Repo
         }
         install(SSE)
     }
+
     private val scope = CoroutineScope(Dispatchers.IO)
-    val currentClientId = userPreferences.userId.distinctUntilChanged()
+    private val currentMatchId = MutableStateFlow<Int?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val lobbySseListener: SharedFlow<LobbyResponse> = currentClientId
+    private val matchSseFlow: SharedFlow<OutCome<MatchResponse, MatchError>> = currentMatchId
         .filterNotNull()
-        .flatMapLatest { clientId ->
+        .flatMapLatest { matchId ->
             flow {
-                logger("created connection")
-                client.sse("$baseUrl/lobbies/events?clientId=$clientId") {
+                logger("created SSE connection for match: $matchId")
+                val clientId = userPreferences.getUserId() ?: return@flow
+                client.sse("$baseUrl/sse/match/$matchId/events?clientId=$clientId") {
                     incoming.collect { event ->
-                        logger("EVENT:" + event.event)
+                        logger("EVENT: ${event.event}")
                         logger("new event: ${event.data}")
-                        if (event.event == "LOBBY_EVENT") {
+                        if (event.event == "MATCH_EVENT") {
                             event.data?.let { data ->
                                 try {
-                                    val lobbyResponse = Json.decodeFromString<LobbyEvent>(data)
-                                    logger("decoded:$lobbyResponse")
-                                    this@flow.emit(lobbyResponse.toDomain())
+                                    val matchResponse = Json.decodeFromString<MatchEvent>(data)
+                                    logger("decoded: $matchResponse")
+                                    emit(Success(matchResponse.toDomain()))
                                 } catch (e: Exception) {
-                                    logger(e.toString())
+                                    logger("decode error: $e")
+                                    emit(Failure(MatchError.SomeError))
                                 }
                             }
                         }
@@ -93,9 +96,9 @@ class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : Repo
             }
         }
         .retry(2) { cause ->
-            logger(cause.toString())
+            logger("SSE error: $cause")
             delay(2000)
-            logger("trying to reconnect")
+            logger("trying to reconnect...")
             true
         }
         .flowOn(Dispatchers.IO)
@@ -105,53 +108,46 @@ class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : Repo
             replay = 0
         )
 
-    override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Lobby, LobbyError> {
+    override fun matchSseListener(matchId: Int): SharedFlow<OutCome<MatchResponse, MatchError>> {
+        currentMatchId.value = matchId
+        return matchSseFlow
+    }
+
+    override suspend fun play(command: PlayCommand): OutCome<Match, MatchError> {
         return try {
-            val response = client.post("$baseUrl/lobbies") {
+            val response = client.post("$baseUrl/match/${currentMatchId.value}/play") {
                 contentType(ContentType.Application.Json)
                 userPreferences.getToken()?.let { t ->
                     header("Authorization", "Bearer $t")
-                } ?: return@post
-                setBody(lobby.toDto())
+                } ?: return Failure(MatchError.SomeError)
+                setBody(command.toDto())
             }
-            val createdLobby = response.body<LobbyIn>().toDomain()
-            Success(createdLobby)
+            val match = response.body<MatchIn>().toDomain()
+            Success(match)
         } catch (e: Exception) {
-            Failure(LobbyError.NetWorkError)
+            logger("play error: $e")
+            Failure(MatchError.SomeError)
         }
     }
 
-    override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
+    override suspend fun leaveMatch(match: Match): OutCome<Match, MatchError> {
         return try {
-            val response = client.post("$baseUrl/lobbies/join/${lobby.id}") {
+            val response = client.post("$baseUrl/match/${match.id}/leave") {
                 contentType(ContentType.Application.Json)
                 userPreferences.getToken()?.let { t ->
                     header("Authorization", "Bearer $t")
-                } ?: return@post
+                } ?: return Failure(MatchError.SomeError)
             }
-            val joinedLobby = response.body<LobbyIn>().toDomain()
-            Success(joinedLobby)
+            val updatedMatch = response.body<MatchIn>().toDomain()
+            currentMatchId.value = null
+            Success(updatedMatch)
         } catch (e: Exception) {
-            Failure(LobbyError.NetWorkError)
-        }
-    }
-
-    override suspend fun leaveLobby(lobby: Lobby): OutCome<Unit, LobbyError> {
-        return try {
-            client.post("$baseUrl/lobbies/leave/${lobby.id}") {
-                contentType(ContentType.Application.Json)
-                userPreferences.getToken()?.let { t ->
-                    header("Authorization", "Bearer $t")
-                } ?: return@post
-            }
-            Success(Unit)
-        } catch (e: Exception) {
-            Failure(LobbyError.NetWorkError)
+            logger("leaveMatch error: $e")
+            Failure(MatchError.SomeError)
         }
     }
 
     private fun logger(str: String) {
-        Log.v("HTTP_LOBBIES", str)
+        Log.v("HTTP_MATCH", str)
     }
-
 }
