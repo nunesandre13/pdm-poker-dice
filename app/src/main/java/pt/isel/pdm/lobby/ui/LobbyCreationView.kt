@@ -21,8 +21,12 @@ fun LobbyCreationView(
     onBack: () -> Unit = {},
 ) {
     var lobbyName by rememberSaveable { mutableStateOf("") }
-    var numOfPlayers by rememberSaveable { mutableStateOf("") }
-    val playersCount = numOfPlayers.toIntOrNull()
+    var description by rememberSaveable { mutableStateOf("") }
+    var minPlayers by rememberSaveable { mutableStateOf("") }
+    var maxPlayers by rememberSaveable { mutableStateOf("") }
+    var numberOfRounds by rememberSaveable { mutableStateOf("") }
+    var firstAnte by rememberSaveable { mutableStateOf("") }
+
 
     DefaultBackGround(
         {
@@ -41,7 +45,7 @@ fun LobbyCreationView(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Set a name and the maximum number of players",
+                    text = "Set lobby details",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center
@@ -61,16 +65,46 @@ fun LobbyCreationView(
                     onValueChange = { lobbyName = it },
                     label = { Text("Lobby name") },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
-                    value = numOfPlayers,
-                    onValueChange = { numOfPlayers = it.filter { ch -> ch.isDigit() } },
-                    label = { Text("Number of players") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
 
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = minPlayers,
+                    onValueChange = { minPlayers = it.filter(Char::isDigit) },
+                    label = { Text("Minimum players") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = maxPlayers,
+                    onValueChange = { maxPlayers = it.filter(Char::isDigit) },
+                    label = { Text("Maximum players") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = numberOfRounds,
+                    onValueChange = { numberOfRounds = it.filter(Char::isDigit) },
+                    label = { Text("Number of rounds") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = firstAnte,
+                    onValueChange = { firstAnte = it.filter(Char::isDigit) },
+                    label = { Text("First ante") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         },
@@ -91,17 +125,16 @@ fun LobbyCreationView(
                 ) {
                     Button(
                         onClick = {
-                            playersCount?.let {
-                                onCreateLobby(
-                                    LobbyCreation(
-                                        name = lobbyName.trim(),
-                                        description = "",
-                                        maxPlayer = 1,
-                                        minPlayer = 1,
-                                        numberOfRounds = 1,
-                                        firstAnte = 1)
+                            onCreateLobby(
+                                LobbyCreation(
+                                    name = lobbyName.trim(),
+                                    description = description.trim(),
+                                    minPlayer = minPlayers.toIntOrNull()!!,
+                                    maxPlayer = maxPlayers.toIntOrNull()!!,
+                                    numberOfRounds = numberOfRounds.toIntOrNull()!!,
+                                    firstAnte = firstAnte.toIntOrNull()!!
                                 )
-                            }
+                            )
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,

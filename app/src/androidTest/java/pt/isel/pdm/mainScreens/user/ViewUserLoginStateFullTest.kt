@@ -11,6 +11,7 @@ import org.junit.Test
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Password
 import pt.isel.pdm.domain.UserLogin
+import pt.isel.pdm.dto.user.UserCreateTokenInputModel
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.ui.login.LoginScreen
 import pt.isel.pdm.user.ui.login.ViewUserLoginStateFull
@@ -22,7 +23,7 @@ class ViewUserLoginStateFullTest {
 
     @Test
     fun login_with_valid_credentials_triggers_onLogin() {
-        var capturedUserLogin: UserLogin? = null
+        var capturedUserLogin: UserCreateTokenInputModel? = null
         val expectedEmail = "test@example.com"
         val expectedPassword = "password123!"
 
