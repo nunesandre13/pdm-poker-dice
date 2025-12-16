@@ -1,7 +1,6 @@
 package pt.isel.pdm.match.innerComposable
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,12 +22,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
 import kotlinx.coroutines.delay
@@ -38,6 +33,7 @@ import pt.isel.pdm.domain.PlayerStatus
 import pt.isel.pdm.match.ui.animation.DiceRollAnimationOverlay
 import pt.isel.pdm.match.ui.animation.RolledDices
 import pt.isel.pdm.match.ui.dices.DisplayStaticDices
+import pt.isel.pdm.match.viewModels.myTurn.MyTurnUiState
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -108,37 +104,38 @@ fun DisplayOtherPlayersStatusOverlay(
     }
 }
 
-
 @Composable
 fun DrawCup(
     me: PlayerRoundState,
+    startAnimmation: Boolean,
+    onClick: ()-> Unit,
     onRollFinished: () -> Unit
 ) {
+    val dices = when(val status = me.playerStatus){
+        is PlayerStatus.FinalHand -> status.hand
+        PlayerStatus.NotStarted -> null
+        PlayerStatus.PassRound -> null
+        is PlayerStatus.StillRolling -> status.hand
+    }
 
-    var rollDices by remember { mutableStateOf(false) }
+    var rollDices by remember { mutableStateOf(startAnimmation) }
 
     var showRolledDices by remember { mutableStateOf(false) }
 
-    val dices: List<DiceFace> = when (val status = me.playerStatus) {
-        is PlayerStatus.StillRolling -> status.hand.dices
-        is PlayerStatus.FinalHand -> status.hand.dices
-        PlayerStatus.NotStarted,
-        PlayerStatus.PassRound -> emptyList()
-    }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         DiceRollAnimationOverlay(
             startAnimation = rollDices,
             onAnimationFinished = {
                 onRollFinished()
-            }
+            },
+            onClick = onClick
         )
 
         LaunchedEffect(rollDices) {
             if (rollDices) {
                 delay(1.6.seconds)
                 showRolledDices = true
-                rollDices = false
                 delay(2.seconds)
                 showRolledDices = false
             }
@@ -146,7 +143,7 @@ fun DrawCup(
 
         if (showRolledDices) {
             RolledDices(
-                dices = dices,
+                dices = dices?.dices ?: emptyList(),
                 modifier = Modifier.size(width = 170.dp, height = 100.dp).offset((-50).dp, (-50).dp)
             )
         }

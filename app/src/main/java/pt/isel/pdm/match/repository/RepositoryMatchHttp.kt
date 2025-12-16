@@ -74,7 +74,7 @@ class RepositoryMatchHttp(private val userPreferences: UserPreferences) : Reposi
             flow {
                 logger("created SSE connection for match: $matchId")
                 val clientId = userPreferences.getUserId() ?: return@flow
-                client.sse("$baseUrl/sse/match/$matchId/events?clientId=$clientId") {
+                client.sse("$baseUrl/sse/match/$matchId/events?playerId=$clientId") {
                     incoming.collect { event ->
                         logger("EVENT: ${event.event}")
                         logger("new event: ${event.data}")
@@ -83,7 +83,7 @@ class RepositoryMatchHttp(private val userPreferences: UserPreferences) : Reposi
                                 try {
                                     val matchResponse = Json.decodeFromString<MatchEvent>(data)
                                     logger("decoded: $matchResponse")
-                                    emit(Success(matchResponse.toDomain()))
+                                    this@flow.emit(Success(matchResponse.toDomain()))
                                 } catch (e: Exception) {
                                     logger("decode error: $e")
                                     emit(Failure(MatchError.SomeError))

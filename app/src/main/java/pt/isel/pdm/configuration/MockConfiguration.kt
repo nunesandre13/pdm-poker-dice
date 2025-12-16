@@ -7,6 +7,7 @@ import pt.isel.pdm.lobby.repository.RepositoryLobbiesHttp
 import pt.isel.pdm.lobby.repository.RepositoryLobbiesMock
 import pt.isel.pdm.lobby.services.LobbyServiceImp
 import pt.isel.pdm.match.repository.RepositoryMatch
+import pt.isel.pdm.match.repository.RepositoryMatchHttp
 import pt.isel.pdm.match.repository.RepositoryMatchMock
 import pt.isel.pdm.match.services.MatchServiceImp
 import pt.isel.pdm.match.services.MatchServices
@@ -39,7 +40,7 @@ class MockConfiguration : Application(), DependenciesContainer {
     }
 
     override val matchRepo: RepositoryMatch by lazy {
-        RepositoryMatchMock()
+        RepositoryMatchHttp(userPreferences)
     }
 
     override val matchService: MatchServices by lazy {

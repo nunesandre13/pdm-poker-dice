@@ -23,6 +23,6 @@ fun RootApp(appConfiguration: DependenciesContainer) {
         about(navController::onNavigateEvent)
         lobby(appConfiguration, navController::onNavigateEvent)
         profile(appConfiguration, navController::onNavigateEvent)
-        match(navController::onNavigateEvent)
+        match(appConfiguration,navController::onNavigateEvent)
     }
 }

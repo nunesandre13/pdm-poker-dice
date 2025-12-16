@@ -1,8 +1,8 @@
 package pt.isel.pdm.match.viewModels.interfaces
 
 interface BettingActions {
-    suspend fun raiseAnte(ante: Int)
-    suspend fun passTurn()
-    suspend fun call()
-    suspend fun fold()
+    suspend fun raiseAnte(ante: Int): Boolean
+    suspend fun passTurn() : Boolean
+    suspend fun call() : Boolean
+    suspend fun fold() : Boolean
 }

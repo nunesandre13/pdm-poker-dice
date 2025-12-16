@@ -1,5 +1,6 @@
 package pt.isel.pdm.match.innerComposable.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -47,19 +48,6 @@ fun MyTurnContent(
 ) {
     val players = state.round.players
     val me = players.first()
-
-    val dices: List<DiceFace> = when (val status = me.playerStatus) {
-        is PlayerStatus.StillRolling -> status.hand.dices
-        is PlayerStatus.FinalHand -> status.hand.dices
-        PlayerStatus.NotStarted, PlayerStatus.PassRound -> emptyList()
-    }
-
-    val hand = when (val s = me.playerStatus) {
-        is PlayerStatus.StillRolling -> s.hand
-        is PlayerStatus.FinalHand -> s.hand
-        PlayerStatus.NotStarted, PlayerStatus.PassRound -> null
-    }
-
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when (state) {
             is MyTurnUiState.Idle -> {
@@ -67,17 +55,9 @@ fun MyTurnContent(
                     players = players,
                     playersPosition = playersPosition
                 )
-                DrawCup(modifier = Modifier.align(Alignment.BottomEnd))
-                if (hand?.dices?.isNotEmpty() == true) {
-                    DisplayClickableDices(
-                        dicesHand = hand,
-                        onClick = {
-                            TODO()
-                        },
-                        size = 80.dp,
-                        modifier = Modifier.align(BottomCenter).offset(y = (-32).dp)
-                    )
-                }
+                Box(modifier = Modifier.clickable(onClick = { vm.rollDice(emptyList())}),
+                    contentAlignment = Alignment.BottomEnd
+                ) {DrawCup()}
                 Button(
                     onClick = { TODO()},
                     modifier = Modifier
@@ -100,44 +80,20 @@ fun MyTurnContent(
                     players = players,
                     playersPosition = playersPosition
                 )
-                DrawCup(modifier = Modifier.align(Alignment.BottomEnd))
-                if (hand?.dices?.isNotEmpty() == true) {
-                        DisplayStaticDices(
-                            dicesHand = hand,
-                            size = 80.dp
-                        )
-                    }
-                }
+                DrawCup()
+            }
             is MyTurnUiState.Rolling -> {
                 DisplayOtherPlayersStatusOverlay(
                     players = players,
                     playersPosition = playersPosition
                 )
-                DrawCup(me) {
-                    vm.rollDice(dices)
-                }
-                if (hand?.dices?.isNotEmpty() == true) {
-                    DisplayClickableDices(
-                        dicesHand = hand,
-                        onClick = {
-                            TODO()
-                        },
-                        size = 80.dp,
-                        modifier = Modifier.align(BottomCenter).offset(y = (-32).dp)
-                    )
-                }
+                DrawCup(me, vm.starRollingAnimation,{}){ vm.stopRollingAnimation() }
             }
             is MyTurnUiState.SettingHand -> {
                 DisplayOtherPlayersStatusOverlay(
                     players = players,
                     playersPosition = playersPosition
                 )
-                if (hand?.dices?.isNotEmpty() == true) {
-                    DisplayStaticDices(
-                        dicesHand = hand,
-                        size = 80.dp
-                    )
-                }
             }
         }
     }

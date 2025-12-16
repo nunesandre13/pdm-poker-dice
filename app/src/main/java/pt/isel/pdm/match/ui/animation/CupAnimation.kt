@@ -19,6 +19,7 @@ import pt.isel.pdm.match.ui.Cup
 @Composable
 fun DiceRollAnimationOverlay(
     startAnimation: Boolean,
+    onClick: () -> Unit,
     onAnimationFinished: () -> Unit
 ) {
     var cupSize by remember { mutableStateOf(IntSize.Zero) }
@@ -56,7 +57,8 @@ fun DiceRollAnimationOverlay(
             offsetY = offsetY,
             rotation = rotation,
             onCupSized = { cupSize = it },
-            onClick = {}
+            enable = !startAnimation,
+            onClick = onClick,
         )
     }
 }
@@ -65,9 +67,9 @@ fun DiceRollAnimationOverlay(
 @Preview
 @Composable
 fun DiceRollAnimationOverlayPreview() {
-    var start by remember { mutableStateOf(false) }
-    DiceRollAnimationOverlay(
-        startAnimation = start,
-        onAnimationFinished = { start = false }
-    )
+//    var start by remember { mutableStateOf(false) }
+//    DiceRollAnimationOverlay(
+//        startAnimation = start,
+//        onAnimationFinished = { start = false }
+//    )
 }

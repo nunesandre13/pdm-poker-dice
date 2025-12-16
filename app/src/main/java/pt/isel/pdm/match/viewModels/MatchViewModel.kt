@@ -51,47 +51,48 @@ open class MatchViewModel(
         viewModelScope.launch { transformMatchStateIntoStateUi() }
     }
 
-    private suspend fun executePlayerAction(action: suspend (playerId: Int, roundId: Int) -> OutCome<Unit, MatchError>) {
+    private suspend fun executePlayerAction(action: suspend (playerId: Int, roundId: Int) -> OutCome<Unit, MatchError>): Boolean {
         val currentState = matchState.value
         val myPlayer = player.value
         if (currentState is MatchState.ActualMatch && myPlayer != null) {
             action(myPlayer.id.toInt(), currentState.match.actualRound.id)
-                .errorOrNull()?.let { emitError(it) }
-        } else emitError(MatchError.InvalidPlay)
+                .errorOrNull()?.let { emitError(it); return false }
+            return true
+        } else emitError(MatchError.InvalidPlay); return false
     }
 
-    override suspend fun rollDice(dices: List<DiceFace>) {
-        executePlayerAction { playerId, roundId ->
+    override suspend fun rollDice(dices: List<DiceFace>) : Boolean{
+        return executePlayerAction { playerId, roundId ->
             matchServices.rollDice(playerId, roundId, dices)
         }
     }
 
-    override suspend fun setHand() {
-        executePlayerAction { playerId, roundId ->
+    override suspend fun setHand(): Boolean {
+        return executePlayerAction { playerId, roundId ->
             matchServices.setHand(playerId, roundId)
         }
     }
 
-    override suspend fun raiseAnte(ante: Int) {
-        executePlayerAction { playerId, roundId ->
+    override suspend fun raiseAnte(ante: Int): Boolean {
+        return executePlayerAction { playerId, roundId ->
             matchServices.raiseAnte(playerId, roundId, ante)
         }
     }
 
-    override suspend fun passTurn() {
-        executePlayerAction { playerId, roundId ->
+    override suspend fun passTurn(): Boolean {
+        return executePlayerAction { playerId, roundId ->
             matchServices.passTurn(playerId, roundId)
         }
     }
 
-    override suspend fun call() {
-        executePlayerAction { playerId, roundId ->
+    override suspend fun call(): Boolean {
+        return executePlayerAction { playerId, roundId ->
             matchServices.call(playerId, roundId)
         }
     }
 
-    override suspend fun fold() {
-        executePlayerAction { playerId, roundId ->
+    override suspend fun fold(): Boolean {
+        return executePlayerAction { playerId, roundId ->
             matchServices.fold(playerId, roundId)
         }
     }

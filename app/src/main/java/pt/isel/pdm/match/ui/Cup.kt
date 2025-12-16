@@ -21,6 +21,7 @@ fun Cup(
     rotation: Float,
     onCupSized: (IntSize) -> Unit,
     onClick: () -> Unit,
+    enable: Boolean,
     modifier: Modifier = Modifier
 ) {
     Image(
@@ -38,6 +39,9 @@ fun Cup(
                 rotationZ = rotation,
                 transformOrigin = TransformOrigin(0.5f, 0.5f)
             )
-            .clickable(onClick = onClick)
+            .clickable(
+                enabled = enable,
+                onClick = onClick
+            )
     )
 }
