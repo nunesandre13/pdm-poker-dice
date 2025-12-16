@@ -76,7 +76,7 @@ fun LobbyListView(
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "Players: ${lobby.players.size}/${lobby.maxPlayers}",
+                                        text = "Players: ${lobby.players.size}/${lobby.maxPlayer}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -144,9 +144,9 @@ fun LobbyListView(
 fun LobbyListPreview() {
     LobbyListView(
         listOf(
-            Lobby("Lobby 1",1, 4, listOf()),
-            Lobby("Lobby 2", 1,6, listOf()),
-            Lobby("Lobby 3", 1,8, listOf())
+//            Lobby("Lobby 1",1, 4, listOf()),
+//            Lobby("Lobby 2", 1,6, listOf()),
+//            Lobby("Lobby 3", 1,8, listOf())
         ),
         onJoinClick = {},
         onBack = {},

@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.User
@@ -44,10 +45,10 @@ class RepositoryLobbiesMock: RepositoryLobbies {
             var id = 0
             while (true){
                 delay(3.seconds)
-                send(LobbyResponse.AddedLobby(Lobby("Lobby_number $id",id,2,listOf(
-                    User("1", Name("Gui"), Email("gui@gmail"))
-                ))))
-                id++
+//                send(LobbyResponse.AddedLobby(Lobby("Lobby_number $id",id,2,listOf(
+//                    User("1", Name("Gui"), Email("gui@gmail"))
+//                ))))
+//                id++
             }
 
         }
@@ -66,15 +67,16 @@ class RepositoryLobbiesMock: RepositoryLobbies {
     }
 
 
-    override suspend fun createNewLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
-        scope.launch {
-            shFlow.emit(LobbyResponse.AddedLobby(lobby))
-        }
-        return Success(lobby)
+    override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Lobby, LobbyError> {
+//        scope.launch {
+//            shFlow.emit(LobbyResponse.AddedLobby(lobby))
+//        }
+//        return Success(lobby)
+        TODO()
     }
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
-        if (lobby.players.size >= lobby.maxPlayers) {
+        if (lobby.players.size >= lobby.maxPlayer) {
             scope.launch {
                 shFlow.emit(LobbyResponse.LobbyFull(lobby))
             }

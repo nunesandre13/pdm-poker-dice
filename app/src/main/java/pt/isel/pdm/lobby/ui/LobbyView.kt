@@ -60,7 +60,7 @@ fun LobbyView(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Máx jogadores: ${lobby.maxPlayers} | Actual Players: ${lobby.players.size}",
+                                    text = "Máx jogadores: ${lobby.maxPlayer} | Actual Players: ${lobby.players.size}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
@@ -100,18 +100,18 @@ fun LobbyView(
 @Preview(showBackground = true)
 @Composable
 fun LobbyScreenPreview() {
-    val fakeLobby = Lobby(
-        name = "Exemplo",
-        id = 1,
-        maxPlayers = 4,
-        players = listOf(
-            User("1233", Name("Alice"), Email("Alice@gamail.com")),
-            User("1234444", Name("Bob"), Email("Bob@gmail.com"))
-        )
-    )
-    LobbyView(
-        lobby = fakeLobby,
-        onLeave = {},
-        modifier = Modifier
-    )
+//    val fakeLobby = Lobby(
+//        name = "Exemplo",
+//        id = 1,
+//        maxPlayers = 4,
+//        players = listOf(
+//            User("1233", Name("Alice"), Email("Alice@gamail.com")),
+//            User("1234444", Name("Bob"), Email("Bob@gmail.com"))
+//        )
+//    )
+//    LobbyView(
+//        lobby = fakeLobby,
+//        onLeave = {},
+//        modifier = Modifier
+//    )
 }

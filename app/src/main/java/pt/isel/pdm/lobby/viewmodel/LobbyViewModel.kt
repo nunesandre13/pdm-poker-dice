@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.domain.state.LobbyScreenState
 import pt.isel.pdm.lobby.services.LobbyServices
@@ -57,25 +58,20 @@ class LobbyViewModel(
         }
     }
 
-    fun createLobby(lobby: Lobby) {
+    fun createLobby(lobby: LobbyCreation) {
         viewModelScope.launch {
             runOperation(stateUi.value) {
                 navigateTo(LobbyScreenState.Loading)
-                userService.getCurrentUser()?.let { user ->
-                    val lobbyWithCreator = lobby.copy(players = listOf(user))
-                    lobbyService.createNewLobby(lobbyWithCreator).onOutCome(
+                lobbyService.createNewLobby(lobby)
+                    .onOutCome(
                         onSuccess = { createdLobby ->
                             LobbyScreenState.JoinedLobby(createdLobby)
-                        },
+                                    },
                         onFailure = { error ->
                             emitError(error)
                             null
                         }
                     )
-                } ?: run {
-                    emitError(LobbyError.LobbyNotFound)
-                    null
-                }
             }.let { navigateTo(it) }
         }
     }

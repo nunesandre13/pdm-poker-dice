@@ -11,12 +11,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.runtime.saveable.rememberSaveable
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 
 @Composable
 fun LobbyCreationView(
-    onCreateLobby: (Lobby) -> Unit,
+    onCreateLobby: (LobbyCreation) -> Unit,
     onBack: () -> Unit = {},
 ) {
     var lobbyName by rememberSaveable { mutableStateOf("") }
@@ -91,7 +92,15 @@ fun LobbyCreationView(
                     Button(
                         onClick = {
                             playersCount?.let {
-                                onCreateLobby(Lobby(lobbyName.trim(), 1,it, emptyList()))
+                                onCreateLobby(
+                                    LobbyCreation(
+                                        name = lobbyName.trim(),
+                                        description = "",
+                                        maxPlayer = 1,
+                                        minPlayer = 1,
+                                        numberOfRounds = 1,
+                                        firstAnte = 1)
+                                )
                             }
                         },
                         colors = ButtonDefaults.buttonColors(

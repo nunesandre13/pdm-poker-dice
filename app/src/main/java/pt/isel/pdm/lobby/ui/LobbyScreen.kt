@@ -37,7 +37,7 @@ private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit, on
         is LobbyScreenState.JoinedLobby -> {
             val lobby = stateUi.lobby.collectAsState().value
             LaunchedEffect(lobby) {
-                if (lobby.maxPlayers == lobby.players.size) {
+                if (lobby.maxPlayer == lobby.players.size) {
                     onUp()
                 }
             }

@@ -35,6 +35,8 @@ import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
+import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.toDto
 import java.util.concurrent.TimeUnit
 
 class RepositoryLobbiesHttp : RepositoryLobbies {
@@ -106,11 +108,11 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
             replay = 0
         )
 
-    override suspend fun createNewLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
+    override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Lobby, LobbyError> {
         return try {
             val response = client.post("$baseUrl/lobbies") {
                 contentType(ContentType.Application.Json)
-                setBody(lobby)
+                setBody(lobby.toDto())
             }
             val createdLobby = response.body<Lobby>()
             Success(createdLobby)

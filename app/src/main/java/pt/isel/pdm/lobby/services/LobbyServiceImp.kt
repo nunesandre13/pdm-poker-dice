@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
@@ -50,7 +51,7 @@ class LobbyServiceImp(private val repository: RepositoryLobbies) : LobbyServices
         )
     }
 
-    override suspend fun createNewLobby(lobby: Lobby): OutCome<StateFlow<Lobby>, LobbyError> {
+    override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<StateFlow<Lobby>, LobbyError> {
         return repository.createNewLobby(lobby).onOutCome(
             onSuccess = { Success(it.lobbyUpdate()) },
             onFailure = { Failure(it) }
