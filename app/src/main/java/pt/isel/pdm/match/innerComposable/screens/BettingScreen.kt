@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import pt.isel.pdm.match.innerComposable.DisplayOtherPlayersStatusOverlay
+import pt.isel.pdm.match.innerComposable.DrawCup
 import pt.isel.pdm.match.innerComposable.PlayerRegistry
 import pt.isel.pdm.match.viewModels.betting.BettingUiState
 import pt.isel.pdm.match.viewModels.betting.BettingViewModel
@@ -26,7 +28,6 @@ import pt.isel.pdm.match.viewModels.betting.BettingViewModel
 @Composable
 fun BettingScreen(vm: BettingViewModel, playersPosition:PlayerRegistry) {
     val uiState by vm.stateUi.collectAsStateWithLifecycle()
-
     when (val state = uiState) {
         BettingUiState.InitialLoading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -45,20 +46,23 @@ fun BettingContent(
     vm: BettingViewModel,
     playersPosition: PlayerRegistry
 ) {
+    val players = state.round.players
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        DisplayOtherPlayersStatusOverlay(
+            players = players,
+            playersPosition = playersPosition
+        )
+        DrawCup(modifier = Modifier.align(Alignment.BottomEnd))
+
         when (state) {
-            is BettingUiState.AwaitingBetting -> {
+            is BettingUiState.AwaitingBetting -> {}
+            is BettingUiState.Betting -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text("É a sua vez de apostar.", style = MaterialTheme.typography.headlineMedium)
-                    Spacer(modifier = Modifier.height(32.dp))
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(onClick = { vm.call() }) {
@@ -70,12 +74,17 @@ fun BettingContent(
                     }
                 }
             }
-            is BettingUiState.Betting -> {
-                CircularProgressIndicator()
-                Text(text = "A processar a sua aposta...")
-            }
             is BettingUiState.BettingDone -> {
-                Text(text = "Aposta submetida. A aguardar pelos outros jogadores.")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Betting action completed.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
     }
