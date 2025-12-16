@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
@@ -35,11 +34,15 @@ import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.request.header
+import kotlinx.coroutines.flow.distinctUntilChanged
 import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.toDto
+import pt.isel.pdm.dto.Lobby.LobbyIn
+import pt.isel.pdm.user.UserPreferences
 import java.util.concurrent.TimeUnit
 
-class RepositoryLobbiesHttp : RepositoryLobbies {
+class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : RepositoryLobbies {
     private val baseUrl = "http://10.0.2.2:4000/api"
 
     private val client = HttpClient(OkHttp) {
@@ -61,14 +64,8 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
         }
         install(SSE)
     }
-
     private val scope = CoroutineScope(Dispatchers.IO)
-
-    private val currentClientId = MutableStateFlow<String?>(null)
-
-    override fun setClientId(id: String) {
-        currentClientId.value = id
-    }
+    val currentClientId = userPreferences.userId.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val lobbySseListener: SharedFlow<LobbyResponse> = currentClientId
@@ -112,6 +109,9 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
         return try {
             val response = client.post("$baseUrl/lobbies") {
                 contentType(ContentType.Application.Json)
+                userPreferences.getToken()?.let { t ->
+                    header("Authorization", "Bearer $t")
+                } ?: return@post
                 setBody(lobby.toDto())
             }
             val createdLobby = response.body<Lobby>()
@@ -125,8 +125,11 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
         return try {
             val response = client.post("$baseUrl/lobbies/join/${lobby.id}") {
                 contentType(ContentType.Application.Json)
+                userPreferences.getToken()?.let { t ->
+                    header("Authorization", "Bearer $t")
+                } ?: return@post
             }
-            val joinedLobby = response.body<Lobby>()
+            val joinedLobby = response.body<LobbyIn>().toDomain()
             Success(joinedLobby)
         } catch (e: Exception) {
             Failure(LobbyError.NetWorkError)
@@ -137,6 +140,9 @@ class RepositoryLobbiesHttp : RepositoryLobbies {
         return try {
             client.post("$baseUrl/lobbies/leave/${lobby.id}") {
                 contentType(ContentType.Application.Json)
+                userPreferences.getToken()?.let { t ->
+                    header("Authorization", "Bearer $t")
+                } ?: return@post
             }
             Success(Unit)
         } catch (e: Exception) {

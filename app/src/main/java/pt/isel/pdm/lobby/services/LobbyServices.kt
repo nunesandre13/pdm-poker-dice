@@ -9,7 +9,6 @@ import pt.isel.pdm.utils.OutCome
 
 interface LobbyServices {
 
-    fun setClientId(id: String)
     suspend fun joinLobby(lobby: Lobby) : OutCome<StateFlow<Lobby>, LobbyError>
 
     suspend fun createNewLobby(lobby: LobbyCreation) : OutCome<StateFlow<Lobby>, LobbyError>

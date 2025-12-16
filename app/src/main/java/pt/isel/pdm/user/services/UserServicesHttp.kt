@@ -1,6 +1,5 @@
 package pt.isel.pdm.user.services
 
-import android.util.Log
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -20,14 +19,14 @@ import pt.isel.pdm.dto.user.UserCreateTokenOutputModel
 import pt.isel.pdm.dto.user.UserInput
 import pt.isel.pdm.dto.user.UserOut
 import pt.isel.pdm.dto.user.toDomain
+import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import pt.isel.pdm.utils.onOutCome
 
-class UserServicesHttp : UserServices {
+class UserServicesHttp(private val userPreferences: UserPreferences) : UserServices {
     private val baseUrl = "http://10.0.2.2:4000/api"
-    private var token: String? = null
 
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -49,15 +48,13 @@ class UserServicesHttp : UserServices {
                 setBody(user)
             }
             val tokenModel = response.body<UserCreateTokenOutputModel>()
-            token = tokenModel.token
+            val token = tokenModel.token
 
             val logged = client.get("$baseUrl/me") {
-                token?.let { token ->
-                    this.header("Authorization", "Bearer $token")
-                }
-
+                header("Authorization", "Bearer $token")
             }.body<UserOut>()
             _currentUser.value = logged.toDomain()
+            userPreferences.saveSession(tokenModel.token, logged.id.toString())
             Success(tokenModel)
         } catch (e: Exception) {
             Failure(UserError.NetworkError)
@@ -67,9 +64,24 @@ class UserServicesHttp : UserServices {
         return try {
             client.post("$baseUrl/logout")
             _currentUser.value = null
+            userPreferences.clearSession()
             Success(Unit)
         } catch (e: Exception) {
             Failure(UserError.NetworkError)
+        }
+    }
+
+    suspend fun restoreSession(): Boolean {
+        val savedToken = userPreferences.getToken() ?: return false
+        return try {
+            val logged = client.get("$baseUrl/me") {
+                header("Authorization", "Bearer $savedToken")
+            }.body<UserOut>()
+            _currentUser.value = logged.toDomain()
+            true
+        } catch (e: Exception) {
+            userPreferences.clearSession()
+            false
         }
     }
 
@@ -103,15 +115,15 @@ class UserServicesHttp : UserServices {
     }
 
     override suspend fun inviteCode(): InviteCode = try {
-            val response = client.post("$baseUrl/users/invite") {
-                token?.let { token ->
-                    header("Authorization", "Bearer $token")
-                }
+        val response = client.post("$baseUrl/users/invite") {
+            userPreferences.getToken()?.let { token ->
+                header("Authorization", "Bearer $token")
             }
-            val responseUrlString = response.body<String>().trim('"')
-            val code = responseUrlString.substringAfterLast('/')
-            InviteCode(code)
-        } catch (e: Exception) {
-            InviteCode("")
         }
+        val responseUrlString = response.body<String>().trim('"')
+        val code = responseUrlString.substringAfterLast('/')
+        InviteCode(code)
+    } catch (e: Exception) {
+        InviteCode("")
+    }
 }

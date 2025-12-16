@@ -14,13 +14,16 @@ import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
+import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import pt.isel.pdm.utils.onOutCome
 
-class LobbyServiceImp(private val repository: RepositoryLobbies) : LobbyServices {
+class LobbyServiceImp(private val repository: RepositoryLobbies, private val userPreferences: UserPreferences) : LobbyServices {
     private val scope = CoroutineScope(Dispatchers.Default)
+
+    private suspend fun user() = userPreferences.getUserId()
 
     private fun Lobby.lobbyUpdate(): StateFlow<Lobby> {
        return repository.lobbySseListener.filter { response ->
@@ -42,7 +45,6 @@ class LobbyServiceImp(private val repository: RepositoryLobbies) : LobbyServices
         )
     }
 
-    override fun setClientId(id: String) = repository.setClientId(id)
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<StateFlow<Lobby>, LobbyError> {
         return repository.joinLobby(lobby).onOutCome(
@@ -63,7 +65,7 @@ class LobbyServiceImp(private val repository: RepositoryLobbies) : LobbyServices
             when (value) {
                 is LobbyResponse.Lobbies -> value.lobbies
                 is LobbyResponse.AddedLobby -> acc + value.lobby
-                is LobbyResponse.RemovedLobby -> acc.filterNot { it.id == value.lobby.id }
+                is LobbyResponse.RemovedLobby -> acc.filterNot { it.id == value.lobby.id && it.players.none { player -> player.id == user() } }
                 is LobbyResponse.UpdatedLobby -> acc.map { if (it.id == value.lobby.id) value.lobby else it }
                 else -> acc
             }

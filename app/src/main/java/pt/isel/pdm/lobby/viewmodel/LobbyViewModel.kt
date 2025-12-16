@@ -34,11 +34,6 @@ class LobbyViewModel(
 
     init {
         goToLobbiesList()
-        viewModelScope.launch { userService.currentUser.filterNotNull()
-                .collect { user ->
-                    lobbyService.setClientId(user.id)
-                }
-        }
     }
 
     fun joinLobby(lobby: Lobby) {

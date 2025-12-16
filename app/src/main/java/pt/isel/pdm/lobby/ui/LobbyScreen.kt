@@ -15,13 +15,13 @@ import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.utils.ViewModelBase
 
 @Composable
-fun LobbyScreen(viewModel: LobbyViewModel, goBack: () -> Unit, onUp: () -> Unit) {
+fun LobbyScreen(viewModel: LobbyViewModel, goBack: () -> Unit, onUp: (matchId: String) -> Unit) {
     LobbyScreenContent(viewModel, goBack,onUp)
     LobbyScreenError(viewModel)
 }
 
 @Composable
-private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit, onUp: ()-> Unit) {
+private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit, onUp: (matchId: String)-> Unit) {
     when (val stateUi = viewModel.stateUi.collectAsState().value) {
 
         is LobbyScreenState.Loading -> {
@@ -37,9 +37,8 @@ private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit, on
         is LobbyScreenState.JoinedLobby -> {
             val lobby = stateUi.lobby.collectAsState().value
             LaunchedEffect(lobby) {
-                if (lobby.maxPlayer == lobby.players.size) {
-                    onUp()
-                }
+                val matchId = lobby.matchId
+                if ( matchId != null) { onUp(matchId)}
             }
             LobbyView(
                 lobby = lobby,
@@ -74,7 +73,7 @@ private fun LobbyScreenError(viewModel: LobbyViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewLobbyScreen() {
-    val viewModel = LobbyViewModel(LobbyServiceImp(RepositoryLobbiesMock()), UsersServiceMock(),
-        ViewModelBase(LobbyScreenState.Loading,LobbyError.NoError) )
-    LobbyScreen(viewModel = viewModel, goBack = {}, onUp = {})
+//    val viewModel = LobbyViewModel(LobbyServiceImp(RepositoryLobbiesMock()), UsersServiceMock(),
+//        ViewModelBase(LobbyScreenState.Loading,LobbyError.NoError) )
+//    LobbyScreen(viewModel = viewModel, goBack = {}, onUp = {})
 }

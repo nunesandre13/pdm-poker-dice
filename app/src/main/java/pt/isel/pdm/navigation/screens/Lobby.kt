@@ -25,7 +25,7 @@ fun NavGraphBuilder.lobby(
         LobbyScreen(
             viewModel = lobbyVm,
             goBack = {onNavigation(NavigationEvent.Back)},
-            onUp = {}
+            onUp = {onNavigation(NavigationEvent.Navigate(Screens.Match(it.toInt())))}
         )
     }
 }

@@ -62,10 +62,6 @@ class RepositoryLobbiesMock: RepositoryLobbies {
         replay = 0
     )
 
-    override fun setClientId(id: String) {
-        TODO("Not yet implemented")
-    }
-
 
     override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Lobby, LobbyError> {
 //        scope.launch {
