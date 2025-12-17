@@ -1,17 +1,20 @@
-package pt.isel.pdm.services
+package pt.isel.pdm.match.foreGround
 
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.example.chelasmulti_playerpokerdice.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import pt.isel.pdm.MainActivity
 import pt.isel.pdm.configuration.DependenciesContainer
 import pt.isel.pdm.utils.onOutCome
 
@@ -19,7 +22,7 @@ class MatchForegroundService : Service() {
     val appConfiguration by lazy { (application as DependenciesContainer) }
 
     private val serviceScope = CoroutineScope(Dispatchers.IO)
-    private val  matchService = appConfiguration.matchService
+    private val  matchService by lazy {  appConfiguration.matchService }
     private var matchId: Int? = null
 
     companion object {
@@ -36,8 +39,17 @@ class MatchForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         matchId = intent?.getIntExtra(EXTRA_MATCH_ID, -1)
         val notification = createNotification()
-        startForeground(NOTIFICATION_ID, notification)
-        if (matchId != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(
+                NOTIFICATION_ID,
+                notification,
+                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
+
+        if (matchId != null && matchId != -1) {
             startListeningToMatch()
         }
         return START_STICKY
@@ -61,11 +73,14 @@ class MatchForegroundService : Service() {
     }
 
     private fun createNotification(): Notification {
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Match em andamento")
             .setContentText("A sincronizar dados do match...")
-            //.setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(R.drawable.ficha)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setContentIntent(pendingIntent)
             .build()
     }
 
