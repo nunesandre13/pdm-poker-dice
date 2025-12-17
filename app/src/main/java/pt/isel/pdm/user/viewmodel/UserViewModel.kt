@@ -23,6 +23,7 @@ class UserViewModel(
 
     init {
         viewModelScope.launch {
+            userService.restoreSession()
             userService.getCurrentUser()?.let { user ->
                 navigateTo(UserScreenState.UserLoggIn(user))
             } ?: run {

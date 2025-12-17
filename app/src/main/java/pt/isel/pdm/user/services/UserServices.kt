@@ -18,6 +18,8 @@ interface UserServices {
 
     val currentUser: StateFlow<User?>
     fun getCurrentUser(): User?
+
+    suspend fun restoreSession(): Boolean
     suspend fun login(user: UserCreateTokenInputModel): OutCome<UserCreateTokenOutputModel, UserError>
     suspend fun logout(): OutCome<Unit, UserError>
     suspend fun createUser(user: UserInput,inviteCode: InviteCode): OutCome<User, UserError>

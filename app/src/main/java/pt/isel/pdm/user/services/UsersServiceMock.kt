@@ -28,6 +28,10 @@ class UsersServiceMock : UserServices {
 
     override fun getCurrentUser(): User? = _currentUser.value
 
+    override suspend fun restoreSession(): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun login(user: UserCreateTokenInputModel): OutCome<UserCreateTokenOutputModel, UserError> {
         return Failure(UserError.ErrorLogin)
     }

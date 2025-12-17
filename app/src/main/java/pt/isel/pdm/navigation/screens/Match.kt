@@ -26,7 +26,7 @@ fun NavGraphBuilder.match(
                 matchId = matchId,
             )
         )
-        MatchScreen(matchVm)
+        MatchScreen(matchVm, {onNavigation(NavigationEvent.Navigate(Screens.StartMatch))} )
         RememberForegroundService(matchId)
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
@@ -27,10 +28,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.chelasmulti_playerpokerdice.R
+import pt.isel.pdm.domain.MatchStatus
 import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.match.innerComposable.RoundScreen
 import pt.isel.pdm.match.repository.RepositoryMatchMock
 import pt.isel.pdm.match.services.MatchServiceImp
+import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.MatchStateUi
 import pt.isel.pdm.match.viewModels.MatchViewModel
 import pt.isel.pdm.user.services.UsersServiceMock
@@ -39,6 +42,7 @@ import pt.isel.pdm.utils.ViewModelBase
 @Composable
 fun MatchScreen(
     matchViewModel: MatchViewModel,
+    onMatchEnded: () -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
     var showMatchDetails by remember { mutableStateOf(false) }
@@ -46,6 +50,15 @@ fun MatchScreen(
     val pokerTableContent = remember(matchViewModel, navController) {
         movableContentOf {
             RoundScreen(matchViewModel = matchViewModel, navController)
+        }
+    }
+
+    // so para teste
+    LaunchedEffect(Unit) {
+        matchViewModel.matchState.collect { state ->
+            if (state is MatchState.ActualMatch && state.match.matchStatus == MatchStatus.FINISHED) {
+                onMatchEnded()
+            }
         }
     }
     Box(
@@ -104,6 +117,6 @@ fun MatchScreenPreviewOtherTurn() {
         UsersServiceMock(),
         1234
     )
-    MatchScreen(matchViewModel = fakeViewModel, navController = rememberNavController())
+    MatchScreen(matchViewModel = fakeViewModel, {},navController = rememberNavController())
 }
 

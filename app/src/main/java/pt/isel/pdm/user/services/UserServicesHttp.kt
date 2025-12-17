@@ -71,7 +71,7 @@ class UserServicesHttp(private val userPreferences: UserPreferences) : UserServi
         }
     }
 
-    suspend fun restoreSession(): Boolean {
+    override suspend fun restoreSession(): Boolean {
         val savedToken = userPreferences.getToken() ?: return false
         return try {
             val logged = client.get("$baseUrl/me") {
@@ -126,4 +126,5 @@ class UserServicesHttp(private val userPreferences: UserPreferences) : UserServi
     } catch (e: Exception) {
         InviteCode("")
     }
+
 }
