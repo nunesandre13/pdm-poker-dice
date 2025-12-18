@@ -1,5 +1,6 @@
 package pt.isel.pdm.navigation.screens
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable

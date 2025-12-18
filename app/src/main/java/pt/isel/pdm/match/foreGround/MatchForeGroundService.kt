@@ -28,7 +28,6 @@ class MatchForegroundService : Service() {
     companion object {
         const val CHANNEL_ID = "match_service_channel"
         const val NOTIFICATION_ID = 1
-        const val EXTRA_MATCH_ID = "match_id"
     }
 
     override fun onCreate() {
@@ -50,6 +49,8 @@ class MatchForegroundService : Service() {
         val matchId = matchService.matchIdState.value
         if (matchId != null && matchId != -1) {
             startListeningToMatch()
+        }else {
+            stopSelf()
         }
         return START_STICKY
     }
