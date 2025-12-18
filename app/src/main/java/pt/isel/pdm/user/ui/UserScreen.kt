@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.state.UserScreenState
 import pt.isel.pdm.domain.state.UserError
+import pt.isel.pdm.match.foreGround.GrantPermission
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.viewmodel.UserViewModel
@@ -24,7 +25,6 @@ fun UserScreen(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
 
 @Composable
 fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
-
     val stateUi = viewModel.stateUi.collectAsState().value
 
     when (stateUi) {

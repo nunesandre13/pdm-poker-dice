@@ -5,8 +5,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import pt.isel.pdm.configuration.DependenciesContainer
-import pt.isel.pdm.lobby.viewmodel.LobbyViewModel
-import pt.isel.pdm.match.foreGround.RememberForegroundService
 import pt.isel.pdm.match.screens.MatchScreen
 import pt.isel.pdm.match.viewModels.MatchViewModel
 import pt.isel.pdm.navigation.NavigationEvent
@@ -27,6 +25,5 @@ fun NavGraphBuilder.match(
             )
         )
         MatchScreen(matchVm, {onNavigation(NavigationEvent.Navigate(Screens.StartMatch))} )
-        RememberForegroundService(matchId)
     }
 }

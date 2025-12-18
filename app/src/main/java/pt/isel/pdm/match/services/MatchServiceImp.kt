@@ -1,6 +1,9 @@
 package pt.isel.pdm.match.services
 
+import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.Match
 import pt.isel.pdm.domain.PlayCommand
@@ -14,7 +17,11 @@ import pt.isel.pdm.utils.onOutCome
 
 class MatchServiceImp(private val repository: RepositoryMatch) : MatchServices {
 
+    private val _matchIdState: MutableStateFlow<Int?> = MutableStateFlow(null)
+    override val matchIdState: StateFlow<Int?> = _matchIdState
+
     override fun getMatchUpdate(matchId: Int): Flow<OutCome<MatchResponse, MatchError>> {
+        _matchIdState.value = matchId
         return repository.matchSseListener(matchId)
     }
 

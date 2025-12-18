@@ -24,7 +24,6 @@ class MatchForegroundService : Service() {
 
     private val serviceScope = CoroutineScope(Dispatchers.IO)
     private val  matchService by lazy {  appConfiguration.matchService }
-    private var matchId: Int? = null
 
     companion object {
         const val CHANNEL_ID = "match_service_channel"
@@ -38,7 +37,6 @@ class MatchForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        matchId = intent?.getIntExtra(EXTRA_MATCH_ID, -1)
         val notification = createNotification()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(
@@ -49,7 +47,7 @@ class MatchForegroundService : Service() {
         } else {
             startForeground(NOTIFICATION_ID, notification)
         }
-
+        val matchId = matchService.matchIdState.value
         if (matchId != null && matchId != -1) {
             startListeningToMatch()
         }
@@ -58,7 +56,7 @@ class MatchForegroundService : Service() {
 
     private fun startListeningToMatch() {
         serviceScope.launch {
-            val matchId = matchId ?: return@launch
+            val matchId = matchService.matchIdState.value ?: return@launch
             matchService.getMatchUpdate(matchId).collect { outcome ->
                 outcome.onOutCome(
                     onSuccess = { matchResponse ->
