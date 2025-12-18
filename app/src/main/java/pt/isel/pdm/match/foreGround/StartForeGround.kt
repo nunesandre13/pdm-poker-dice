@@ -16,6 +16,9 @@ fun RememberForegroundService(
     serviceClass: Class<out Service> = MatchForegroundService::class.java
 ) {
     val context = LocalContext.current
+
+    // apenas para versoes android 13 + ,pedir ao utilizador para permitir notificacoes,
+    // futuramente verificar se a permissao ja foi consedida, estamos a usar uma versao superior
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val launcher = rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -34,6 +37,7 @@ fun RememberForegroundService(
         val intent = Intent(context, serviceClass).apply {
             putExtra(MatchForegroundService.EXTRA_MATCH_ID, matchId)
         }
+        // verificacao do tipo de android, android 8 + necessita de startForeGrounService
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
         } else {

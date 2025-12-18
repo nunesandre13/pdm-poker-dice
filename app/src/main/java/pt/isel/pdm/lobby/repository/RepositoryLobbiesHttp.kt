@@ -98,7 +98,6 @@ class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : Repo
             logger("trying to reconnect")
             true
         }
-        .flowOn(Dispatchers.IO)
         .shareIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),

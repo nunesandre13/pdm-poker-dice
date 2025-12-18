@@ -1,8 +1,10 @@
 package pt.isel.pdm.lobby.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -28,7 +30,7 @@ class LobbyViewModel(
 
     private val lobbiesListStateFlow : StateFlow<List<Lobby>> = lobbyService.listAvailableLobbies().stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Lazily,
+        started = SharingStarted.WhileSubscribed(),
         initialValue = emptyList()
     )
 
@@ -42,7 +44,7 @@ class LobbyViewModel(
                 navigateTo(LobbyScreenState.Loading)
                 lobbyService.joinLobby(lobby).onOutCome(
                     onSuccess = { updatedLobby ->
-                        LobbyScreenState.JoinedLobby(updatedLobby)
+                        LobbyScreenState.JoinedLobby(updatedLobby.toState(lobby))
                     },
                     onFailure = { error ->
                         emitError(error)
@@ -60,7 +62,7 @@ class LobbyViewModel(
                 lobbyService.createNewLobby(lobby)
                     .onOutCome(
                         onSuccess = { createdLobby ->
-                            LobbyScreenState.JoinedLobby(createdLobby)
+                            LobbyScreenState.JoinedLobby(createdLobby.second.toState(createdLobby.first))
                                     },
                         onFailure = { error ->
                             emitError(error)
@@ -103,6 +105,16 @@ class LobbyViewModel(
         }
     }
 
+    fun Flow<Lobby>.toState(lobby: Lobby) = stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(2000),
+        initialValue = lobby
+    )
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.v("HTTP_LOBBIES_onCleared", "ViewModel destruído - Cancelando scope")
+    }
     companion object {
         fun getFactory(lobbyServices: LobbyServices, userServices: UserServices) =
             object : ViewModelProvider.Factory {
