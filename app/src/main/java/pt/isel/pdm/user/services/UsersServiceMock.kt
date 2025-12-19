@@ -64,6 +64,12 @@ class UsersServiceMock(
         }
     }
 
-    override suspend fun inviteCode(): InviteCode = InviteCode("12345")
+    override suspend fun inviteCode(): InviteCode {
+        return if (shouldFail) {
+            InviteCode("")
+        } else {
+            InviteCode("Invite Code")
+        }
+    }
 
 }
