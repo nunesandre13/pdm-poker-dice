@@ -1,21 +1,16 @@
 package pt.isel.pdm.user.ui
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.state.UserScreenState
 import pt.isel.pdm.domain.state.UserError
-import pt.isel.pdm.match.foreGround.GrantPermission
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.viewmodel.UserViewModel
-import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.user.ui.create.CreateUserScreen
 import pt.isel.pdm.user.ui.create.ViewUserCreateStateFull
 import pt.isel.pdm.user.ui.login.LoginScreen
 import pt.isel.pdm.user.ui.login.ViewUserLoginStateFull
-import pt.isel.pdm.utils.ViewModelBase
 
 @Composable
 fun UserScreen(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
@@ -98,15 +93,3 @@ private fun UserScreenError(viewModel: UserViewModel) {
 }
 
 
-@SuppressLint("ViewModelConstructorInComposable")
-@Composable
-@Preview
-fun UserScreenPreview() {
-    UserScreen(
-        UserViewModel(
-            UsersServiceMock(),
-            viewModelBase = ViewModelBase(UserScreenState.Idle, UserError.NoError)
-        ),
-        onTitleScreen = {}
-    )
-}

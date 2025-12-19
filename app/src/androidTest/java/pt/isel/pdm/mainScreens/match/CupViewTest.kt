@@ -26,6 +26,7 @@ class CupViewTest {
                 offsetY = 0f,
                 rotation = 0f,
                 onCupSized = { },
+                enable = true,
                 onClick = { }
             )
         }
@@ -44,6 +45,7 @@ class CupViewTest {
                 offsetY = 0f,
                 rotation = 0f,
                 onCupSized = { },
+                enable = true,
                 onClick = { clicked = true }
             )
         }
@@ -66,7 +68,8 @@ class CupViewTest {
                 offsetY = 0f,
                 rotation = 0f,
                 onCupSized = { cupSize = it },
-                onClick = { }
+                onClick = { },
+                enable = true
             )
         }
         composeTestRule.waitForIdle()

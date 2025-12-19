@@ -1,6 +1,7 @@
 package pt.isel.pdm.user.services
 
 import android.util.Log
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.AuthenticatedUser
@@ -16,7 +17,9 @@ import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.Success
 import pt.isel.pdm.dto.user.UserCreateTokenOutputModel
 
-class UsersServiceMock : UserServices {
+class UsersServiceMock(
+    private val shouldFail: Boolean = false
+): UserServices {
 
     init {
         Log.d("UsersServiceMock", "init")
@@ -29,11 +32,18 @@ class UsersServiceMock : UserServices {
     override fun getCurrentUser(): User? = _currentUser.value
 
     override suspend fun restoreSession(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override suspend fun login(user: UserCreateTokenInputModel): OutCome<UserCreateTokenOutputModel, UserError> {
-        return Failure(UserError.ErrorLogin)
+        delay(50)
+        return if (shouldFail) {
+            Failure(UserError.ErrorLogin)
+        } else {
+            val newUser = User("123", Name("Guilherme"), Email(user.email))
+            _currentUser.value = newUser
+            Success(UserCreateTokenOutputModel("fake-token"))
+        }
     }
 
     override suspend fun logout(): OutCome<Unit, UserError> {
@@ -45,12 +55,15 @@ class UsersServiceMock : UserServices {
         user: UserInput,
         inviteCode: InviteCode
     ): OutCome<User, UserError> {
-        val newUser = User("122434566", Name(user.name), Email(user.email))
-        _currentUser.value = newUser
-        return Success(newUser)
+        return if (shouldFail) {
+            Failure(UserError.ErrorCreateUser)
+        } else {
+            val newUser = User("123", Name(user.name), Email(user.email))
+            _currentUser.value = newUser
+            Success(newUser)
+        }
     }
 
-    override suspend fun inviteCode(): InviteCode {
-        TODO("Not yet implemented")
-    }
+    override suspend fun inviteCode(): InviteCode = InviteCode("12345")
+
 }

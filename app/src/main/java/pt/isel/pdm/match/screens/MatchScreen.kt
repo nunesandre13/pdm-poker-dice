@@ -1,6 +1,5 @@
 package pt.isel.pdm.match.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -23,21 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.MatchStatus
-import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.match.innerComposable.RoundScreen
-import pt.isel.pdm.match.repository.RepositoryMatchMock
-import pt.isel.pdm.match.services.MatchServiceImp
 import pt.isel.pdm.match.viewModels.MatchState
-import pt.isel.pdm.match.viewModels.MatchStateUi
 import pt.isel.pdm.match.viewModels.MatchViewModel
-import pt.isel.pdm.user.services.UsersServiceMock
-import pt.isel.pdm.utils.ViewModelBase
 
 @Composable
 fun MatchScreen(
@@ -105,18 +97,5 @@ fun MatchScreen(
             )
         }
     }
-}
-
-@SuppressLint("ViewModelConstructorInComposable")
-@Preview(showBackground = true, name = "Other Player's Turn Test")
-@Composable
-fun MatchScreenPreviewOtherTurn() {
-    val fakeViewModel = MatchViewModel(
-        ViewModelBase(MatchStateUi.OtherPlayerTurn, MatchError.SomeError),
-        MatchServiceImp(RepositoryMatchMock()),
-        UsersServiceMock(),
-        1234
-    )
-    MatchScreen(matchViewModel = fakeViewModel, {},navController = rememberNavController())
 }
 
