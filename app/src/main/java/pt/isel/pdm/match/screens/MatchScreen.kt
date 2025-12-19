@@ -49,7 +49,7 @@ fun MatchScreen(
 
     val pokerTableContent = remember(matchViewModel, navController) {
         movableContentOf {
-            RoundScreen(matchViewModel = matchViewModel, navController)
+            RoundScreen(matchViewModel = matchViewModel)
         }
     }
 

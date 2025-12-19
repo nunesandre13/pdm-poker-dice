@@ -1,4 +1,4 @@
-package pt.isel.pdm.match.innerComposable.screens
+package pt.isel.pdm.match.innerComposable.screens.betting
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,44 +52,45 @@ fun BettingContent(
             players = players,
             playersPosition = playersPosition
         )
-
         DrawCup(modifier = Modifier.align(Alignment.BottomEnd))
-
         when (state) {
-            is BettingUiState.AwaitingBetting -> {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Button(onClick = { vm.call() }) {
-                            Text("Call")
-                        }
-                        Button(onClick = { vm.fold() }) {
-                            Text("Fold")
-                        }
-                    }
-                }
-            }
-            is BettingUiState.Betting -> {
+            is BettingUiState.AwaitingBetting -> AwatingBetting(vm)
+            is BettingUiState.Betting -> Unit
+            is BettingUiState.BettingDone -> BettingDone()
+        }
+    }
+}
 
+@Composable
+fun AwatingBetting(vm: BettingViewModel){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(onClick = { vm.call() }) {
+                Text("Call")
             }
-            is BettingUiState.BettingDone -> {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Betting action completed.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+            Button(onClick = { vm.fold() }) {
+                Text("Fold")
             }
         }
     }
 }
 
+@Composable
+fun BettingDone(){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Betting action completed.",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}

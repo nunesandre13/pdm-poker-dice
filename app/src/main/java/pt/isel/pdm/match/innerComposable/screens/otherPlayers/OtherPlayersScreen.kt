@@ -1,4 +1,4 @@
-package pt.isel.pdm.match.innerComposable.screens
+package pt.isel.pdm.match.innerComposable.screens.otherPlayers
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

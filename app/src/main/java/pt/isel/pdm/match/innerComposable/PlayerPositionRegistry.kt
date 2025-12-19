@@ -1,14 +1,13 @@
 package pt.isel.pdm.match.innerComposable
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.toImmutableMap
+import androidx.compose.ui.unit.toSize
+
 
 @Immutable
 sealed interface PlayerRegistry {
@@ -21,40 +20,38 @@ sealed interface PlayerRegistry {
     }
 }
 
-class PlayerRegistryBuilder {
-    private val positions = mutableMapOf<Int, Rect>()
 
-    val isEmpty get() =  positions.isEmpty()
+class PlayerRegistryManager {
+    private val _positions = mutableStateMapOf<Int, Rect>()
+    val isEmpty get() = _positions.isEmpty()
 
-    val size get() = positions.size
+    val size get() = _positions.size
 
-    fun register(playerId: Int, coordinates: LayoutCoordinates) {
-        if (!coordinates.isAttached) return
-        val position = coordinates.positionInRoot()
-        val size = coordinates.size
-        positions[playerId] = Rect(
-            offset = position,
-            size = Size(size.width.toFloat(), size.height.toFloat())
+    fun build(): PlayerRegistry = PlayerRegistryImpl(_positions)
+    fun register(playerId: Int, coordinates: LayoutCoordinates, parentCoordinates: LayoutCoordinates?) {
+        if (!coordinates.isAttached || parentCoordinates == null || !parentCoordinates.isAttached) return
+
+        val relativePosition = parentCoordinates.localPositionOf(coordinates)
+        val newRect = Rect(
+            offset = relativePosition,
+            size = coordinates.size.toSize()
         )
-    }
-
-    fun build(): PlayerRegistry {
-        return PlayerRegistryImpl(positions.toImmutableMap())
+        if (_positions[playerId] != newRect) {
+            _positions[playerId] = newRect
+        }
     }
 }
 
-fun Modifier.registerBounds(playerId: Int, registryBuilder: PlayerRegistryBuilder, onFinish: ()-> Unit = {}): Modifier =
-    this.onGloballyPositioned { coordinates ->
-        registryBuilder.register(playerId, coordinates)
-        onFinish()
-    }
+fun Modifier.registerBounds(playerId: Int, registryManager: PlayerRegistryManager, parentCoordinates: LayoutCoordinates?): Modifier = this.onGloballyPositioned { coordinates ->
+    registryManager.register(playerId, coordinates, parentCoordinates)
+}
 
 private data object EmptyPlayerRegistry : PlayerRegistry {
     override fun getBounds(playerId: Int): Rect? = null
 }
 
 private data class PlayerRegistryImpl(
-    private val positions: ImmutableMap<Int, Rect>
+    private val positions: Map<Int, Rect>
 ) : PlayerRegistry {
     override fun getBounds(playerId: Int): Rect? = positions[playerId]
     override fun toString(): String = "PlayerRegistry(count=${positions.size})"

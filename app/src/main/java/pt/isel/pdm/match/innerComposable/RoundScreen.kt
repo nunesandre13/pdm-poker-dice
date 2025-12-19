@@ -1,5 +1,6 @@
 package pt.isel.pdm.match.innerComposable
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -26,8 +28,7 @@ import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.MatchViewModel
 
 @Composable
-fun RoundScreen(matchViewModel: MatchViewModel, navController: NavHostController) {
-
+fun RoundScreen(matchViewModel: MatchViewModel) {
     val matchSetUp by produceState<Pair<Int, List<Int>>?>(initialValue = null, matchViewModel) {
        combine(
             matchViewModel.player,
@@ -48,59 +49,48 @@ fun RoundScreen(matchViewModel: MatchViewModel, navController: NavHostController
                 value = validSetup
             }
     }
-
     val roundNavController = rememberNavController()
-
+    val registryManager = remember { PlayerRegistryManager() }
+    var tableCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize()
+            .onGloballyPositioned { tableCoordinates = it },
+        contentAlignment = Alignment.Center,
+
     ) {
-
-        val playerPositionRegistryBuilder = remember { PlayerRegistryBuilder() }
-        var playerRegistry by remember { mutableStateOf(PlayerRegistry.Empty) }
-
         val actualMatchSetUp = matchSetUp
         if (actualMatchSetUp != null) {
             val (myId, otherIds) = actualMatchSetUp
-            val onFinished: ()-> Unit = {
-                if (playerPositionRegistryBuilder.size ==  otherIds.size + 1 ){
-                    playerRegistry = playerPositionRegistryBuilder.build()
-                }
-            }
-            PokerTableSurface(
-                modifier = Modifier
-                    .fillMaxWidth(0.78f)
-                    .aspectRatio(2f)
-            ) {
+            PokerTableSurface(modifier = Modifier.fillMaxWidth(0.78f).aspectRatio(2f)) {
                 MakeLayout(
                     me = myId,
                     others = otherIds,
                     myPlayerComposable = { player, modifier ->
                         BasePlayerView(
-                            modifier
-                                .fillMaxSize()
-                                .registerBounds(player, playerPositionRegistryBuilder, onFinished)
+                            modifier.registerBounds(player, registryManager, tableCoordinates)
                         )
                     },
                     otherPlayersComposable = { player, modifier ->
                         BasePlayerView(
-                            modifier
-                                .fillMaxSize()
-                                .registerBounds(player, playerPositionRegistryBuilder, onFinished)
+                            modifier.registerBounds(player, registryManager, tableCoordinates)
                         )
                     }
                 )
             }
-
-            if (playerRegistry !== PlayerRegistry.Empty) {
+            if (registryManager.size >= (otherIds.size + 1)) {
+                logger("something")
                 RoundNavigation(
                     matchViewModel = matchViewModel,
                     navController = roundNavController,
-                    playersPosition = playerRegistry
+                    playersPosition = registryManager.build()
                 )
             }
         } else {
             // Opcional: Colocar um Loading Spinner aqui enquanto espera pelos dados
         }
     }
+}
+
+fun logger(string: String){
+    Log.v("some logger of my app", string)
 }
