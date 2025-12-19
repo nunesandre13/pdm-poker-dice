@@ -57,7 +57,7 @@ class ViewUserLoginStateFullTest {
         composeTestRule.onNodeWithText("Sign in").performClick()
 
         assertNotNull("UserLogin object should not be null", capturedUserLogin)
-        assertEquals(Email(expectedEmail), capturedUserLogin?.email)
-        assertEquals(Password(expectedPassword), capturedUserLogin?.password)
+        assertEquals(expectedEmail, capturedUserLogin?.email)
+        assertEquals(expectedPassword, capturedUserLogin?.password)
     }
 }
