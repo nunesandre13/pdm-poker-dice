@@ -1,28 +1,28 @@
 package pt.isel.pdm.lobby.services
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.flow.stateIn
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
-import pt.isel.pdm.user.UserPreferences
+import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import pt.isel.pdm.utils.onOutCome
 
-class LobbyServiceImp(private val repository: RepositoryLobbies, private val userPreferences: UserPreferences) : LobbyServices {
+class LobbyServiceImp(
+    private val repository: RepositoryLobbies,
+    private val userService: UserServices
+) : LobbyServices {
 
-    private suspend fun user() = userPreferences.getUserId()
+    private fun user() = userService.getCurrentUser()?.id
 
     private fun Lobby.lobbyUpdate(): Flow<Lobby> {
        return repository.lobbySseListener.filter { response ->

@@ -5,17 +5,14 @@ import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
 import pt.isel.pdm.lobby.repository.RepositoryLobbiesHttp
-import pt.isel.pdm.lobby.repository.RepositoryLobbiesMock
 import pt.isel.pdm.lobby.services.LobbyServiceImp
 import pt.isel.pdm.match.foreGround.MatchLifecycleObserver
 import pt.isel.pdm.match.repository.RepositoryMatch
 import pt.isel.pdm.match.repository.RepositoryMatchHttp
-import pt.isel.pdm.match.repository.RepositoryMatchMock
 import pt.isel.pdm.match.services.MatchServiceImp
 import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.user.services.UserServicesHttp
-import pt.isel.pdm.user.services.UsersServiceMock
 
 
 class MockConfiguration : Application(), DependenciesContainer {
@@ -42,7 +39,7 @@ class MockConfiguration : Application(), DependenciesContainer {
     }
 
     override val lobbyServices by lazy{
-        LobbyServiceImp(repoLobby, userPreferences)
+        LobbyServiceImp(repoLobby, userServices)
     }
 
     override val matchRepo: RepositoryMatch by lazy {

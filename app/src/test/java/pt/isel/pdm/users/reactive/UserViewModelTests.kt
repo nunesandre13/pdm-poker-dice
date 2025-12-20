@@ -3,6 +3,7 @@ package pt.isel.pdm.users.reactive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import pt.isel.pdm.SuspendingLatch
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.domain.state.UserScreenState
