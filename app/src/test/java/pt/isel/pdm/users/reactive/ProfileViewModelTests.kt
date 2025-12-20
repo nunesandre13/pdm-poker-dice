@@ -3,6 +3,7 @@ package pt.isel.pdm.users.reactive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import pt.isel.pdm.SuspendingLatch
 import pt.isel.pdm.domain.state.ProfileError
 import pt.isel.pdm.domain.state.ProfileScreenState
 import pt.isel.pdm.profile.viewmodel.ProfileViewModel

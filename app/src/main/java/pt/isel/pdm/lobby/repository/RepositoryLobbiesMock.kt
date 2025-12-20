@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.User
@@ -24,7 +25,9 @@ import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import kotlin.time.Duration.Companion.seconds
 
-class RepositoryLobbiesMock: RepositoryLobbies {
+class RepositoryLobbiesMock(
+    private val shouldFail: Boolean = false
+): RepositoryLobbies {
     private val scope = CoroutineScope(Dispatchers.Default)
     private val shFlow: MutableSharedFlow<LobbyResponse> = MutableSharedFlow()
 
@@ -64,25 +67,26 @@ class RepositoryLobbiesMock: RepositoryLobbies {
 
 
     override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Lobby, LobbyError> {
-//        scope.launch {
-//            shFlow.emit(LobbyResponse.AddedLobby(lobby))
-//        }
-//        return Success(lobby)
-        TODO()
+        if (shouldFail) return Failure(LobbyError.NetWorkError)
+        val newLobby = Lobby(
+            id = "123",
+            name = lobby.name,
+            maxPlayer = lobby.maxPlayer,
+            minPlayer = lobby.minPlayer,
+            description = "Lobby mock",
+            owner = "",
+            numberOdRounds = 3,
+            firstAnte = 10,
+            matchId = "match-123",
+            players = listOf(User("1", Name("Host"), Email("host@test.com"))),
+            lobbyStatus = LobbyStatus.OPEN
+        )
+        return Success(newLobby)
     }
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
-        if (lobby.players.size >= lobby.maxPlayer) {
-            scope.launch {
-                shFlow.emit(LobbyResponse.LobbyFull(lobby))
-            }
-            return Failure(LobbyError.LobbyFull)
-        }
-
-        val updatedLobby = lobby.copy(players = lobby.players + User("newUser", Name("New Player"), Email("new@player.com")))
-        scope.launch {
-            shFlow.emit(LobbyResponse.UpdatedLobby(updatedLobby))
-        }
+        val updatedLobby = lobby.copy(players = lobby.players + User("2", Name("Guest"), Email("g@t.com")))
+        shFlow.emit(LobbyResponse.UpdatedLobby(updatedLobby))
         return Success(updatedLobby)
     }
 
