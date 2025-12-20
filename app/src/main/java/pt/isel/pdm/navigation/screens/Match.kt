@@ -10,12 +10,13 @@ import pt.isel.pdm.match.screens.MatchScreen
 import pt.isel.pdm.match.viewModels.MatchViewModel
 import pt.isel.pdm.navigation.NavigationEvent
 import pt.isel.pdm.navigation.Screens
+import pt.isel.pdm.navigation.composableWithOrientation
 
 fun NavGraphBuilder.match(
     appConfiguration: DependenciesContainer,
     onNavigation: (NavigationEvent) -> Unit
 ) {
-    composable<Screens.Match> { backStackEntry ->
+    composableWithOrientation<Screens.Match> { backStackEntry ->
         val matchId = backStackEntry.toRoute<Screens.Match>().matchId
         val matchVm: MatchViewModel = viewModel(
             viewModelStoreOwner = backStackEntry,

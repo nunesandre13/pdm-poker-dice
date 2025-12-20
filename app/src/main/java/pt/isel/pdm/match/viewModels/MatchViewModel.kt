@@ -45,7 +45,7 @@ open class MatchViewModel(
 
     override val matchState: StateFlow<MatchState> = matchUpdates.transformFlowIntoMatchStateFlow()
 
-    open val player = userRepository.currentUser
+    override val player = userRepository.currentUser
 
     init {
         viewModelScope.launch { transformMatchStateIntoStateUi() }

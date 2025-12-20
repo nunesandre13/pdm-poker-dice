@@ -6,11 +6,12 @@ import pt.isel.pdm.about.AboutScreen
 import pt.isel.pdm.actions.onAction
 import pt.isel.pdm.navigation.NavigationEvent
 import pt.isel.pdm.navigation.Screens
+import pt.isel.pdm.navigation.composableWithOrientation
 
 fun NavGraphBuilder.about(
     onNavigation: (NavigationEvent) -> Unit,
 ) {
-    composable<Screens.About> {
+    composableWithOrientation<Screens.About> {
         AboutScreen(
             onDetails = { action -> onAction(action) },
             onSendEmail = { action -> onAction(action) },

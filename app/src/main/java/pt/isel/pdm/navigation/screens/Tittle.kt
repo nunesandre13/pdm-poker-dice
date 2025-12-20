@@ -7,11 +7,12 @@ import androidx.navigation.compose.composable
 import pt.isel.pdm.home.TitleScreen
 import pt.isel.pdm.navigation.NavigationEvent
 import pt.isel.pdm.navigation.Screens
+import pt.isel.pdm.navigation.composableWithOrientation
 
 fun NavGraphBuilder.title(
     onNavigation: (NavigationEvent) -> Unit
 ) {
-    composable<Screens.Title> {
+    composableWithOrientation<Screens.Title> {
         TitleScreen(
             onAboutClick = { onNavigation(NavigationEvent.Navigate(Screens.About)) },
             onProfileClick = { onNavigation(NavigationEvent.Navigate(Screens.Profile)) },

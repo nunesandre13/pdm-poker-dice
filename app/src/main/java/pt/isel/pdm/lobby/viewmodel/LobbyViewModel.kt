@@ -28,7 +28,7 @@ class LobbyViewModel(
 
     private val lobbiesListStateFlow : StateFlow<List<Lobby>> = lobbyService.listAvailableLobbies().stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.Eagerly,
         initialValue = emptyList()
     )
 

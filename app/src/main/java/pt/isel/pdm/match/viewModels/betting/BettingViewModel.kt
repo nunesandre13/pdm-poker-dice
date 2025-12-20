@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import pt.isel.pdm.domain.BetState
 import pt.isel.pdm.domain.DomainError
 import pt.isel.pdm.domain.Round
 import pt.isel.pdm.domain.RoundState
@@ -23,7 +25,6 @@ import pt.isel.pdm.utils.ViewModelState
 sealed interface BettingActionState {
     object Idle : BettingActionState
     object PlacingBet : BettingActionState
-
     object BettingDone: BettingActionState
 }
 
@@ -59,23 +60,24 @@ class BettingViewModel(
     private val _actionState = MutableStateFlow<BettingActionState>(BettingActionState.Idle)
 
     private suspend fun transformStateInUiState() {
-        actualRound.filter {
-            round -> round.state is RoundState.Betting
-        }.combine(_actionState) { round, action ->
-            when (action) {
-                is BettingActionState.Idle -> AwaitingBetting(round)
-                is BettingActionState.PlacingBet -> Betting(round)
-                is BettingActionState.BettingDone -> BettingDone(round)
+        actualRound
+            .filter { it.state is RoundState.Betting }
+            .combine(_actionState) { round, action ->
+                val state = round.state as RoundState.Betting
+                if (state.hasPlayerBet()) {
+                    BettingDone(round)
+                } else {
+                    action.toUiState(round)
+                }
             }
-        }.collect { uiState ->
-            navigateTo(uiState)
-        }
+            .collectLatest { navigateTo(it) }
     }
+
 
     fun call() {
         when (stateUi.value) {
-            is BettingUiState.InitialLoading -> { /* Não fazer nada */ }
-            is BettingUiState.ValidState -> {
+            is InitialLoading -> { /* Não fazer nada */ }
+            is ValidState -> {
                 if (_actionState.compareAndSet(BettingActionState.Idle, BettingActionState.PlacingBet)) {
                     runAndSetAction(BettingActionState.BettingDone) {
                         actions.call()
@@ -87,8 +89,8 @@ class BettingViewModel(
 
     fun fold() {
         when (stateUi.value) {
-            is BettingUiState.InitialLoading -> { /* Não fazer nada */ }
-            is BettingUiState.ValidState -> {
+            is InitialLoading -> { /* Não fazer nada */ }
+            is ValidState -> {
                 if (_actionState.compareAndSet(BettingActionState.Idle, BettingActionState.PlacingBet)) {
                     runAndSetAction(BettingActionState.BettingDone) {
                         actions.fold()
@@ -108,6 +110,17 @@ class BettingViewModel(
                 _actionState.value = endAction
             }
         }
+    }
+
+    private fun RoundState.Betting.hasPlayerBet() =
+        stateProvider.player.value?.id.toString().let {  playerId ->
+            playersBets.firstOrNull{ it.playerId.toString() == playerId }?.betState != BetState.PENDING
+        }
+
+    private fun BettingActionState.toUiState(round: Round) = when (this) {
+        is BettingActionState.Idle -> AwaitingBetting(round)
+        is BettingActionState.PlacingBet -> Betting(round)
+        is BettingActionState.BettingDone -> BettingDone(round)
     }
 
     init {

@@ -15,7 +15,6 @@ class MainActivity : ComponentActivity() {
     val appConfiguration by lazy { (application as DependenciesContainer) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ProcessLifecycleOwner.get().lifecycle.addObserver(MatchLifecycleObserver(this))
         enableEdgeToEdge()
         setContent {
             ChelasMultiPlayerPokerDiceTheme {
