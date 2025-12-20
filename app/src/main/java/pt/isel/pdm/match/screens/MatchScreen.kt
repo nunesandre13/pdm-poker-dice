@@ -1,56 +1,59 @@
 package pt.isel.pdm.match.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.movableContentOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.chelasmulti_playerpokerdice.R
-import pt.isel.pdm.domain.MatchStatus
 import pt.isel.pdm.match.innerComposable.RoundScreen
-import pt.isel.pdm.match.viewModels.MatchState
+import pt.isel.pdm.match.viewModels.MatchGlobalStateUi
 import pt.isel.pdm.match.viewModels.MatchViewModel
 
 @Composable
 fun MatchScreen(
     matchViewModel: MatchViewModel,
-    onMatchEnded: () -> Unit,
-    navController: NavHostController = rememberNavController()
+    onMatchEnded: () -> Unit
+) {
+    val globalUiState by matchViewModel.stateUi.collectAsStateWithLifecycle()
+    when (globalUiState) {
+        is MatchGlobalStateUi.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        is MatchGlobalStateUi.Finished -> {
+            MatchFinishedView(
+                onExit = onMatchEnded
+            )
+        }
+        is MatchGlobalStateUi.Elapsed -> {
+            MatchActiveGameTable(
+                matchViewModel = matchViewModel,
+                content = {
+                    RoundScreen(matchViewModel = matchViewModel)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun MatchActiveGameTable(
+    matchViewModel: MatchViewModel,
+    content: @Composable () -> Unit
 ) {
     var showMatchDetails by remember { mutableStateOf(false) }
 
-    val pokerTableContent = remember(matchViewModel, navController) {
+    val pokerTableContent = remember(matchViewModel) {
         movableContentOf {
-            RoundScreen(matchViewModel = matchViewModel)
-        }
-    }
-
-    // so para teste
-    LaunchedEffect(Unit) {
-        matchViewModel.matchState.collect { state ->
-            if (state is MatchState.ActualMatch && state.match.matchStatus == MatchStatus.FINISHED) {
-                onMatchEnded()
-            }
+            content()
         }
     }
     Box(
@@ -68,15 +71,16 @@ fun MatchScreen(
         if (showMatchDetails) {
             Row(modifier = Modifier.fillMaxSize()) {
                 Box(
-                    modifier = Modifier.weight(0.2f)
+                    modifier = Modifier
+                        .weight(0.2f)
                         .fillMaxHeight()
-                        .background(Color.Cyan)
-                )
-                Box(
-                    modifier = Modifier.weight(0.8f)
-                        .fillMaxHeight()) {
-                            pokerTableContent()
-                        }
+                        .background(Color.Cyan.copy(alpha = 0.8f))
+                ) {
+                    Text("Match Details Here", modifier = Modifier.align(Alignment.Center))
+                }
+                Box(modifier = Modifier.weight(0.8f).fillMaxHeight()) {
+                    pokerTableContent()
+                }
             }
         } else {
             pokerTableContent()
@@ -85,17 +89,38 @@ fun MatchScreen(
             onClick = { showMatchDetails = !showMatchDetails },
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(1.dp),
+                .padding(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
             )
         ) {
             Text(
-                text = if (showMatchDetails) "Close Details" else "Open Details",
+                text = if (showMatchDetails) "Close" else "Info",
                 style = MaterialTheme.typography.labelSmall
             )
         }
     }
 }
 
+@Composable
+private fun MatchFinishedView(onExit: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.8f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "GAME OVER",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onExit) {
+                Text("Back to Menu")
+            }
+        }
+    }
+}

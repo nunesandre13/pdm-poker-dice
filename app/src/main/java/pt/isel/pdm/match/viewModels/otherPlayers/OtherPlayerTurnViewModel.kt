@@ -10,6 +10,7 @@ import pt.isel.pdm.domain.Round
 import pt.isel.pdm.domain.State
 import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
+import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 
@@ -25,15 +26,13 @@ sealed class OtherPlayerTurnError(
 }
 
 class OtherPlayerTurnViewModel(
-    private val matchStateProvider: MatchStateProvider,
+    private val stateProvider: RoundStateProvider,
     private val baseViewModel: ViewModelState<OtherPlayerTurnUiState, OtherPlayerTurnError>
 ) : ViewModel(), ViewModelState<OtherPlayerTurnUiState, OtherPlayerTurnError> by baseViewModel {
 
     init {
         viewModelScope.launch {
-            matchStateProvider.matchState
-                .filterIsInstance<MatchState.ActualMatch>()
-                .map { it.match.actualRound }
+            stateProvider.roundState.filterNotNull()
                 .collect { round ->
                     navigateTo(OtherPlayerTurnUiState.ShowingTurn(round))
                 }
@@ -42,14 +41,14 @@ class OtherPlayerTurnViewModel(
 
     companion object {
         fun factory(
-            stateProvider: MatchStateProvider,
+            stateProvider: RoundStateProvider,
             base: ViewModelState<OtherPlayerTurnUiState, OtherPlayerTurnError> =
                 ViewModelBase(OtherPlayerTurnUiState.Loading, OtherPlayerTurnError.SomeError)
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return OtherPlayerTurnViewModel(
-                    matchStateProvider = stateProvider,
+                    stateProvider = stateProvider,
                     baseViewModel = base
                 ) as T
             }

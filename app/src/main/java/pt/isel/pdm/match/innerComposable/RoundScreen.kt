@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -29,26 +30,7 @@ import pt.isel.pdm.match.viewModels.MatchViewModel
 
 @Composable
 fun RoundScreen(matchViewModel: MatchViewModel) {
-    val matchSetUp by produceState<Pair<Int, List<Int>>?>(initialValue = null, matchViewModel) {
-       combine(
-            matchViewModel.player,
-            matchViewModel.matchState
-        ) { player, matchState ->
-            val myId = player?.id?.toInt()
-            val actualMatch = (matchState as? MatchState.ActualMatch)?.match
-            if (myId != null && actualMatch != null) {
-                val otherIds = actualMatch.players.map { it.playerId }.filter { it != myId }
-                Pair(myId, otherIds)
-            } else {
-                null
-            }
-        }
-            .filterNotNull()
-            .take(1)
-            .collect { validSetup ->
-                value = validSetup
-            }
-    }
+    val tableSetup by matchViewModel.tableSetup.collectAsState()
     val roundNavController = rememberNavController()
     val registryManager = remember { PlayerRegistryManager() }
     var tableCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
@@ -56,15 +38,13 @@ fun RoundScreen(matchViewModel: MatchViewModel) {
         modifier = Modifier.fillMaxSize()
             .onGloballyPositioned { tableCoordinates = it },
         contentAlignment = Alignment.Center,
-
     ) {
-        val actualMatchSetUp = matchSetUp
-        if (actualMatchSetUp != null) {
-            val (myId, otherIds) = actualMatchSetUp
+        val setup = tableSetup
+        if (setup != null){
             PokerTableSurface(modifier = Modifier.fillMaxWidth(0.78f).aspectRatio(2f)) {
                 MakeLayout(
-                    me = myId,
-                    others = otherIds,
+                    me = setup.myId,
+                    others = setup.opponentsIds,
                     myPlayerComposable = { player, modifier ->
                         BasePlayerView(
                             modifier.registerBounds(player, registryManager, tableCoordinates)
@@ -77,20 +57,17 @@ fun RoundScreen(matchViewModel: MatchViewModel) {
                     }
                 )
             }
-            if (registryManager.size >= (otherIds.size + 1)) {
-                logger("something")
-                RoundNavigation(
-                    matchViewModel = matchViewModel,
-                    navController = roundNavController,
-                    playersPosition = registryManager.build()
-                )
-            }
+            logger("something")
+            RoundNavigation(
+                matchViewModel = matchViewModel,
+                navController = roundNavController,
+                playersPosition = registryManager.build()
+            )
         } else {
-            // Opcional: Colocar um Loading Spinner aqui enquanto espera pelos dados
+            Unit // depois colocar algo
         }
     }
 }
-
 fun logger(string: String){
     Log.v("some logger of my app", string)
 }

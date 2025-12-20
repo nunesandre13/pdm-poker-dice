@@ -27,7 +27,8 @@ class PlayerRegistryManager {
 
     val size get() = _positions.size
 
-    fun build(): PlayerRegistry = PlayerRegistryImpl(_positions)
+    private val registry: PlayerRegistry by lazy {PlayerRegistryImpl(_positions)  }
+    fun build(): PlayerRegistry = registry
     fun register(playerId: Int, coordinates: LayoutCoordinates, parentCoordinates: LayoutCoordinates?) {
         if (!coordinates.isAttached || parentCoordinates == null || !parentCoordinates.isAttached) return
 

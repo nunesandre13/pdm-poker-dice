@@ -13,14 +13,14 @@ import pt.isel.pdm.match.innerComposable.PlayerRegistry
 import pt.isel.pdm.match.innerComposable.screens.betting.BettingScreen
 import pt.isel.pdm.match.innerComposable.screens.myturn.MyTurnScreen
 import pt.isel.pdm.match.innerComposable.screens.otherPlayers.OtherPlayerTurnScreen
-import pt.isel.pdm.match.screens.MatchRoute
+import pt.isel.pdm.match.screens.RoundRoute
 import pt.isel.pdm.match.viewModels.MatchViewModel
 import pt.isel.pdm.match.viewModels.betting.BettingViewModel
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
 import pt.isel.pdm.match.viewModels.otherPlayers.OtherPlayerTurnViewModel
 
 fun NavGraphBuilder.betting(matchViewModel: MatchViewModel, playersPosition:PlayerRegistry) {
-    composable<MatchRoute.Betting> { backStackEntry ->
+    composable<RoundRoute.Betting> { backStackEntry ->
         val vmBettingViewModel: BettingViewModel = viewModel(
             viewModelStoreOwner = backStackEntry,
             factory = BettingViewModel.factory(
@@ -33,7 +33,7 @@ fun NavGraphBuilder.betting(matchViewModel: MatchViewModel, playersPosition:Play
 }
 
 fun NavGraphBuilder.myTurn(matchViewModel: MatchViewModel,playersPosition:PlayerRegistry) {
-    composable<MatchRoute.MyTurn> { backStackEntry ->
+    composable<RoundRoute.MyTurn> { backStackEntry ->
         val vmMyTurnViewModel: MyTurnViewModel = viewModel(
             viewModelStoreOwner = backStackEntry,
             factory = MyTurnViewModel.factory(
@@ -46,7 +46,7 @@ fun NavGraphBuilder.myTurn(matchViewModel: MatchViewModel,playersPosition:Player
 }
 
 fun NavGraphBuilder.otherPlayerTurn(matchViewModel: MatchViewModel, playersPosition: PlayerRegistry) {
-    composable<MatchRoute.OtherPlayerTurn> { backStackEntry ->
+    composable<RoundRoute.OtherPlayerTurn> { backStackEntry ->
         val vmOtherPlayerTurnViewModel: OtherPlayerTurnViewModel = viewModel(
             viewModelStoreOwner = backStackEntry,
             factory = OtherPlayerTurnViewModel.factory(
@@ -58,7 +58,7 @@ fun NavGraphBuilder.otherPlayerTurn(matchViewModel: MatchViewModel, playersPosit
 }
 
 fun NavGraphBuilder.idle() {
-    composable<MatchRoute.Idle> {
+    composable<RoundRoute.Idle> {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -69,3 +69,17 @@ fun NavGraphBuilder.idle() {
         }
     }
 }
+
+fun NavGraphBuilder.finished() {
+    composable<RoundRoute.Finished> {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = Color.Yellow
+            )
+        }
+    }
+}
+

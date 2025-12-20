@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.BetState
@@ -19,6 +20,7 @@ import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.betting.BettingUiState.*
 import pt.isel.pdm.match.viewModels.interfaces.BettingActions
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
+import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 
@@ -48,14 +50,12 @@ sealed class BettingError(
 
 class BettingViewModel(
     private val baseViewModel: ViewModelState<BettingUiState, BettingError>,
-    private val stateProvider: MatchStateProvider,
+    private val stateProvider: RoundStateProvider,
     private val actions: BettingActions
 ) : ViewModel(),
     ViewModelState<BettingUiState, BettingError> by baseViewModel {
 
-    private val actualRound = stateProvider.matchState
-        .filterIsInstance<MatchState.ActualMatch>()
-        .map { it.match.actualRound }
+    private val actualRound = stateProvider.roundState.filterNotNull()
 
     private val _actionState = MutableStateFlow<BettingActionState>(BettingActionState.Idle)
 
@@ -131,7 +131,7 @@ class BettingViewModel(
 
     companion object {
         fun factory(
-            stateProvider: MatchStateProvider,
+            stateProvider: RoundStateProvider,
             actions: BettingActions,
             base: ViewModelState<BettingUiState, BettingError> =
                 ViewModelBase(InitialLoading, BettingError.SomeError)

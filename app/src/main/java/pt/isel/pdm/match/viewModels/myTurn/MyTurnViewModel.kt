@@ -25,6 +25,8 @@ import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.filterNotNull
+import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 
 sealed interface MyTurnActionState {
     object Idle : MyTurnActionState
@@ -59,12 +61,13 @@ sealed class MyTurnError(
 
 class MyTurnViewModel(
     private val baseViewModel: ViewModelState<MyTurnUiState, MyTurnError>,
-    private val stateProvider: MatchStateProvider,
+    private val stateProvider: RoundStateProvider,
     private val actions: RollingActions
 ) : ViewModel(),
     ViewModelState<MyTurnUiState, MyTurnError> by baseViewModel {
 
-    private val actualRound = stateProvider.matchState.filterIsInstance<MatchState.ActualMatch>().map { it.match.actualRound }
+    private val actualRound = stateProvider.roundState.filterNotNull()
+
     private val _actionState = MutableStateFlow<MyTurnActionState>(MyTurnActionState.Idle)
 
         init {
@@ -177,7 +180,7 @@ class MyTurnViewModel(
 
     companion object {
         fun factory(
-            stateProvider: MatchStateProvider,
+            stateProvider: RoundStateProvider,
             actions: RollingActions,
             base: ViewModelState<MyTurnUiState, MyTurnError> =
                 ViewModelBase(InitialLoading, MyTurnError.SomeError)
