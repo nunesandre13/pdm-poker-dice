@@ -12,6 +12,7 @@ import org.junit.Assert.assertTrue
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.profile.ui.ProfileView
 
 class ProfileViewTest {
@@ -20,7 +21,7 @@ class ProfileViewTest {
     val composeTestRule = createComposeRule()
 
     private val dummyUser = User(
-        id = "1",
+        id = UserId(1),
         name = Name("Player"),
         email = Email("player@example.com")
     )
