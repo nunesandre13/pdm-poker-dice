@@ -29,41 +29,12 @@ class RepositoryLobbiesMock(
     private val shouldFail: Boolean = false
 ): RepositoryLobbies {
     private val scope = CoroutineScope(Dispatchers.Default)
-    private val shFlow: MutableSharedFlow<LobbyResponse> = MutableSharedFlow()
 
-    private val lobbyFlow : Flow<LobbyResponse> = flow{
-        shFlow.collect {
-            emit(it)
-        }
-    }
 
-    override val lobbySseListener: SharedFlow<LobbyResponse> = callbackFlow {
-        launch {
-            lobbyFlow.collect {
-                send(it)
-            }
-        }
+    private val shFlow = MutableSharedFlow<LobbyResponse>(replay = 1)
 
-        launch {
-            var id = 0
-            while (true){
-                delay(3.seconds)
-//                send(LobbyResponse.AddedLobby(Lobby("Lobby_number $id",id,2,listOf(
-//                    User("1", Name("Gui"), Email("gui@gmail"))
-//                ))))
-//                id++
-            }
-
-        }
-
-        awaitClose {
-            // do something
-        }
-    }.shareIn(
-        scope,
-        started = SharingStarted.WhileSubscribed(),
-        replay = 0
-    )
+    // Mudança 2: Expõe diretamente o fluxo sem callbackFlow ou filtros extras
+    override val lobbySseListener: SharedFlow<LobbyResponse> = shFlow
 
 
     override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Lobby, LobbyError> {

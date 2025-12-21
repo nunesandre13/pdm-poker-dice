@@ -39,7 +39,8 @@ import kotlin.time.Duration.Companion.seconds
 
 class RepositoryMatchMock : RepositoryMatch {
     private val scope = CoroutineScope(Dispatchers.Default)
-    private val shFlow: MutableSharedFlow<OutCome<MatchResponse, MatchError>> = MutableSharedFlow()
+    private val shFlow = MutableSharedFlow<OutCome<MatchResponse, MatchError>>(replay = 1)
+
 
     init {
         scope.launch {
@@ -147,9 +148,9 @@ class RepositoryMatchMock : RepositoryMatch {
         )
     }
 
+
     override fun matchSseListener(matchId: Int): SharedFlow<OutCome<MatchResponse, MatchError>> {
-        actualMatchId.value = matchId
-        return sseListener
+        return shFlow
     }
 
     override suspend fun play(command: PlayCommand): OutCome<Match, MatchError> {
@@ -236,6 +237,10 @@ class RepositoryMatchMock : RepositoryMatch {
             }
         }
         return Success(match)
+    }
+
+    suspend fun emitMatchEvent(event: MatchResponse) {
+        shFlow.emit(Success(event))
     }
 
 }

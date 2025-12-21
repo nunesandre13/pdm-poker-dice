@@ -18,6 +18,42 @@ import pt.isel.pdm.user.services.UsersServiceMock
 class LobbyViewModelTests {
 
     @Test
+    fun `JoinedLobby flow updates automatically when a new player joins via SSE`() = runTest {
+        val lobbyRepoMock = RepositoryLobbiesMock()
+        val userMock = UsersServiceMock()
+        val lobbyService = LobbyServiceImp(lobbyRepoMock, userMock)
+        val sut = LobbyViewModel.getFactory(lobbyService, userMock).create(LobbyViewModel::class.java)
+
+        val latchJoined = SuspendingLatch()
+        val latchPlayerAdded = SuspendingLatch()
+        var playersCount = 0
+
+        val collectorJob = launch {
+            sut.stateUi.collect { state ->
+                if (state is LobbyScreenState.JoinedLobby) {
+                    latchJoined.open()
+                    // Observar o StateFlow INTERNO do lobby
+                    state.lobby.collect { lobbyData ->
+                        playersCount = lobbyData.players.size
+                        if (playersCount == 2) latchPlayerAdded.open()
+                    }
+                }
+            }
+        }
+
+        sut.createLobby(LobbyCreation("Live", "Desc", 2, 4, 3, 10))
+        latchJoined.await()
+
+        // Simular evento vindo do "servidor" (Mock)
+        val currentLobby = (sut.stateUi.value as LobbyScreenState.JoinedLobby).lobby.value
+        lobbyRepoMock.joinLobby(currentLobby)
+
+        latchPlayerAdded.await()
+        collectorJob.cancel()
+        assert(playersCount == 2)
+    }
+
+    @Test
     fun `createLobby changes state to JoinedLobby and contains the new lobby`() = runTest {
         val userMock = UsersServiceMock()
         val lobbyRepoMock = RepositoryLobbiesMock()
