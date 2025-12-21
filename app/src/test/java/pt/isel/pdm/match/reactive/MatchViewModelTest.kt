@@ -1,6 +1,7 @@
 package pt.isel.pdm.match.reactive
 
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -184,6 +185,24 @@ class MatchViewModelTest {
         job.cancel()
 
         assert(currentRoute is InnerRoute.BettingState)
+    }
+
+    @Test
+    fun `innerNavigation stays Idle until both Player and Match are available`() = runTest {
+        val matchRepoMock = RepositoryMatchMock()
+        val matchService = MatchServiceImp(matchRepoMock)
+        val userMock = UsersServiceMock()
+
+        val sut = MatchViewModel.factory(matchService, userMock, matchId = 1)
+            .create(MatchViewModel::class.java)
+
+        // Inicialmente deve ser Idle
+        assert(sut.innerNavigation.value is InnerRoute.Idle)
+
+        // Emitimos o Match, mas se o User ainda for null no combine, deve continuar Idle
+        matchRepoMock.emitMatchEvent(MatchResponse.NewMatch(fakeMatch))
+
+        assert(sut.innerNavigation.value is InnerRoute.Idle)
     }
 
 }
