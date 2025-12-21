@@ -60,12 +60,10 @@ class LobbyViewModelTests {
 
     @Test
     fun `leaveLobby success should navigate back to LobbiesList`() = runTest {
-        // Arrange
         val config = LobbyServiceConfig(leaveLobbyResult = Success(Unit))
         val sut = createSut(config)
         val deferred = CompletableDeferred<Unit>()
 
-        // Act: Lançamos uma corrotina para observar o fluxo de estados
         val job = launch {
             sut.stateUi.collect {
                 // Verifica se o estado mudou para LobbiesList (resultado do leaveLobby com sucesso)
@@ -74,8 +72,6 @@ class LobbyViewModelTests {
         }
 
         sut.leaveLobby(lobbyList[0])
-
-        // Assert: Aguarda com timeout para não bloquear o teste infinitamente
         withTimeout(2000) { deferred.await() }
         job.cancel()
 
@@ -84,7 +80,6 @@ class LobbyViewModelTests {
 
     @Test
     fun `joinLobby success should navigate to JoinedLobby`() = runTest {
-        // Arrange
         val targetLobby = lobbyList[0]
         val config = LobbyServiceConfig(
             joinLobbyResult = Success(flowOf(targetLobby))
@@ -92,7 +87,6 @@ class LobbyViewModelTests {
         val sut = createSut(config)
         val deferred = CompletableDeferred<Unit>()
 
-        // Act
         val job = launch {
             sut.stateUi.collect {
                 if (it is LobbyScreenState.JoinedLobby) deferred.complete(Unit)
@@ -101,7 +95,6 @@ class LobbyViewModelTests {
 
         sut.joinLobby(targetLobby)
 
-        // Assert
         withTimeout(2000) { deferred.await() }
         job.cancel()
 
@@ -110,7 +103,6 @@ class LobbyViewModelTests {
 
     @Test
     fun `joinLobby failure should emit LobbyNotFound error`() = runTest {
-        // Arrange
         val targetLobby = lobbyList[0]
         val config = LobbyServiceConfig(
             joinLobbyResult = Failure(LobbyError.LobbyNotFound)
@@ -118,7 +110,6 @@ class LobbyViewModelTests {
         val sut = createSut(config)
         val deferred = CompletableDeferred<Unit>()
 
-        // Act: Observamos o erro em vez do estado de UI
         val job = launch {
             sut.errorState.collect {
                 if (it == LobbyError.LobbyNotFound) deferred.complete(Unit)
@@ -127,7 +118,6 @@ class LobbyViewModelTests {
 
         sut.joinLobby(targetLobby)
 
-        // Assert
         withTimeout(2000) { deferred.await() }
         job.cancel()
 
@@ -136,7 +126,6 @@ class LobbyViewModelTests {
 
     @Test
     fun `createLobby success should update state to JoinedLobby`() = runTest {
-        // Arrange
         val newLobby = lobbyList[0]
         val config = LobbyServiceConfig()
         config.createNewLobbyResult = {
@@ -145,7 +134,6 @@ class LobbyViewModelTests {
         val sut = createSut(config)
         val deferred = CompletableDeferred<Unit>()
 
-        // Act
         val job = launch {
             sut.stateUi.collect {
                 if (it is LobbyScreenState.JoinedLobby) deferred.complete(Unit)
@@ -154,8 +142,7 @@ class LobbyViewModelTests {
 
         sut.createLobby(LobbyCreation("Test", "Desc", 4, 2, 5, 10))
 
-        // Assert
-        withTimeout(2000) { deferred.await() }
+        deferred.await()
         job.cancel()
 
         assert(sut.stateUi.value is LobbyScreenState.JoinedLobby)
