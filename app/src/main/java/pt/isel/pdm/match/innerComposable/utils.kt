@@ -45,7 +45,7 @@ fun DrawOnPlayers(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         players.forEach { playerState ->
-            val bounds = registry[playerState.playerId]
+            val bounds = registry[playerState.playerId.id]
             if (bounds != null) {
                 content(
                     playerState,

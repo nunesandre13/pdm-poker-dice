@@ -1,8 +1,9 @@
-package pt.isel.pdm.dto.Round
+package pt.isel.pdm.dto.round
 
 import kotlinx.serialization.Serializable
+import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.PlayerRoundState
-import pt.isel.pdm.dto.Player.PlayerStatusIn
+import pt.isel.pdm.dto.player.PlayerStatusIn
 
 @Serializable
 data class PlayerRoundStateIn(
@@ -11,7 +12,7 @@ data class PlayerRoundStateIn(
     val playerStatus: PlayerStatusIn = PlayerStatusIn.NotStarted
 ){
     fun toDomain() = PlayerRoundState(
-        playerId = playerId,
+        playerId = PlayerId(playerId),
         coins = coins,
         playerStatus = playerStatus.toDomain()
     )

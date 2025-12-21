@@ -1,6 +1,6 @@
 package pt.isel.pdm.domain
 
-import pt.isel.pdm.dto.Lobby.LobbyOut
+import pt.isel.pdm.dto.lobby.LobbyOut
 
 data class LobbyCreation(
     val name: String,

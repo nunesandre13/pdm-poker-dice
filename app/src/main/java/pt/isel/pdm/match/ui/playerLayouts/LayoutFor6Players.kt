@@ -54,17 +54,3 @@ fun <T>ConstraintLayoutScope.LayoutFor6Players(others: List<T>, playersComposabl
 }
 
 
-@Preview(showBackground = true, widthDp = 800, heightDp = 400)
-@Composable
-private fun LayoutFor6PlayersPreview() {
-    val mockOthers = listOf(
-        PlayerRoundState(2,0,PlayerStatus.NotStarted),
-        PlayerRoundState(3,0,PlayerStatus.NotStarted),
-        PlayerRoundState(4,0,PlayerStatus.NotStarted),
-        PlayerRoundState(5,0,PlayerStatus.NotStarted),
-        PlayerRoundState(6,0,PlayerStatus.NotStarted)
-    )
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        //LayoutFor6Players(others = mockOthers)
-    }
-}

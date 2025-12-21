@@ -6,9 +6,11 @@ import org.junit.Rule
 import org.junit.Test
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyId
 import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.lobby.ui.LobbyListView
 
 class LobbyListViewTest {
@@ -23,15 +25,15 @@ class LobbyListViewTest {
         var backClicked = false
 
         val players = listOf(
-            User("1", Name("Alice"), Email("alice@mail"))
+            User(UserId(1), Name("Alice"), Email("alice@mail"))
         )
 
         val lobbyA = Lobby(
-            id = "a",
+            id = LobbyId(2),
             name = "Lobby A",
             description = "desc A",
             players = players,
-            owner = "1",
+            owner = UserId(1),
             maxPlayer = 4,
             minPlayer = 1,
             numberOdRounds = 3,
@@ -41,11 +43,11 @@ class LobbyListViewTest {
         )
 
         val lobbyB = Lobby(
-            id = "b",
+            id = LobbyId(3),
             name = "Lobby B",
             description = "desc B",
             players = players,
-            owner = "1",
+            owner = UserId(1),
             maxPlayer = 6,
             minPlayer = 2,
             numberOdRounds = 4,
@@ -66,7 +68,7 @@ class LobbyListViewTest {
 
         composeTestRule.onAllNodes(hasText("Join")).assertCountEquals(2)
         composeTestRule.onAllNodes(hasText("Join") and hasClickAction()).get(0).performClick()
-        assert(joinedLobby?.id == "a")
+        assert(joinedLobby?.id?.id == lobbyA.id.id)
 
 
         composeTestRule.onNode(hasText("Create Lobby") and hasClickAction()).performClick()

@@ -9,6 +9,7 @@ import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel
 import pt.isel.pdm.dto.user.UserInput
@@ -25,7 +26,7 @@ class UsersServiceMock(
         Log.d("UsersServiceMock", "init")
     }
 
-    private val _currentUser = MutableStateFlow<User?>(User("1",Name("guilherme"), Email("andre@gmail")))
+    private val _currentUser = MutableStateFlow<User?>(User(UserId(1),Name("guilherme"), Email("andre@gmail")))
 
     override val currentUser: StateFlow<User?> = _currentUser
 
@@ -40,7 +41,7 @@ class UsersServiceMock(
         return if (shouldFail) {
             Failure(UserError.ErrorLogin)
         } else {
-            val newUser = User("123", Name("Guilherme"), Email(user.email))
+            val newUser = User(UserId(123), Name("Guilherme"), Email(user.email))
             _currentUser.value = newUser
             Success(UserCreateTokenOutputModel("fake-token"))
         }
@@ -58,7 +59,7 @@ class UsersServiceMock(
         return if (shouldFail) {
             Failure(UserError.ErrorCreateUser)
         } else {
-            val newUser = User("123", Name(user.name), Email(user.email))
+            val newUser = User(UserId(123), Name(user.name), Email(user.email))
             _currentUser.value = newUser
             Success(newUser)
         }

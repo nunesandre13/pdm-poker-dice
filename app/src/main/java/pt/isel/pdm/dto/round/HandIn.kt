@@ -1,4 +1,4 @@
-package pt.isel.pdm.dto.Round
+package pt.isel.pdm.dto.round
 
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.Serializable

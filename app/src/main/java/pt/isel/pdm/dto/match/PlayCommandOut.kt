@@ -1,4 +1,4 @@
-package pt.isel.pdm.dto.Match
+package pt.isel.pdm.dto.match
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName

@@ -16,9 +16,12 @@ import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.LobbyId
 import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.domain.state.LobbyScreenState
 import pt.isel.pdm.domain.state.UserError
@@ -40,14 +43,14 @@ import pt.isel.pdm.utils.ViewModelBase
 class LobbyViewModelTests {
 
     val players = listOf(
-        User("1", Name("Player 1"), Email("teste@email")),
-        User("2", Name("Player 2"), Email("teste2@email")),
-        User("3", Name("Player 3"), Email("teste3@email"))
+        User(UserId(1), Name("Player 1"), Email("teste@email")),
+        User(UserId(2), Name("Player 2"), Email("teste2@email")),
+        User(UserId(3), Name("Player 3"), Email("teste3@email"))
     )
     val lobbyList = listOf(
-        Lobby("1", "Lobby Beginner", "Ideal for new players", players, "1", 4, 2, 3, 10, null, LobbyStatus.OPEN),
-        Lobby("2", "High Stakes", "Only for pros", players.take(2), "2", 8, 2, 5, 50, null, LobbyStatus.OPEN),
-        Lobby("3", "Final Table", "Tournament final", players, "3", 3, 2, 10, 100, "match_123", LobbyStatus.IN_GAME)
+        Lobby(LobbyId(1), "Lobby Beginner", "Ideal for new players", players, UserId(1), 4, 2, 3, 10, null, LobbyStatus.OPEN),
+        Lobby(LobbyId(2), "High Stakes", "Only for pros", players.take(2), UserId(2), 8, 2, 5, 50, null, LobbyStatus.OPEN),
+        Lobby(LobbyId(3), "Final Table", "Tournament final", players, UserId(3), 3, 2, 10, 100, "match_123", LobbyStatus.IN_GAME)
     )
 
     private fun createSut(lobbyConfig: LobbyServiceConfig = LobbyServiceConfig(), currentUser: User? = players[0]): LobbyViewModel {
@@ -196,7 +199,7 @@ class LobbyViewModelTests {
                 return config.joinLobbyResult
             }
 
-            override suspend fun leaveLobby(lobby: Lobby, playerId: String): OutCome<Unit, LobbyError> {
+            override suspend fun leaveLobby(lobby: Lobby, playerId: PlayerId): OutCome<Unit, LobbyError> {
                 return config.leaveLobbyResult
             }
         }

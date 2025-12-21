@@ -35,6 +35,10 @@ import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.MatchId
+import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.RoundId
+import pt.isel.pdm.domain.UserId
 import kotlin.time.Duration.Companion.seconds
 
 class RepositoryMatchMock : RepositoryMatch {
@@ -66,24 +70,24 @@ class RepositoryMatchMock : RepositoryMatch {
             )
 
             val p1RoundState = PlayerRoundState(
-                playerId = 101,
+                playerId = PlayerId(101),
                 coins = 90,
                 playerStatus = PlayerStatus.StillRolling(
                     hand = dummyHand,
                     remainingRolls = 1
                 )
             )
-            val p2RoundState = PlayerRoundState(102, 90,playerStatus = PlayerStatus.StillRolling(
+            val p2RoundState = PlayerRoundState(PlayerId(102), 90,playerStatus = PlayerStatus.StillRolling(
                 hand = dummyHand2,
                 remainingRolls = 1
             ))
 
-            val p3RoundState = PlayerRoundState(103, 90, PlayerStatus.NotStarted)
-            val p4RoundState = PlayerRoundState(104, 90, PlayerStatus.NotStarted)
+            val p3RoundState = PlayerRoundState(PlayerId(103), 90, PlayerStatus.NotStarted)
+            val p4RoundState = PlayerRoundState(PlayerId(104), 90, PlayerStatus.NotStarted)
 
             val roundPlayers = listOf(p1RoundState, p2RoundState, p3RoundState, p4RoundState)
             val currentRound = Round(
-                id = 1,
+                id = RoundId(1),
                 players = roundPlayers,
                 ante = 10,
                 totalBet = 40,
@@ -91,16 +95,16 @@ class RepositoryMatchMock : RepositoryMatch {
             )
 
             val matchPlayers = listOf(
-                PlayerMatchState(101, 90),
-                PlayerMatchState(102, 90),
-                PlayerMatchState(103, 90),
-                PlayerMatchState(104, 90)
+                PlayerMatchState(PlayerId(101), 90),
+                PlayerMatchState(PlayerId(102), 90),
+                PlayerMatchState(PlayerId(103), 90),
+                PlayerMatchState(PlayerId(104), 90)
             )
 
             val dummyMatch = Match(
-                id = 500,
+                id = MatchId(500),
                 players = matchPlayers,
-                owner = 101,
+                owner = UserId(101),
                 actualRound = currentRound,
                 initialCoins = 100,
                 remainingRounds = 5,
@@ -155,17 +159,17 @@ class RepositoryMatchMock : RepositoryMatch {
 
     override suspend fun play(command: PlayCommand): OutCome<Match, MatchError> {
         val fakeMatch = Match(
-            id = 1,
+            id = MatchId(1),
             players = listOf(
-                PlayerMatchState(playerId = 10, coins = 100),
-                PlayerMatchState(playerId = 20, coins = 120)
+                PlayerMatchState(playerId = PlayerId(10), coins = 100),
+                PlayerMatchState(playerId = PlayerId(20), coins = 120)
             ),
-            owner = 10,
+            owner = UserId(10),
             actualRound = Round(
-                id = 1,
+                id = RoundId(1),
                 players = listOf(
                     PlayerRoundState(
-                        playerId = 10,
+                        playerId = PlayerId(10),
                         coins = 100,
                         playerStatus = PlayerStatus.StillRolling(
                             hand = DicesHand(
@@ -181,7 +185,7 @@ class RepositoryMatchMock : RepositoryMatch {
                         )
                     ),
                     PlayerRoundState(
-                        playerId = 20,
+                        playerId = PlayerId(20),
                         coins = 120,
                         playerStatus = PlayerStatus.FinalHand(
                             hand = DicesHand(
@@ -200,7 +204,7 @@ class RepositoryMatchMock : RepositoryMatch {
                 totalBet = 10,
                 state = RoundState.Betting(
                     turn = PlayerRoundState(
-                        playerId = 10,
+                        playerId = PlayerId(10),
                         coins = 100,
                         playerStatus = PlayerStatus.StillRolling(
                             hand =DicesHand(
@@ -217,8 +221,8 @@ class RepositoryMatchMock : RepositoryMatch {
                     ),
                     amount = 10,
                     playersBets = listOf(
-                        PlayerBetState(playerId = 10, betState = BetState.PENDING),
-                        PlayerBetState(playerId = 20, betState = BetState.CALL)
+                        PlayerBetState(playerId = PlayerId(10), betState = BetState.PENDING),
+                        PlayerBetState(playerId = PlayerId(20), betState = BetState.CALL)
                     )
                 )
             ),

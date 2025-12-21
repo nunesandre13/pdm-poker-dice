@@ -2,9 +2,9 @@ package pt.isel.pdm.domain
 
 
 data class Match(
-    val id: Int,
+    val id: MatchId,
     val players: List<PlayerMatchState>,
-    val owner: Int,
+    val owner: UserId,
     val actualRound : Round,
     val initialCoins: Int,
     val remainingRounds: Int,

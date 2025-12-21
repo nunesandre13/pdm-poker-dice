@@ -6,7 +6,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.PlayCommand
+import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.match.repository.RepositoryMatch
@@ -20,19 +23,19 @@ class MatchServiceImp(private val repository: RepositoryMatch) : MatchServices {
     private val _matchIdState: MutableStateFlow<Int?> = MutableStateFlow(null)
     override val matchIdState: StateFlow<Int?> = _matchIdState
 
-    override fun getMatchUpdate(matchId: Int): Flow<OutCome<MatchResponse, MatchError>> {
-        _matchIdState.value = matchId
-        return repository.matchSseListener(matchId)
+    override fun getMatchUpdate(matchId: MatchId): Flow<OutCome<MatchResponse, MatchError>> {
+        _matchIdState.value = matchId.id
+        return repository.matchSseListener(matchId.id)
     }
 
-    override suspend fun rollDice(playerId: Int, roundId: Int, dices: List<DiceFace>): OutCome<Unit, MatchError> {
+    override suspend fun rollDice(playerId: PlayerId, roundId: RoundId,dices: List<DiceFace>): OutCome<Unit, MatchError> {
         return repository.play(PlayCommand.RollDice(playerId, roundId, dices)).onOutCome(
             onSuccess = { Success(Unit) },
             onFailure = { Failure(it) }
         )
     }
 
-    override suspend fun setHand(playerId: Int, roundId: Int): OutCome<Unit, MatchError> {
+    override suspend fun setHand(playerId: PlayerId, roundId: RoundId): OutCome<Unit, MatchError> {
         return repository.play(PlayCommand.SetHand(playerId, roundId)).onOutCome(
             onSuccess = { Success(Unit) },
             onFailure = { Failure(it) }
@@ -40,8 +43,8 @@ class MatchServiceImp(private val repository: RepositoryMatch) : MatchServices {
     }
 
     override suspend fun raiseAnte(
-        playerId: Int,
-        roundId: Int,
+        playerId: PlayerId,
+        roundId: RoundId,
         ante: Int
     ): OutCome<Unit, MatchError> {
         return repository.play(PlayCommand.RaiseAnte(playerId, roundId, ante)).onOutCome(
@@ -50,21 +53,21 @@ class MatchServiceImp(private val repository: RepositoryMatch) : MatchServices {
         )
     }
 
-    override suspend fun passTurn(playerId: Int, roundId: Int): OutCome<Unit, MatchError> {
+    override suspend fun passTurn(playerId: PlayerId, roundId: RoundId): OutCome<Unit, MatchError> {
         return repository.play(PlayCommand.PassTurn(playerId, roundId)).onOutCome(
             onSuccess = { Success(Unit) },
             onFailure = { Failure(it) }
         )
     }
 
-    override suspend fun call(playerId: Int, roundId: Int): OutCome<Unit, MatchError> {
+    override suspend fun call(playerId: PlayerId, roundId: RoundId): OutCome<Unit, MatchError> {
         return repository.play(PlayCommand.Call(playerId, roundId)).onOutCome(
             onSuccess = { Success(Unit) },
             onFailure = { Failure(it) }
         )
     }
 
-    override suspend fun fold(playerId: Int, roundId: Int): OutCome<Unit, MatchError> {
+    override suspend fun fold(playerId: PlayerId, roundId: RoundId): OutCome<Unit, MatchError> {
         return repository.play(PlayCommand.Fold(playerId, roundId)).onOutCome(
             onSuccess = { Success(Unit) },
             onFailure = { Failure(it) }

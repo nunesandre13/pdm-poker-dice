@@ -11,6 +11,7 @@ import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.state.ProfileError
 import pt.isel.pdm.domain.state.ProfileScreenState
 import pt.isel.pdm.domain.state.UserError
@@ -25,7 +26,7 @@ import pt.isel.pdm.utils.ViewModelBase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProfileViewModelTests {
-    private val testUser = User("1", Name("Guilherme"), Email("gui@test.com"))
+    private val testUser = User(UserId(1), Name("Guilherme"), Email("gui@test.com"))
     private fun createSut(config: ProfileServiceConfig = ProfileServiceConfig()): ProfileViewModel {
         return ProfileViewModel(
             userService = getStubService(config),

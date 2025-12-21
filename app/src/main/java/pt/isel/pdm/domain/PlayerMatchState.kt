@@ -1,6 +1,6 @@
 package pt.isel.pdm.domain
 
 data class PlayerMatchState(
-    val playerId: Int,
+    val playerId: PlayerId,
     val coins: Int
 )

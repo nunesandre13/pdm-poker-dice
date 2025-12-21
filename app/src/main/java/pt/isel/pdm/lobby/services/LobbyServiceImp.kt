@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.scan
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.LobbyStatus
+import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
@@ -68,7 +69,7 @@ class LobbyServiceImp(
         }
     }
 
-    override suspend fun leaveLobby(lobby: Lobby, playerId: String): OutCome<Unit, LobbyError> {
+    override suspend fun leaveLobby(lobby: Lobby, playerId: PlayerId): OutCome<Unit, LobbyError> {
         return repository.leaveLobby(lobby)
     }
 }

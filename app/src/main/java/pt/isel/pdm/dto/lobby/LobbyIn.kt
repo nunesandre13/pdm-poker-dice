@@ -1,13 +1,14 @@
-package pt.isel.pdm.dto.Lobby
+package pt.isel.pdm.dto.lobby
 
 import kotlinx.serialization.Serializable
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyId
 import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
-import pt.isel.pdm.dto.Player.PlayerInfoIn
-import kotlin.toString
+import pt.isel.pdm.domain.UserId
+import pt.isel.pdm.dto.player.PlayerInfoIn
 
 @Serializable
 data class LobbyIn(
@@ -23,15 +24,15 @@ data class LobbyIn(
 )
 fun LobbyIn.toDomain(): Lobby =
     Lobby(
-        id = id.toString(),
+        id = LobbyId(id),
         name = name,
         description = description,
-        owner = owner.toString(),
+        owner = UserId(owner),
         maxPlayer = maxPlayer,
         minPlayer = minPlayer,
         numberOdRounds = 0,
         firstAnte = 0,
         matchId = matchId?.toString(),
         lobbyStatus = LobbyStatus.valueOf(status),
-        players = players.map { User(it.playerId.toString(), Name(it.name), Email(it.name + "@gmail")) }
+        players = players.map { User(UserId(it.playerId), Name(it.name), Email(it.name + "@gmail")) }
     )

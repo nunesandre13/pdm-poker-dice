@@ -7,9 +7,11 @@ import org.junit.Rule
 import org.junit.Test
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyId
 import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
 
 class LobbyViewTest {
 
@@ -19,8 +21,8 @@ class LobbyViewTest {
     @Test
     fun lobbyViewTest() {
         var left = false
-        val players = listOf(User("1", Name("Alice"), Email("alice@mail")), User("2", Name("Bob"), Email("bob@mail")))
-        val lobby = Lobby(id = "l1", name = "Test Lobby", description = "desc", players = players, owner = "1", maxPlayer = 4, minPlayer = 2, numberOdRounds = 3, firstAnte = 10, matchId = null, lobbyStatus = LobbyStatus.OPEN)
+        val players = listOf(User(UserId(1), Name("Alice"), Email("alice@mail")), User(UserId(2), Name("Bob"), Email("bob@mail")))
+        val lobby = Lobby(id = LobbyId(2), name = "Test Lobby", description = "desc", players = players, owner = UserId(1), maxPlayer = 4, minPlayer = 2, numberOdRounds = 3, firstAnte = 10, matchId = null, lobbyStatus = LobbyStatus.OPEN)
 
         composeTestRule.setContent {
             LobbyView(lobby = lobby, onLeave = { left = true })

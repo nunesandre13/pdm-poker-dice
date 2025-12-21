@@ -17,6 +17,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import pt.isel.pdm.MainActivity
 import pt.isel.pdm.configuration.DependenciesContainer
+import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.utils.onOutCome
 
 class MatchForegroundService : Service() {
@@ -58,7 +59,7 @@ class MatchForegroundService : Service() {
     private fun startListeningToMatch() {
         serviceScope.launch {
             val matchId = matchService.matchIdState.value ?: return@launch
-            matchService.getMatchUpdate(matchId).collect { outcome ->
+            matchService.getMatchUpdate(MatchId(matchId)).collect { outcome ->
                 outcome.onOutCome(
                     onSuccess = { matchResponse ->
                         // Processe a resposta do match

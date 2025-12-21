@@ -1,4 +1,4 @@
-package pt.isel.pdm.dto.Lobby
+package pt.isel.pdm.dto.lobby
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -13,10 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
-import pt.isel.pdm.domain.Name
-import pt.isel.pdm.domain.User
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.ui.author.PlayerItem

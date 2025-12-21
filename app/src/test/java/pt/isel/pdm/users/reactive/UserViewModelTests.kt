@@ -11,6 +11,7 @@ import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.domain.state.UserScreenState
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel
@@ -25,8 +26,8 @@ import pt.isel.pdm.utils.ViewModelBase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserViewModelTests {
-    private val testUser1 = User("1", Name("Guilherme"), Email("gui@email"))
-    private val testUser2 = User("2", Name("Andre"), Email("andre@email"))
+    private val testUser1 = User(UserId(1), Name("Guilherme"), Email("gui@email"))
+    private val testUser2 = User(UserId(2), Name("Andre"), Email("andre@email"))
 
     private fun createSut(config: UserServiceConfig = UserServiceConfig()): UserViewModel {
         return UserViewModel(

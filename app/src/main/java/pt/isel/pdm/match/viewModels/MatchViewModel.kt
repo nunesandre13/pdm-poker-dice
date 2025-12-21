@@ -19,8 +19,11 @@ import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.MatchStatus
+import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.RoundState
 import pt.isel.pdm.domain.State
 import pt.isel.pdm.domain.User
@@ -47,7 +50,7 @@ class MatchViewModel(
 ) : ViewModel(),
     ViewModelState<MatchGlobalStateUi, MatchError> by viewModelBase,
     MatchStateProvider , RoundStateProvider, RollingActions, BettingActions {
-    private val matchUpdates = matchServices.getMatchUpdate(matchId)
+    private val matchUpdates = matchServices.getMatchUpdate(MatchId(matchId))
 
     override val player = userRepository.currentUser
     override val matchState: StateFlow<MatchState> = matchUpdates.transformFlowIntoMatchStateFlow()
@@ -81,7 +84,7 @@ class MatchViewModel(
         val currentState = matchState.value
         val myPlayer = player.value
         if (currentState is MatchState.ActualMatch && myPlayer != null) {
-            action(myPlayer.id.toInt(), currentState.match.actualRound.id)
+            action(myPlayer.id.id, currentState.match.actualRound.id.id)
                 .errorOrNull()?.let { emitError(it); return false }
             return true
         } else emitError(MatchError.InvalidPlay); return false
@@ -89,37 +92,37 @@ class MatchViewModel(
 
     override suspend fun rollDice(dices: List<DiceFace>) : Boolean{
         return executePlayerAction { playerId, roundId ->
-            matchServices.rollDice(playerId, roundId, dices)
+            matchServices.rollDice(PlayerId(playerId), RoundId(roundId), dices)
         }
     }
 
     override suspend fun setHand(): Boolean {
         return executePlayerAction { playerId, roundId ->
-            matchServices.setHand(playerId, roundId)
+            matchServices.setHand(PlayerId(playerId), RoundId(roundId))
         }
     }
 
     override suspend fun raiseAnte(ante: Int): Boolean {
         return executePlayerAction { playerId, roundId ->
-            matchServices.raiseAnte(playerId, roundId, ante)
+            matchServices.raiseAnte(PlayerId(playerId), RoundId(roundId), ante)
         }
     }
 
     override suspend fun passTurn(): Boolean {
         return executePlayerAction { playerId, roundId ->
-            matchServices.passTurn(playerId, roundId)
+            matchServices.passTurn(PlayerId(playerId), RoundId(roundId))
         }
     }
 
     override suspend fun call(): Boolean {
         return executePlayerAction { playerId, roundId ->
-            matchServices.call(playerId, roundId)
+            matchServices.call(PlayerId(playerId), RoundId(roundId))
         }
     }
 
     override suspend fun fold(): Boolean {
         return executePlayerAction { playerId, roundId ->
-            matchServices.fold(playerId, roundId)
+            matchServices.fold(PlayerId(playerId),RoundId(roundId))
         }
     }
 
@@ -135,7 +138,7 @@ class MatchViewModel(
             is RoundState.Finished -> InnerRoute.Finished
             is RoundState.Betting -> InnerRoute.BettingState
             is RoundState.Rolling -> {
-                if (round.state.turn.playerId == myPlayer.id.toInt()) {
+                if (round.state.turn.playerId.id == myPlayer.id.id) {
                     InnerRoute.MyTurnState
                 } else {
                     InnerRoute.OtherPlayerTurn
@@ -147,9 +150,9 @@ class MatchViewModel(
     private fun makeTableSetUp(): StateFlow<TableSetup?> = combine(player, matchState) { myPlayer, state ->
         val actualMatch = (state as? MatchState.ActualMatch)?.match
         if (myPlayer != null && actualMatch != null) {
-            val myId = myPlayer.id.toInt()
+            val myId = myPlayer.id.id
             val others = actualMatch.players
-                .map { it.playerId }
+                .map { it.playerId.id }
                 .filter { it != myId }
             TableSetup(myId, others)
         } else {

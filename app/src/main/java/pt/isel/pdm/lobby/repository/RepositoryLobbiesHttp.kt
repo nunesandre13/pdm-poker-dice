@@ -20,15 +20,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.serialization.json.Json
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
-import pt.isel.pdm.dto.Lobby.LobbyEvent
-import pt.isel.pdm.dto.Lobby.toDomain
+import pt.isel.pdm.dto.lobby.LobbyEvent
+import pt.isel.pdm.dto.lobby.toDomain
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
@@ -38,7 +37,7 @@ import io.ktor.client.request.header
 import kotlinx.coroutines.flow.distinctUntilChanged
 import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.toDto
-import pt.isel.pdm.dto.Lobby.LobbyIn
+import pt.isel.pdm.dto.lobby.LobbyIn
 import pt.isel.pdm.user.UserPreferences
 import java.util.concurrent.TimeUnit
 

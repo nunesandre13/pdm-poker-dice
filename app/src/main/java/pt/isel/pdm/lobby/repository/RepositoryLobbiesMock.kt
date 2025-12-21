@@ -9,10 +9,12 @@ import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.LobbyId
 import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
@@ -33,23 +35,23 @@ class RepositoryLobbiesMock(
     override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Lobby, LobbyError> {
         if (shouldFail) return Failure(LobbyError.NetWorkError)
         val newLobby = Lobby(
-            id = "123",
+            id = LobbyId(123),
             name = lobby.name,
             maxPlayer = lobby.maxPlayer,
             minPlayer = lobby.minPlayer,
             description = "Lobby mock",
-            owner = "",
+            owner = UserId(1),
             numberOdRounds = 3,
             firstAnte = 10,
             matchId = "match-123",
-            players = listOf(User("1", Name("Host"), Email("host@test.com"))),
+            players = listOf(User(UserId(1), Name("Host"), Email("host@test.com"))),
             lobbyStatus = LobbyStatus.OPEN
         )
         return Success(newLobby)
     }
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
-        val updatedLobby = lobby.copy(players = lobby.players + User("2", Name("Guest"), Email("g@t.com")))
+        val updatedLobby = lobby.copy(players = lobby.players + User(UserId(2), Name("Guest"), Email("g@t.com")))
         shFlow.emit(LobbyResponse.UpdatedLobby(updatedLobby))
         return Success(updatedLobby)
     }

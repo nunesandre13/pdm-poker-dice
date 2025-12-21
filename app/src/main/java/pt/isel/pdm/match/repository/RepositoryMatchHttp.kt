@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.serialization.json.Json
@@ -33,8 +32,8 @@ import pt.isel.pdm.domain.PlayCommand
 import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.domain.toDto
-import pt.isel.pdm.dto.Match.MatchEvent
-import pt.isel.pdm.dto.Match.MatchIn
+import pt.isel.pdm.dto.match.MatchEvent
+import pt.isel.pdm.dto.match.MatchIn
 import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome

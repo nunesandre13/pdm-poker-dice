@@ -9,13 +9,17 @@ import pt.isel.pdm.domain.BetState
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.MatchStatus
 import pt.isel.pdm.domain.PlayerBetState
+import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.PlayerMatchState
 import pt.isel.pdm.domain.PlayerRoundState
 import pt.isel.pdm.domain.PlayerStatus
 import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.RoundState
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.match.repository.RepositoryMatchMock
 import pt.isel.pdm.match.services.MatchServiceImp
@@ -26,17 +30,17 @@ import pt.isel.pdm.user.services.UsersServiceMock
 
 class MatchViewModelTest {
     val fakeMatch = Match(
-        id = 1,
+        id = MatchId(1),
         players = listOf(
-            PlayerMatchState(playerId = 10, coins = 100),
-            PlayerMatchState(playerId = 20, coins = 120)
+            PlayerMatchState(playerId = PlayerId(10), coins = 100),
+            PlayerMatchState(playerId = PlayerId(20), coins = 120)
         ),
-        owner = 10,
+        owner = UserId(10),
         actualRound = Round(
-            id = 1,
+            id = RoundId(1),
             players = listOf(
                 PlayerRoundState(
-                    playerId = 10,
+                    playerId = PlayerId(10),
                     coins = 100,
                     playerStatus = PlayerStatus.StillRolling(
                         hand = DicesHand(
@@ -52,7 +56,7 @@ class MatchViewModelTest {
                     )
                 ),
                 PlayerRoundState(
-                    playerId = 20,
+                    playerId = PlayerId(20),
                     coins = 120,
                     playerStatus = PlayerStatus.FinalHand(
                         hand = DicesHand(
@@ -71,7 +75,7 @@ class MatchViewModelTest {
             totalBet = 10,
             state = RoundState.Betting(
                 turn = PlayerRoundState(
-                    playerId = 10,
+                    playerId = PlayerId(10),
                     coins = 100,
                     playerStatus = PlayerStatus.StillRolling(
                         hand =DicesHand(
@@ -88,8 +92,8 @@ class MatchViewModelTest {
                 ),
                 amount = 10,
                 playersBets = listOf(
-                    PlayerBetState(playerId = 10, betState = BetState.PENDING),
-                    PlayerBetState(playerId = 20, betState = BetState.CALL)
+                    PlayerBetState(playerId = PlayerId(10), betState = BetState.PENDING),
+                    PlayerBetState(playerId = PlayerId(20), betState = BetState.CALL)
                 )
             )
         ),

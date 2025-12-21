@@ -51,31 +51,3 @@ fun <T>ConstraintLayoutScope.LayoutFor5Players(others: List<T>, playersComposabl
 }
 
 
-@Preview(showBackground = true, widthDp = 800, heightDp = 400)
-@Composable
-private fun LayoutFor5PlayersPreview() {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val other1 = PlayerRoundState(
-            playerId = 2,
-            coins = 0,
-            playerStatus = PlayerStatus.NotStarted
-        )
-        val other2 = PlayerRoundState(
-            playerId = 3,
-            coins = 0,
-            playerStatus = PlayerStatus.NotStarted
-        )
-        val other3 = PlayerRoundState(
-            playerId = 6,
-            coins = 0,
-            playerStatus = PlayerStatus.NotStarted
-        )
-        val other4 = PlayerRoundState(
-            playerId = 7,
-            coins = 0,
-            playerStatus = PlayerStatus.NotStarted
-        )
-
-        //LayoutFor5Players(others = listOf(other1, other2, other3, other4))
-    }
-}

@@ -1,10 +1,10 @@
-package pt.isel.pdm.dto.Player
+package pt.isel.pdm.dto.player
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.json.JsonClassDiscriminator
 import pt.isel.pdm.domain.NUMBER_OF_ROLLS
-import pt.isel.pdm.dto.Round.HandIn
+import pt.isel.pdm.dto.round.HandIn
 import kotlinx.serialization.Serializable
 import pt.isel.pdm.domain.PlayerStatus
 

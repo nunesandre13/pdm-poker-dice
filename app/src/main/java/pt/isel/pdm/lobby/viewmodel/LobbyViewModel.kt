@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.domain.state.LobbyScreenState
 import pt.isel.pdm.lobby.services.LobbyServices
@@ -82,7 +83,7 @@ class LobbyViewModel(
             runOperation(stateUi.value) {
                 navigateTo(LobbyScreenState.Loading)
                 userService.getCurrentUser()?.let { user ->
-                    lobbyService.leaveLobby(lobby, user.id).onOutCome(
+                    lobbyService.leaveLobby(lobby, PlayerId(user.id.id)).onOutCome(
                         onSuccess = {
                             LobbyScreenState.LobbiesList(lobbiesListStateFlow)
                         },

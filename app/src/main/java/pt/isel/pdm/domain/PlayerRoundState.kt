@@ -21,7 +21,7 @@ sealed class PlayerStatus {
 }
 
 data class PlayerRoundState(
-    val playerId: Int,
+    val playerId: PlayerId,
     val coins: Int,
     val playerStatus: PlayerStatus = PlayerStatus.NotStarted
 )

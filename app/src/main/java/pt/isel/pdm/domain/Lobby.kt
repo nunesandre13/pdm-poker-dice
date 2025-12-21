@@ -1,11 +1,11 @@
 package pt.isel.pdm.domain
 
 data class Lobby(
-    val id: String,
+    val id: LobbyId,
     val name: String,
     val description: String,
     val players: List<User>,
-    val owner: String,
+    val owner: UserId,
     val maxPlayer: Int,
     val minPlayer: Int,
     val numberOdRounds: Int,
