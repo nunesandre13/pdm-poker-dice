@@ -148,6 +148,41 @@ class LobbyViewModelTests {
         assert(sut.stateUi.value is LobbyScreenState.JoinedLobby)
     }
 
+
+    // Este teste garante que a navegação para a lista de lobbies liga corretamente
+    // o fluxo de dados do serviço ao estado da UI, verificando se os lobbies
+    // emitidos pelo serviço chegam intactos ao ecrã.
+    @Test
+    fun `goToLobbiesList should update state to LobbiesList with correct data`() = runTest {
+
+        val expectedLobbies = lobbyList
+        val config = LobbyServiceConfig(
+            listAvailableLobbiesFlow = MutableStateFlow(expectedLobbies)
+        )
+        val sut = createSut(config)
+        val deferred = CompletableDeferred<List<Lobby>>()
+
+
+        val job = launch {
+            sut.stateUi.collect { state ->
+                // Procuramos o estado LobbiesList e extraímos o valor do StateFlow interno
+                if (state is LobbyScreenState.LobbiesList) {
+                    deferred.complete(state.lobby.value)
+                }
+            }
+        }
+
+        sut.goToLobbiesList()
+
+        val actualLobbies = withTimeout(2000) { deferred.await() }
+        job.cancel()
+
+        assert(actualLobbies == expectedLobbies) {
+            "not equal: expected=$expectedLobbies, actual=$actualLobbies"
+        }
+        assert(sut.stateUi.value is LobbyScreenState.LobbiesList)
+    }
+
     fun getStubService(config: LobbyServiceConfig): LobbyServices {
         return object : LobbyServices {
             override fun listAvailableLobbies(): Flow<List<Lobby>> {
