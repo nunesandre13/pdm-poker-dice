@@ -1,7 +1,6 @@
 package pt.isel.pdm.lobby.services
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.state.LobbyError

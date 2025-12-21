@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
@@ -40,7 +39,7 @@ import pt.isel.pdm.utils.errorOrNull
 import pt.isel.pdm.utils.getOrNull
 import kotlin.time.Duration.Companion.seconds
 
-open class MatchViewModel(
+class MatchViewModel(
     private val viewModelBase: ViewModelState<MatchGlobalStateUi, MatchError>,
     private val matchServices: MatchServices,
     userRepository: UserServices,
@@ -68,7 +67,7 @@ open class MatchViewModel(
         .transform { targetRoute ->
             emit(targetRoute)
             if (targetRoute == InnerRoute.Finished) {
-                delay(4.seconds) // so para congelar a maquina de estados 4 segundos
+                delay(4.seconds)
             }
         }.stateIn(
         scope = viewModelScope,

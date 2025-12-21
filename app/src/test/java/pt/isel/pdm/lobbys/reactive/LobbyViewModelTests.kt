@@ -2,20 +2,31 @@ package pt.isel.pdm.lobbys.reactive
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import pt.isel.pdm.SuspendingLatch
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.domain.state.LobbyScreenState
 import pt.isel.pdm.lobby.repository.RepositoryLobbiesMock
 import pt.isel.pdm.lobby.services.LobbyServiceImp
+import pt.isel.pdm.lobby.services.LobbyServices
 import pt.isel.pdm.lobby.viewmodel.LobbyViewModel
 import pt.isel.pdm.user.services.UsersServiceMock
+import pt.isel.pdm.utils.Failure
+import pt.isel.pdm.utils.OutCome
+import pt.isel.pdm.utils.Success
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LobbyViewModelTests {
+
+    val lobbyList = listOf<Lobby>()
 
     @Test
     fun `JoinedLobby flow updates automatically when a new player joins via SSE`() = runTest {
@@ -166,4 +177,35 @@ class LobbyViewModelTests {
 
         assert(sut.stateUi.value is LobbyScreenState.LobbiesList)
     }
+
+    fun getStubService(config: LobbyServiceConfig): LobbyServices {
+        return object : LobbyServices {
+            override fun listAvailableLobbies(): Flow<List<Lobby>> {
+                return config.listAvailableLobbiesFlow
+            }
+            override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Pair<Lobby, Flow<Lobby>>, LobbyError> {
+                return config.createNewLobbyResult(lobby)
+            }
+
+            override suspend fun joinLobby(lobby: Lobby): OutCome<Flow<Lobby>, LobbyError> {
+                return config.joinLobbyResult
+            }
+
+            override suspend fun leaveLobby(lobby: Lobby, playerId: String): OutCome<Unit, LobbyError> {
+                return config.leaveLobbyResult
+            }
+        }
+    }
+
+    data class LobbyServiceConfig(
+        val listAvailableLobbiesFlow: MutableStateFlow<List<Lobby>> =  MutableStateFlow(emptyList()),
+
+        var createNewLobbyResult: (LobbyCreation) -> OutCome<Pair<Lobby, Flow<Lobby>>, LobbyError> = { _ ->
+            Failure(LobbyError.NoError)
+        },
+
+        var joinLobbyResult: OutCome<Flow<Lobby>, LobbyError> = Failure(LobbyError.LobbyNotFound),
+
+        var leaveLobbyResult: OutCome<Unit, LobbyError> = Success(Unit)
+    )
 }

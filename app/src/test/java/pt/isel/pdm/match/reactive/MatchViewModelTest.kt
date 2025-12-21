@@ -1,7 +1,6 @@
 package pt.isel.pdm.match.reactive
 
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -99,7 +98,6 @@ class MatchViewModelTest {
         matchStatus = MatchStatus.ELAPSED
     )
 
-    //se o ViewModel encerra a partida corretamente ao receber o evento MatchEnded.
     @Test
     fun `MatchViewModel updates state to Finished when SSE receives MatchEnded`() = runTest {
         val matchRepoMock = RepositoryMatchMock()
