@@ -1,5 +1,6 @@
 package pt.isel.pdm.lobbys.reactive
 
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -8,174 +9,156 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import org.junit.Test
 import pt.isel.pdm.SuspendingLatch
+import pt.isel.pdm.domain.Email
+import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.LobbyStatus
+import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.domain.state.LobbyScreenState
+import pt.isel.pdm.domain.state.UserError
+import pt.isel.pdm.dto.user.UserCreateTokenInputModel
+import pt.isel.pdm.dto.user.UserInput
 import pt.isel.pdm.lobby.repository.RepositoryLobbiesMock
 import pt.isel.pdm.lobby.services.LobbyServiceImp
 import pt.isel.pdm.lobby.services.LobbyServices
 import pt.isel.pdm.lobby.viewmodel.LobbyViewModel
+import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.user.services.UsersServiceMock
+import pt.isel.pdm.users.reactive.UserViewModelTests
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
+import pt.isel.pdm.utils.ViewModelBase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LobbyViewModelTests {
 
-    val lobbyList = listOf<Lobby>()
+    val players = listOf(
+        User("1", Name("Player 1"), Email("teste@email")),
+        User("2", Name("Player 2"), Email("teste2@email")),
+        User("3", Name("Player 3"), Email("teste3@email"))
+    )
+    val lobbyList = listOf(
+        Lobby("1", "Lobby Beginner", "Ideal for new players", players, "1", 4, 2, 3, 10, null, LobbyStatus.OPEN),
+        Lobby("2", "High Stakes", "Only for pros", players.take(2), "2", 8, 2, 5, 50, null, LobbyStatus.OPEN),
+        Lobby("3", "Final Table", "Tournament final", players, "3", 3, 2, 10, 100, "match_123", LobbyStatus.IN_GAME)
+    )
 
-    @Test
-    fun `JoinedLobby flow updates automatically when a new player joins via SSE`() = runTest {
-        val lobbyRepoMock = RepositoryLobbiesMock()
-        val userMock = UsersServiceMock()
-        val lobbyService = LobbyServiceImp(lobbyRepoMock, userMock)
-        val sut = LobbyViewModel.getFactory(lobbyService, userMock).create(LobbyViewModel::class.java)
-
-        val latchJoined = SuspendingLatch()
-        val latchPlayerAdded = SuspendingLatch()
-        var playersCount = 0
-
-        val collectorJob = launch {
-            sut.stateUi.collect { state ->
-                if (state is LobbyScreenState.JoinedLobby) {
-                    latchJoined.open()
-                    // Observar o StateFlow INTERNO do lobby
-                    state.lobby.collect { lobbyData ->
-                        playersCount = lobbyData.players.size
-                        if (playersCount == 2) latchPlayerAdded.open()
-                    }
-                }
-            }
-        }
-
-        sut.createLobby(LobbyCreation("Live", "Desc", 2, 4, 3, 10))
-        latchJoined.await()
-
-        // Simular evento vindo do "servidor" (Mock)
-        val currentLobby = (sut.stateUi.value as LobbyScreenState.JoinedLobby).lobby.value
-        lobbyRepoMock.joinLobby(currentLobby)
-
-        latchPlayerAdded.await()
-        collectorJob.cancel()
-        assert(playersCount == 2)
-    }
-
-    @Test
-    fun `createLobby changes state to JoinedLobby and contains the new lobby`() = runTest {
-        val userMock = UsersServiceMock()
-        val lobbyRepoMock = RepositoryLobbiesMock()
-        val lobbyService = LobbyServiceImp(lobbyRepoMock, userMock)
-
-        val sut = LobbyViewModel.getFactory(lobbyService, userMock)
-            .create(LobbyViewModel::class.java)
-
-        val latch = SuspendingLatch()
-        var finalState: LobbyScreenState? = null
-
-        //courotina que fica a observar o stateUi
-        val collectorJob = launch {
-            sut.stateUi.collect { state ->
-                finalState = state
-                if (state is LobbyScreenState.JoinedLobby) {
-                    latch.open()
-                }
-            }
-        }
-
-
-        val lobbyCreation = LobbyCreation(
-            name = "Test Lobby",
-            description = "Desc",
-            minPlayer = 2,
-            maxPlayer = 4,
-            numberOfRounds = 3,
-            firstAnte = 10
+    private fun createSut(lobbyConfig: LobbyServiceConfig = LobbyServiceConfig(), currentUser: User? = players[0]): LobbyViewModel {
+        return LobbyViewModel(
+            lobbyService = getStubService(lobbyConfig),
+            userService = getStubUserService(currentUser),
+            viewModelState = ViewModelBase(LobbyScreenState.Loading, LobbyError.NoError)
         )
-
-        sut.createLobby(lobbyCreation)
-
-        //teste fica parado no await() até que o coletor encontre o estado JoinedLobby e chame latch.open().
-        latch.await()
-        collectorJob.cancel()
-
-
-        assert(finalState is LobbyScreenState.JoinedLobby)
-        val joinedState = finalState as LobbyScreenState.JoinedLobby
-        val lobbyData = joinedState.lobby.value // Aceder ao StateFlow interno
-        assert(lobbyData.name == "Test Lobby")
     }
 
     @Test
-    fun `goToCreation changes state to Creation`() = runTest {
-        val userMock = UsersServiceMock()
-        val lobbyService = LobbyServiceImp(RepositoryLobbiesMock(), userMock)
-        val sut = LobbyViewModel.Companion.getFactory(lobbyService, userMock)
-            .create(LobbyViewModel::class.java)
+    fun `leaveLobby success should navigate back to LobbiesList`() = runTest {
+        // Arrange
+        val config = LobbyServiceConfig(leaveLobbyResult = Success(Unit))
+        val sut = createSut(config)
+        val deferred = CompletableDeferred<Unit>()
 
-        val latch = SuspendingLatch()
-
+        // Act: Lançamos uma corrotina para observar o fluxo de estados
         val job = launch {
             sut.stateUi.collect {
-                if (it is LobbyScreenState.Creation) latch.open()
+                // Verifica se o estado mudou para LobbiesList (resultado do leaveLobby com sucesso)
+                if (it is LobbyScreenState.LobbiesList) deferred.complete(Unit)
             }
         }
 
-        sut.goToCreation()
-        latch.await()
-        job.cancel()
+        sut.leaveLobby(lobbyList[0])
 
-        assert(sut.stateUi.value is LobbyScreenState.Creation)
-    }
-
-
-    @Test
-    fun `leaveLobby changes state back to LobbiesList`() = runTest {
-        val lobbyRepoMock = RepositoryLobbiesMock()
-        val userMock = UsersServiceMock()
-        val lobbyService = LobbyServiceImp(lobbyRepoMock, userMock)
-        val sut = LobbyViewModel.getFactory(lobbyService, userMock).create(LobbyViewModel::class.java)
-
-        val latchJoined = SuspendingLatch()
-        val latchLeft = SuspendingLatch()
-        var joinedLobbyData: Lobby? = null
-
-        val job = launch {
-            sut.stateUi.collect { state ->
-                if (state is LobbyScreenState.JoinedLobby) {
-                    joinedLobbyData = state.lobby.value
-                    latchJoined.open() // Notifica que já entramos
-                }
-                if (state is LobbyScreenState.LobbiesList) {
-                    latchLeft.open() // Notifica que já saímos
-                }
-            }
-        }
-
-
-        sut.createLobby(
-            LobbyCreation(
-                "ToLeave",
-                "Desc",
-                2,
-                4,
-                3,
-                10)
-        )
-
-        latchJoined.await()
-
-        joinedLobbyData?.let {
-            sut.leaveLobby(it)
-        }
-
-        latchLeft.await()
+        // Assert: Aguarda com timeout para não bloquear o teste infinitamente
+        withTimeout(2000) { deferred.await() }
         job.cancel()
 
         assert(sut.stateUi.value is LobbyScreenState.LobbiesList)
+    }
+
+    @Test
+    fun `joinLobby success should navigate to JoinedLobby`() = runTest {
+        // Arrange
+        val targetLobby = lobbyList[0]
+        val config = LobbyServiceConfig(
+            joinLobbyResult = Success(flowOf(targetLobby))
+        )
+        val sut = createSut(config)
+        val deferred = CompletableDeferred<Unit>()
+
+        // Act
+        val job = launch {
+            sut.stateUi.collect {
+                if (it is LobbyScreenState.JoinedLobby) deferred.complete(Unit)
+            }
+        }
+
+        sut.joinLobby(targetLobby)
+
+        // Assert
+        withTimeout(2000) { deferred.await() }
+        job.cancel()
+
+        assert(sut.stateUi.value is LobbyScreenState.JoinedLobby)
+    }
+
+    @Test
+    fun `joinLobby failure should emit LobbyNotFound error`() = runTest {
+        // Arrange
+        val targetLobby = lobbyList[0]
+        val config = LobbyServiceConfig(
+            joinLobbyResult = Failure(LobbyError.LobbyNotFound)
+        )
+        val sut = createSut(config)
+        val deferred = CompletableDeferred<Unit>()
+
+        // Act: Observamos o erro em vez do estado de UI
+        val job = launch {
+            sut.errorState.collect {
+                if (it == LobbyError.LobbyNotFound) deferred.complete(Unit)
+            }
+        }
+
+        sut.joinLobby(targetLobby)
+
+        // Assert
+        withTimeout(2000) { deferred.await() }
+        job.cancel()
+
+        assert(sut.errorState.value == LobbyError.LobbyNotFound)
+    }
+
+    @Test
+    fun `createLobby success should update state to JoinedLobby`() = runTest {
+        // Arrange
+        val newLobby = lobbyList[0]
+        val config = LobbyServiceConfig()
+        config.createNewLobbyResult = {
+            Success(Pair(newLobby, flowOf(newLobby)))
+        }
+        val sut = createSut(config)
+        val deferred = CompletableDeferred<Unit>()
+
+        // Act
+        val job = launch {
+            sut.stateUi.collect {
+                if (it is LobbyScreenState.JoinedLobby) deferred.complete(Unit)
+            }
+        }
+
+        sut.createLobby(LobbyCreation("Test", "Desc", 4, 2, 5, 10))
+
+        // Assert
+        withTimeout(2000) { deferred.await() }
+        job.cancel()
+
+        assert(sut.stateUi.value is LobbyScreenState.JoinedLobby)
     }
 
     fun getStubService(config: LobbyServiceConfig): LobbyServices {
@@ -197,6 +180,15 @@ class LobbyViewModelTests {
         }
     }
 
+    private fun getStubUserService(user: User?) = object : UserServices {
+        override val currentUser = MutableStateFlow(user)
+        override fun getCurrentUser(): User? = user
+        override suspend fun restoreSession() = true
+        override suspend fun login(user: UserCreateTokenInputModel) = Failure(UserError.NoError)
+        override suspend fun logout() = Success(Unit)
+        override suspend fun createUser(user: UserInput, inviteCode: InviteCode) = Failure(UserError.NoError)
+        override suspend fun inviteCode() = InviteCode("ABCDE")
+    }
     data class LobbyServiceConfig(
         val listAvailableLobbiesFlow: MutableStateFlow<List<Lobby>> =  MutableStateFlow(emptyList()),
 

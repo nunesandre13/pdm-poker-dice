@@ -31,11 +31,6 @@ class LobbyViewModel(
         started = SharingStarted.Eagerly,
         initialValue = emptyList()
     )
-
-    init {
-        goToLobbiesList()
-    }
-
     fun joinLobby(lobby: Lobby) {
         viewModelScope.launch {
             runOperation(stateUi.value) {
@@ -71,6 +66,7 @@ class LobbyViewModel(
         }
     }
 
+    // como estado iniccial no factory ja e loading n sei se vale a pena ter o loding aqui
     fun goToLobbiesList() {
         navigateTo(LobbyScreenState.Loading).also {
             navigateTo(LobbyScreenState.LobbiesList(lobbiesListStateFlow))
@@ -122,7 +118,9 @@ class LobbyViewModel(
                         lobbyServices,
                         userServices,
                         ViewModelBase(LobbyScreenState.Loading, LobbyError.NoError)
-                    ) as T
+                    ).also {
+                        it.goToLobbiesList()
+                    } as T
                 }
             }
     }

@@ -21,7 +21,7 @@ class UserViewModel(
 ) :
     ViewModelState<UserScreenState, UserError> by viewModelBase, ViewModel() {
 
-    init {
+    fun init() {
         viewModelScope.launch {
             userService.restoreSession()
             userService.getCurrentUser()?.let { user ->
@@ -76,7 +76,9 @@ class UserViewModel(
                 return UserViewModel(
                     userService,
                     ViewModelBase(UserScreenState.Idle, UserError.NoError)
-                ) as T
+                ).also {
+                    it.init()
+                } as T
             }
         }
     }
