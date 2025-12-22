@@ -255,6 +255,43 @@ class MatchViewModelTests {
     }
 
 
+    @Test
+    fun `roundState updates when the round changes to a different round id`() = runTest {
+        val firstRoundDeferred = CompletableDeferred<Round>()
+        val secondRoundDeferred = CompletableDeferred<Round>()
+
+        val updatesFlow = MutableStateFlow<OutCome<MatchResponse, MatchError>>(
+            Success(MatchResponse.NewMatch(fakeMatch.copy(actualRound = fakeRound.copy(id = RoundId(1)))))
+        )
+        val sut = createSut(MatchServiceConfig(updatesFlow))
+
+        val job = launch {
+            sut.roundState.collect { round ->
+                if (round != null) {
+                    if (round.id.id == 1) firstRoundDeferred.complete(round)
+                    if (round.id.id == 2) secondRoundDeferred.complete(round)
+                }
+            }
+        }
+
+        val firstRound = firstRoundDeferred.await()
+        assertEquals(1, firstRound.id.id)
+        assertTrue(firstRound.state is RoundState.Betting)
+
+        // Simula uma nova atualização com um round diferente
+        updatesFlow.value = Success(MatchResponse.NewMatch(fakeMatch.copy(
+            actualRound = fakeRound.copy(id = RoundId(2), state = RoundState.Rolling(turn = PlayerRoundState(myPlayerId, 90)))
+        )))
+
+        // Deve emitir o novo round
+        val secondRound = secondRoundDeferred.await()
+        assertEquals(2, secondRound.id.id)
+        assertTrue(secondRound.state is RoundState.Rolling)
+
+        job.cancel()
+    }
+
+
 
 
     class MatchServiceConfig(

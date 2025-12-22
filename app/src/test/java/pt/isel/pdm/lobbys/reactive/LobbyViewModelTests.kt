@@ -8,8 +8,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import pt.isel.pdm.SuspendingLatch
 import pt.isel.pdm.domain.Email
@@ -82,6 +85,13 @@ class LobbyViewModelTests {
         job.cancel()
 
         assert(sut.stateUi.value is LobbyScreenState.LobbiesList)
+    }
+
+    @Test
+    fun `goToCreation should navigate to Creation state`() = runTest {
+        val sut = createSut()
+        sut.goToCreation()
+        assertTrue(sut.stateUi.value is LobbyScreenState.Creation)
     }
 
     @Test
@@ -187,6 +197,28 @@ class LobbyViewModelTests {
             "not equal: expected=$expectedLobbies, actual=$actualLobbies"
         }
         assert(sut.stateUi.value is LobbyScreenState.LobbiesList)
+    }
+
+    @Test
+    fun `joinLobby failure should emit error`() = runTest {
+        val errorDeferred = CompletableDeferred<LobbyError>()
+
+        val config = LobbyServiceConfig(
+            joinLobbyResult = Failure(LobbyError.LobbyFull)
+        )
+        val sut = createSut(config)
+
+        val job = launch {
+            sut.errorState.collect { error ->
+                if (error is LobbyError.LobbyFull) errorDeferred.complete(error)
+            }
+        }
+
+        sut.joinLobby(lobbyList[0])
+
+        errorDeferred.await()
+
+        job.cancel()
     }
 
     fun getStubService(config: LobbyServiceConfig): LobbyServices {
