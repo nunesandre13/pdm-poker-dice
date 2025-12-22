@@ -1,210 +1,286 @@
-//package pt.isel.pdm.match.reactive
-//
-//import kotlinx.collections.immutable.toImmutableList
-//import kotlinx.coroutines.launch
-//import kotlinx.coroutines.test.runTest
-//import org.junit.Test
-//import pt.isel.pdm.SuspendingLatch
-//import pt.isel.pdm.domain.BetState
-//import pt.isel.pdm.domain.DiceFace
-//import pt.isel.pdm.domain.DicesHand
-//import pt.isel.pdm.domain.RawMatch
-//import pt.isel.pdm.domain.MatchId
-//import pt.isel.pdm.domain.MatchStatus
-//import pt.isel.pdm.domain.PlayerBetState
-//import pt.isel.pdm.domain.PlayerId
-//import pt.isel.pdm.domain.PlayerMatchState
-//import pt.isel.pdm.domain.PlayerRoundState
-//import pt.isel.pdm.domain.PlayerStatus
-//import pt.isel.pdm.domain.RawRound
-//import pt.isel.pdm.domain.RoundId
-//import pt.isel.pdm.domain.RoundState
-//import pt.isel.pdm.domain.UserId
-//import pt.isel.pdm.domain.events.MatchResponse
-//import pt.isel.pdm.match.repository.RepositoryMatchMock
-//import pt.isel.pdm.match.services.MatchServiceImp
-//import pt.isel.pdm.match.viewModels.InnerRoute
-//import pt.isel.pdm.match.viewModels.MatchGlobalStateUi
-//import pt.isel.pdm.match.viewModels.MatchViewModel
-//import pt.isel.pdm.user.services.UsersServiceMock
-//
-//class MatchViewModelTest {
-//    val fakeMatch = RawMatch(
-//        id = MatchId(1),
-//        players = listOf(
-//            PlayerMatchState(playerId = PlayerId(10), coins = 100),
-//            PlayerMatchState(playerId = PlayerId(20), coins = 120)
-//        ),
-//        owner = UserId(10),
-//        actualRound = RawRound(
-//            id = RoundId(1),
-//            players = listOf(
-//                PlayerRoundState(
-//                    playerId = PlayerId(10),
-//                    coins = 100,
-//                    playerStatus = PlayerStatus.StillRolling(
-//                        hand = DicesHand(
-//                            listOf(
-//                                DiceFace.NINE,
-//                                DiceFace.TEN,
-//                                DiceFace.JACK,
-//                                DiceFace.QUEEN,
-//                                DiceFace.KING
-//                            ).toImmutableList()
-//                        ),
-//                        remainingRolls = 1
-//                    )
-//                ),
-//                PlayerRoundState(
-//                    playerId = PlayerId(20),
-//                    coins = 120,
-//                    playerStatus = PlayerStatus.FinalHand(
-//                        hand = DicesHand(
-//                            listOf(
-//                                DiceFace.NINE,
-//                                DiceFace.TEN,
-//                                DiceFace.JACK,
-//                                DiceFace.QUEEN,
-//                                DiceFace.KING
-//                            ).toImmutableList()
-//                        )
-//                    )
-//                )
-//            ),
-//            ante = 0,
-//            totalBet = 10,
-//            state = RoundState.Betting(
-//                turn = PlayerRoundState(
-//                    playerId = PlayerId(10),
-//                    coins = 100,
-//                    playerStatus = PlayerStatus.StillRolling(
-//                        hand =DicesHand(
-//                            listOf(
-//                                DiceFace.NINE,
-//                                DiceFace.TEN,
-//                                DiceFace.JACK,
-//                                DiceFace.QUEEN,
-//                                DiceFace.KING
-//                            ).toImmutableList()
-//                        ),
-//                        remainingRolls = 1
-//                    )
-//                ),
-//                amount = 10,
-//                playersBets = listOf(
-//                    PlayerBetState(playerId = PlayerId(10), betState = BetState.PENDING),
-//                    PlayerBetState(playerId = PlayerId(20), betState = BetState.CALL)
-//                )
-//            )
-//        ),
-//        initialCoins = 100,
-//        remainingRounds = 3,
-//        matchStatus = MatchStatus.ELAPSED
-//    )
-//
-//    @Test
-//    fun `MatchViewModel updates state to Finished when SSE receives MatchEnded`() = runTest {
-//        val matchRepoMock = RepositoryMatchMock()
-//        val matchService = MatchServiceImp(matchRepoMock)
-//        val userMock = UsersServiceMock()
-//
-//        val sut = MatchViewModel.factory(matchService, userMock, matchId = 123)
-//            .create(MatchViewModel::class.java)
-//
-//        val latchFinished = SuspendingLatch()
-//
-//        //para simular a UI a ouvir o estado global
-//        val job = launch {
-//            sut.stateUi.collect { state ->
-//                if (state is MatchGlobalStateUi.Finished)
-//                    latchFinished.open()
-//            }
-//        }
-//
-//        // Simular evento de fim de jogo vindo do Mock
-//        matchRepoMock.emitMatchEvent(MatchResponse.MatchEnded)
-//
-//        // O teste fica parado aqui até o latch.open() ser chamado ou o tempo expirar
-//        latchFinished.await()
-//        job.cancel()
-//
-//        // Verifica se o estado final guardado no ViewModel é de facto Finished
-//        assert(sut.stateUi.value is MatchGlobalStateUi.Finished)
-//    }
-//
-//
-//    //Garante que o ViewModel deteta que é a nossa vez de apostar.
-//    @Test
-//    fun `MatchViewModel transitions to MyTurnState when round state is Betting and is my turn`() = runTest {
-//
-//        val matchRepoMock = RepositoryMatchMock()
-//        val matchService = MatchServiceImp(matchRepoMock)
-//        val userMock = UsersServiceMock()
-//
-//        val sut = MatchViewModel.factory(matchService, userMock, matchId = 1)
-//            .create(MatchViewModel::class.java)
-//
-//        val latchMyTurn = SuspendingLatch()
-//
-//        // Observamos a 'innerNavigation' que controla que sub-ecrã mostrar dentro do jogo
-//        val job = launch {
-//            sut.innerNavigation.collect { route ->
-//                if (route is InnerRoute.BettingState) {
-//                    latchMyTurn.open()
-//                }
-//            }
-//        }
-//        // Simulamos a receção de um Match NOVO (NewMatch) com os dados do fakeMatch
-//        // O fakeMatch está em estado RoundState.Betting e o turno é do ID 10
-//        matchRepoMock.emitMatchEvent(MatchResponse.NewMatch(fakeMatch))
-//        latchMyTurn.await()
-//        // Confirma que a navegação interna está no estado em betting
-//        assert(sut.innerNavigation.value is InnerRoute.BettingState)
-//    }
-//
-//    @Test
-//    fun `MatchViewModel transitions to BettingState when round is in betting phase`() = runTest {
-//        val matchRepoMock = RepositoryMatchMock()
-//        val matchService = MatchServiceImp(matchRepoMock)
-//        val userMock = UsersServiceMock()
-//
-//        val sut = MatchViewModel.factory(matchService, userMock, matchId = 1)
-//            .create(MatchViewModel::class.java)
-//
-//        val latch = SuspendingLatch()
-//        var currentRoute: InnerRoute? = null
-//
-//        val job = launch {
-//            sut.innerNavigation.collect { route ->
-//                currentRoute = route
-//                if (route is InnerRoute.BettingState) latch.open()
-//            }
-//        }
-//
-//        matchRepoMock.emitMatchEvent(MatchResponse.NewMatch(fakeMatch))
-//
-//        latch.await()
-//        job.cancel()
-//
-//        assert(currentRoute is InnerRoute.BettingState)
-//    }
-//
-//    @Test
-//    fun `innerNavigation stays Idle until both Player and Match are available`() = runTest {
-//        val matchRepoMock = RepositoryMatchMock()
-//        val matchService = MatchServiceImp(matchRepoMock)
-//        val userMock = UsersServiceMock()
-//
-//        val sut = MatchViewModel.factory(matchService, userMock, matchId = 1)
-//            .create(MatchViewModel::class.java)
-//
-//        // Inicialmente deve ser Idle
-//        assert(sut.innerNavigation.value is InnerRoute.Idle)
-//
-//        // Emitimos o Match, mas se o User ainda for null no combine, deve continuar Idle
-//        matchRepoMock.emitMatchEvent(MatchResponse.NewMatch(fakeMatch))
-//
-//        assert(sut.innerNavigation.value is InnerRoute.Idle)
-//    }
-//
-//}
+package pt.isel.pdm.match.reactive
+
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
+import org.junit.Test
+import pt.isel.pdm.domain.*
+import pt.isel.pdm.domain.events.MatchResponse
+import pt.isel.pdm.domain.state.MatchError
+import pt.isel.pdm.domain.state.Round
+import pt.isel.pdm.match.viewModels.*
+import pt.isel.pdm.match.services.MatchServices
+import pt.isel.pdm.user.services.UserServices
+import pt.isel.pdm.utils.*
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class MatchViewModelTests {
+
+    private val myUserId = UserId(10)
+    private val myPlayerId = PlayerId(10)
+    private val opponentPlayerId = PlayerId(20)
+    private val matchId = MatchId(1)
+    val myDices = listOf(
+        DiceFace.ACE,
+        DiceFace.ACE,
+        DiceFace.KING,
+        DiceFace.KING,
+        DiceFace.KING
+    ).toImmutableList()
+
+    val fakeRound = RawRound(
+        id = RoundId(1),
+        players = listOf(
+            PlayerRoundState(
+                myPlayerId,
+                90,
+                PlayerStatus.StillRolling(DicesHand(myDices), 0)
+            ),
+            PlayerRoundState(
+                opponentPlayerId,
+                120,
+                PlayerStatus.FinalHand(DicesHand(emptyList<DiceFace>().toImmutableList()))
+            )
+        ),
+        ante = 10,
+        totalBet = 20,
+        state = RoundState.Betting(
+            turn = PlayerRoundState(myPlayerId, 90),
+            amount = 10,
+            playersBets = listOf(
+                PlayerBetState(myPlayerId, BetState.PENDING),
+                PlayerBetState(opponentPlayerId, BetState.CALL)
+            )
+        )
+    )
+    private val fakeMatch = RawMatch(id = matchId, players = listOf(
+            PlayerMatchState(myPlayerId, 100),
+            PlayerMatchState(opponentPlayerId, 120)
+        ),
+        owner = myUserId,
+        actualRound = fakeRound,
+        initialCoins = 100,
+        remainingRounds = 3,
+        matchStatus = MatchStatus.ELAPSED
+    )
+
+
+    private val myUser = User(myUserId, Name("Me"), Email("me@test.com"))
+
+    private val playersNameCache = PlayersNameCache().apply {
+        cachePlayers(
+            listOf(
+                PlayerInfo(PlayerId(10), Name("Me")),
+                PlayerInfo(PlayerId(20), Name("Opponent"))
+            )
+        )
+    }
+    private fun createSut(config: MatchServiceConfig= MatchServiceConfig(), user: User? = myUser): MatchViewModel {
+        return MatchViewModel(
+            viewModelBase = ViewModelBase(MatchGlobalStateUi.Loading, MatchError.SomeError),
+            matchServices = getStubMatchService(config),
+            userRepository = getStubUserService(user),
+            playersNameCache = playersNameCache,
+            matchId = 1
+        )
+    }
+
+    @Test
+    fun `initial state is NoMatch and Loading global state`() = runTest {
+        val sut = createSut()
+        assertTrue(sut.matchState.value is MatchState.NoMatch)
+        assertEquals(MatchGlobalStateUi.Loading, sut.stateUi.value)
+    }
+
+    @Test
+    fun `when NewMatch arrives, matchState becomes ActualMatch with resolved names`() =
+        runTest {
+
+            val matchLoaded = CompletableDeferred<MatchState.ActualMatch>()
+
+            val updatesFlow = MutableStateFlow<OutCome<MatchResponse, MatchError>>(
+                Success(MatchResponse.NewMatch(fakeMatch))
+            )
+            val config = MatchServiceConfig(updatesFlow)
+            val sut = createSut(config)
+
+            val job = launch {
+                sut.matchState.collect { state ->
+                    if (state is MatchState.ActualMatch) {
+                        matchLoaded.complete(state)
+                    }
+                }
+            }
+
+            val actualState = withTimeout(5000) {
+                matchLoaded.await()
+            }
+
+            assertEquals(matchId, actualState.match.id)
+            assertEquals(2, actualState.match.players.size)
+
+            val me = actualState.match.players.find { it.playerId.id == 10 }
+            val opponent = actualState.match.players.find { it.playerId.id == 20 }
+
+            assertEquals("Me", me?.name?.name)
+            assertEquals("Opponent", opponent?.name?.name)
+
+            assertEquals(MatchGlobalStateUi.Elapsed, sut.stateUi.value)
+            job.cancel()
+        }
+
+    @Test
+    fun `when MatchEnded arrives, stateUi becomes Finished after 4s delay`() = runTest {
+        val becameElapsed = CompletableDeferred<Unit>()
+        val becameFinished = CompletableDeferred<Unit>()
+
+        val updatesFlow = MutableStateFlow<OutCome<MatchResponse, MatchError>>(
+            Success(MatchResponse.NewMatch(fakeMatch))
+        )
+        val sut = createSut(MatchServiceConfig(updatesFlow))
+
+        val job = launch {
+            sut.stateUi.collect { state ->
+                when (state) {
+                    MatchGlobalStateUi.Elapsed -> becameElapsed.complete(Unit)
+                    MatchGlobalStateUi.Finished -> becameFinished.complete(Unit)
+                    else -> {}
+                }
+            }
+        }
+
+        becameElapsed.await() // Espera ficar Elapsed
+
+        updatesFlow.value = Success(MatchResponse.MatchEnded)
+
+        advanceTimeBy(5000) // Avança > 4s para trigger do delay
+
+        becameFinished.await() // Agora deve estar Finished
+
+        job.cancel()
+    }
+
+    @Test
+    fun `innerNavigation changes correctly based on round state`() = runTest {
+        val bettingDeferred = CompletableDeferred<Unit>()
+        val myTurnDeferred = CompletableDeferred<Unit>()
+        val opponentTurnDeferred = CompletableDeferred<Unit>()
+        val finishedDeferred = CompletableDeferred<Unit>()
+
+        val updatesFlow = MutableStateFlow<OutCome<MatchResponse, MatchError>>(
+            Success(MatchResponse.NewMatch(fakeMatch.copy(
+                actualRound = fakeRound.copy(state = RoundState.Betting(
+                    turn = PlayerRoundState(myPlayerId, 90),
+                    amount = 10,
+                    playersBets = listOf(
+                        PlayerBetState(myPlayerId, BetState.PENDING),
+                        PlayerBetState(opponentPlayerId, BetState.CALL)
+                    )
+                ))
+            )))
+        )
+        val sut = createSut(MatchServiceConfig(updatesFlow))
+
+        val job = launch {
+            sut.innerNavigation.collect { route ->
+                when (route) {
+                    InnerRoute.BettingState -> bettingDeferred.complete(Unit)
+                    InnerRoute.MyTurnState -> myTurnDeferred.complete(Unit)
+                    InnerRoute.OtherPlayerTurn -> opponentTurnDeferred.complete(Unit)
+                    InnerRoute.Finished -> finishedDeferred.complete(Unit)
+                    else -> {}
+                }
+            }
+        }
+
+        bettingDeferred.await()
+
+        // Muda para Rolling - minha vez
+        updatesFlow.value = Success(MatchResponse.NewMatch(fakeMatch.copy(
+            actualRound = fakeRound.copy(state = RoundState.Rolling(turn = PlayerRoundState(myPlayerId, 90)))
+        )))
+        myTurnDeferred.await()
+
+        // Muda para Rolling - vez do adversário
+        updatesFlow.value = Success(MatchResponse.NewMatch(fakeMatch.copy(
+            actualRound = fakeRound.copy(state = RoundState.Rolling(turn = PlayerRoundState(opponentPlayerId, 120)))
+        )))
+        opponentTurnDeferred.await()
+
+        // Round termina
+        updatesFlow.value = Success(MatchResponse.NewMatch(fakeMatch.copy(
+            actualRound = fakeRound.copy(state = RoundState.Finished(winner = myPlayerId.id))
+        )))
+        finishedDeferred.await()
+
+        job.cancel()
+    }
+
+    @Test
+    fun `call returns false and emits error when no match`() = runTest {
+        val sut = createSut()
+        val result = sut.call()
+        assertFalse(result)
+        assertTrue(sut.errorState.value is MatchError.InvalidPlay)
+    }
+
+    @Test
+    fun `roundState reflects the current round after match loads`() = runTest {
+        val roundDeferred = CompletableDeferred<Round>()
+
+        val updatesFlow = MutableStateFlow<OutCome<MatchResponse, MatchError>>(
+            Success(MatchResponse.NewMatch(fakeMatch))
+        )
+        val sut = createSut(MatchServiceConfig(updatesFlow))
+
+        val job = launch {
+            sut.roundState.collect { round ->
+                if (round != null) roundDeferred.complete(round)
+            }
+        }
+
+        val round = roundDeferred.await()
+        assertEquals(RoundId(1), round.id)
+        assertTrue(round.state is RoundState.Betting)
+
+        job.cancel()
+    }
+
+
+
+
+    class MatchServiceConfig(
+        val matchUpdatesFlow: MutableStateFlow<OutCome<MatchResponse, MatchError>> =
+            MutableStateFlow(Failure(MatchError.SomeError))
+    )
+
+    private fun getStubMatchService(config: MatchServiceConfig) = object : MatchServices {
+        override val matchIdState = MutableStateFlow(1)
+        override fun getMatchUpdate(matchId: MatchId) = config.matchUpdatesFlow
+        override suspend fun rollDice(p: PlayerId, r: RoundId, d: List<DiceFace>) = Success(Unit)
+        override suspend fun setHand(p: PlayerId, r: RoundId) = Success(Unit)
+        override suspend fun raiseAnte(p: PlayerId, r: RoundId, a: Int) = Success(Unit)
+        override suspend fun passTurn(p: PlayerId, r: RoundId) = Success(Unit)
+        override suspend fun call(p: PlayerId, r: RoundId) = Success(Unit)
+        override suspend fun fold(p: PlayerId, r: RoundId) = Success(Unit)
+        override suspend fun leaveMatch(m: RawMatch) = Success(Unit)
+    }
+
+    private fun getStubUserService(user: User?) = object : UserServices {
+        override val currentUser = MutableStateFlow(user)
+        override fun getCurrentUser() = user
+        override suspend fun restoreSession() = true
+        override suspend fun login(u: pt.isel.pdm.dto.user.UserCreateTokenInputModel) = Failure(pt.isel.pdm.domain.state.UserError.NoError)
+        override suspend fun logout() = Success(Unit)
+        override suspend fun createUser(u: pt.isel.pdm.dto.user.UserInput, c: InviteCode) = Failure(pt.isel.pdm.domain.state.UserError.NoError)
+        override suspend fun inviteCode() = InviteCode("TEST")
+    }
+}
