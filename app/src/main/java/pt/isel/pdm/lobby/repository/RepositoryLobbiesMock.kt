@@ -12,6 +12,8 @@ import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.LobbyId
 import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.PlayerInfo
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserId
@@ -44,14 +46,14 @@ class RepositoryLobbiesMock(
             numberOdRounds = 3,
             firstAnte = 10,
             matchId = "match-123",
-            players = listOf(User(UserId(1), Name("Host"), Email("host@test.com"))),
+            players = listOf(PlayerInfo(PlayerId(1), Name("Host"))),
             lobbyStatus = LobbyStatus.OPEN
         )
         return Success(newLobby)
     }
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
-        val updatedLobby = lobby.copy(players = lobby.players + User(UserId(2), Name("Guest"), Email("g@t.com")))
+        val updatedLobby = lobby.copy(players = lobby.players + PlayerInfo(PlayerId(2), Name("Guest")))
         shFlow.emit(LobbyResponse.UpdatedLobby(updatedLobby))
         return Success(updatedLobby)
     }

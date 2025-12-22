@@ -23,6 +23,7 @@ fun NavGraphBuilder.match(
             factory = MatchViewModel.factory(
                 matchServices = appConfiguration.matchService,
                 userService = appConfiguration.userServices,
+                playersNameCache = appConfiguration.playersNameCache,
                 matchId = matchId,
             )
         )

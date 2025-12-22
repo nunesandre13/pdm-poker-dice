@@ -1,7 +1,7 @@
 package pt.isel.pdm.dto.match
 
 import kotlinx.serialization.Serializable
-import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.RawMatch
 import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.dto.round.RoundIn
@@ -16,7 +16,7 @@ data class MatchIn(
     val remainingRounds: Int,
     val matchStatus: String
 ){
-    fun toDomain(): Match = Match(
+    fun toDomain(): RawMatch = RawMatch(
         id = MatchId(id),
         players = players.map { it.toDomain() },
         owner = UserId(owner),

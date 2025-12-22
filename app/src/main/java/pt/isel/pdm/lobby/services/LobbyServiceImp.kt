@@ -3,6 +3,7 @@ package pt.isel.pdm.lobby.services
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
 import pt.isel.pdm.domain.Lobby
@@ -11,19 +12,22 @@ import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
+import pt.isel.pdm.domain.toPlayerInfo
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
+import pt.isel.pdm.utils.PlayersNameCache
 import pt.isel.pdm.utils.Success
 import pt.isel.pdm.utils.onOutCome
 
 class LobbyServiceImp(
     private val repository: RepositoryLobbies,
+    private val playersNameCache: PlayersNameCache,
     private val userService: UserServices
 ) : LobbyServices {
 
-    private fun user() = userService.getCurrentUser()?.id
+    private fun player() = userService.getCurrentUser()?.toPlayerInfo()?.id
 
     private fun Lobby.lobbyUpdate(): Flow<Lobby> {
        return repository.lobbySseListener.filter { response ->
@@ -38,9 +42,17 @@ class LobbyServiceImp(
                 is LobbyResponse.LobbyFull -> response.lobby
                 else -> error("Unexpected response type")
             }
-        }.onStart { emit(this@lobbyUpdate) }
+        }.onEach { updatedLobby ->
+            cacheLobbyPlayers(updatedLobby)
+        }.onStart {
+            cacheLobbyPlayers(this@lobbyUpdate)
+           emit(this@lobbyUpdate)
+        }
     }
 
+    private fun cacheLobbyPlayers(lobby: Lobby) {
+        playersNameCache.cachePlayers(lobby.players)
+    }
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<Flow<Lobby>, LobbyError> {
         return repository.joinLobby(lobby).onOutCome(
@@ -62,7 +74,7 @@ class LobbyServiceImp(
                 is LobbyResponse.Lobbies -> value.lobbies
                 is LobbyResponse.AddedLobby -> acc + value.lobby
                 is LobbyResponse.RemovedLobby -> acc.filterNot {
-                    it.id == value.lobby.id && (it.players.none { player -> player.id == user() } || it.lobbyStatus == LobbyStatus.CLOSED) }
+                    it.id == value.lobby.id && (it.players.none { player -> player.id == player() } || it.lobbyStatus == LobbyStatus.CLOSED) }
                 is LobbyResponse.UpdatedLobby -> acc.map { if (it.id == value.lobby.id) value.lobby else it }
                 else -> acc
             }

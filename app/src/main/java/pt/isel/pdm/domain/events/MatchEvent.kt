@@ -1,8 +1,8 @@
 package pt.isel.pdm.domain.events
 
-import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.RawMatch
 
 sealed class MatchResponse {
-    class NewMatch(val newMatch: Match) : MatchResponse()
+    class NewMatch(val newMatch: RawMatch) : MatchResponse()
     data object MatchEnded: MatchResponse()
 }

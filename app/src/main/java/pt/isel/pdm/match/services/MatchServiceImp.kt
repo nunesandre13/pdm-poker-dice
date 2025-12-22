@@ -1,11 +1,10 @@
 package pt.isel.pdm.match.services
 
-import androidx.compose.runtime.State
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.RawMatch
 import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.PlayCommand
 import pt.isel.pdm.domain.PlayerId
@@ -75,7 +74,7 @@ class MatchServiceImp(private val repository: RepositoryMatch) : MatchServices {
     }
 
 
-    override suspend fun leaveMatch(match: Match): OutCome<Unit, MatchError> {
+    override suspend fun leaveMatch(match: RawMatch): OutCome<Unit, MatchError> {
         return repository.leaveMatch(match).onOutCome(
             onSuccess = { Success(Unit) },
             onFailure = { Failure(it) }

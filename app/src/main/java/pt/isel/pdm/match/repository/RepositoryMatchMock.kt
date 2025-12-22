@@ -18,17 +18,16 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.delay
 import pt.isel.pdm.domain.BetState
 import pt.isel.pdm.domain.DicesHand
-import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.RawMatch
 import pt.isel.pdm.domain.MatchStatus
 import pt.isel.pdm.domain.PlayCommand
 import pt.isel.pdm.domain.PlayerBetState
 import pt.isel.pdm.domain.PlayerMatchState
 import pt.isel.pdm.domain.PlayerRoundState
 import pt.isel.pdm.domain.PlayerStatus
-import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RawRound
 import pt.isel.pdm.domain.RoundState
 import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.domain.state.MatchError
@@ -86,7 +85,7 @@ class RepositoryMatchMock : RepositoryMatch {
             val p4RoundState = PlayerRoundState(PlayerId(104), 90, PlayerStatus.NotStarted)
 
             val roundPlayers = listOf(p1RoundState, p2RoundState, p3RoundState, p4RoundState)
-            val currentRound = Round(
+            val currentRound = RawRound(
                 id = RoundId(1),
                 players = roundPlayers,
                 ante = 10,
@@ -101,7 +100,7 @@ class RepositoryMatchMock : RepositoryMatch {
                 PlayerMatchState(PlayerId(104), 90)
             )
 
-            val dummyMatch = Match(
+            val dummyMatch = RawMatch(
                 id = MatchId(500),
                 players = matchPlayers,
                 owner = UserId(101),
@@ -157,15 +156,15 @@ class RepositoryMatchMock : RepositoryMatch {
         return shFlow
     }
 
-    override suspend fun play(command: PlayCommand): OutCome<Match, MatchError> {
-        val fakeMatch = Match(
+    override suspend fun play(command: PlayCommand): OutCome<RawMatch, MatchError> {
+        val fakeMatch = RawMatch(
             id = MatchId(1),
             players = listOf(
                 PlayerMatchState(playerId = PlayerId(10), coins = 100),
                 PlayerMatchState(playerId = PlayerId(20), coins = 120)
             ),
             owner = UserId(10),
-            actualRound = Round(
+            actualRound = RawRound(
                 id = RoundId(1),
                 players = listOf(
                     PlayerRoundState(
@@ -233,7 +232,7 @@ class RepositoryMatchMock : RepositoryMatch {
         return Success(fakeMatch)
     }
 
-    override suspend fun leaveMatch(match: Match): OutCome<Match, MatchError> {
+    override suspend fun leaveMatch(match: RawMatch): OutCome<RawMatch, MatchError> {
         scope.launch {
             val updatedPlayers = match.players.drop(1)
             if (updatedPlayers.isEmpty()) {

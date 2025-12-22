@@ -4,7 +4,7 @@ package pt.isel.pdm.match.services
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.RawMatch
 import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.RoundId
@@ -21,6 +21,6 @@ interface MatchServices {
     suspend fun passTurn(playerId: PlayerId, roundId: RoundId) : OutCome<Unit, MatchError>
     suspend fun call(playerId: PlayerId, roundId: RoundId,) : OutCome<Unit, MatchError>
     suspend fun fold(playerId: PlayerId, roundId: RoundId,) : OutCome<Unit, MatchError>
-    suspend fun leaveMatch(match: Match):  OutCome<Unit, MatchError>
+    suspend fun leaveMatch(match: RawMatch):  OutCome<Unit, MatchError>
     val matchIdState: StateFlow<Int?>
 }

@@ -13,6 +13,7 @@ import pt.isel.pdm.match.services.MatchServiceImp
 import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.user.services.UserServicesHttp
+import pt.isel.pdm.utils.PlayersNameCache
 
 
 class MockConfiguration : Application(), DependenciesContainer {
@@ -26,6 +27,10 @@ class MockConfiguration : Application(), DependenciesContainer {
         super.onCreate()
          ProcessLifecycleOwner.get().lifecycle.addObserver(MatchLifecycleObserver(this))
      }
+
+    override val playersNameCache: PlayersNameCache by lazy {
+        PlayersNameCache()
+    }
     override val repoLobby: RepositoryLobbies by lazy {
         RepositoryLobbiesHttp(userPreferences)
     }
@@ -39,7 +44,7 @@ class MockConfiguration : Application(), DependenciesContainer {
     }
 
     override val lobbyServices by lazy{
-        LobbyServiceImp(repoLobby, userServices)
+        LobbyServiceImp(repoLobby, playersNameCache,userServices)
     }
 
     override val matchRepo: RepositoryMatch by lazy {

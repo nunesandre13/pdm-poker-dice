@@ -6,10 +6,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.DomainError
-import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RawRound
 import pt.isel.pdm.domain.State
-import pt.isel.pdm.match.viewModels.MatchState
-import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
+import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState

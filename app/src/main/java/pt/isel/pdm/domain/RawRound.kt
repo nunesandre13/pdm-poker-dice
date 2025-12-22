@@ -2,7 +2,7 @@ package pt.isel.pdm.domain
 
 const val INITIAL_ANTE = 0
 
-data class Round(
+data class RawRound(
     val id: RoundId,
     val players: List<PlayerRoundState>,
     val ante: Int = INITIAL_ANTE,

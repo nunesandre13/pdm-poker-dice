@@ -7,19 +7,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.BetState
 import pt.isel.pdm.domain.DomainError
-import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RawRound
 import pt.isel.pdm.domain.RoundState
 import pt.isel.pdm.domain.State
-import pt.isel.pdm.match.viewModels.MatchState
+import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.match.viewModels.betting.BettingUiState.*
 import pt.isel.pdm.match.viewModels.interfaces.BettingActions
-import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
@@ -113,8 +110,8 @@ class BettingViewModel(
     }
 
     private fun RoundState.Betting.hasPlayerBet() =
-        stateProvider.player.value?.id.toString().let {  playerId ->
-            playersBets.firstOrNull{ it.playerId.toString() == playerId }?.betState != BetState.PENDING
+        stateProvider.player.value?.id.let {  playerId ->
+            playersBets.firstOrNull{ it.playerId.id == playerId?.id }?.betState != BetState.PENDING
         }
 
     private fun BettingActionState.toUiState(round: Round) = when (this) {

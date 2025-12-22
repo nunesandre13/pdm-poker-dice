@@ -6,6 +6,8 @@ import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyId
 import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.PlayerInfo
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.dto.player.PlayerInfoIn
@@ -34,5 +36,5 @@ fun LobbyIn.toDomain(): Lobby =
         firstAnte = 0,
         matchId = matchId?.toString(),
         lobbyStatus = LobbyStatus.valueOf(status),
-        players = players.map { User(UserId(it.playerId), Name(it.name), Email(it.name + "@gmail")) }
+        players = players.map { PlayerInfo(PlayerId(it.playerId), Name(it.name)) }
     )

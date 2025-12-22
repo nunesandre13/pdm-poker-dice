@@ -77,8 +77,8 @@ fun LobbyView(
                                 .heightIn(min = 0.dp, max = 300.dp),
                             contentPadding = PaddingValues(vertical = 4.dp)
                         ) {
-                            items(lobby.players) { user ->
-                                PlayerItem(user = user)
+                            items(lobby.players) { player ->
+                                PlayerItem(playerInfo = player)
                             }
                         }
 

@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.serialization.json.Json
-import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.RawMatch
 import pt.isel.pdm.domain.PlayCommand
 import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.domain.state.MatchError
@@ -110,7 +110,7 @@ class RepositoryMatchHttp(private val userPreferences: UserPreferences) : Reposi
         return matchSseFlow
     }
 
-    override suspend fun play(command: PlayCommand): OutCome<Match, MatchError> {
+    override suspend fun play(command: PlayCommand): OutCome<RawMatch, MatchError> {
         return try {
             val response = client.post("$baseUrl/match/${currentMatchId.value}/play") {
                 contentType(ContentType.Application.Json)
@@ -127,9 +127,9 @@ class RepositoryMatchHttp(private val userPreferences: UserPreferences) : Reposi
         }
     }
 
-    override suspend fun leaveMatch(match: Match): OutCome<Match, MatchError> {
+    override suspend fun leaveMatch(match: RawMatch): OutCome<RawMatch, MatchError> {
         return try {
-            val response = client.post("$baseUrl/match/${match.id}/leave") {
+            val response = client.post("$baseUrl/match/${match.id.id}/leave") {
                 contentType(ContentType.Application.Json)
                 userPreferences.getToken()?.let { t ->
                     header("Authorization", "Bearer $t")

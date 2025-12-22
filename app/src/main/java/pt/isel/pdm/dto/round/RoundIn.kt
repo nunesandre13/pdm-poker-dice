@@ -2,7 +2,7 @@ package pt.isel.pdm.dto.round
 
 import kotlinx.serialization.Serializable
 import pt.isel.pdm.domain.INITIAL_ANTE
-import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RawRound
 import pt.isel.pdm.domain.RoundId
 
 @Serializable
@@ -13,7 +13,7 @@ data class RoundIn(
     val totalBet: Int = INITIAL_ANTE,
     val state: RoundStateIn
 ) {
-    fun toDomain(): Round = Round(
+    fun toDomain(): RawRound = RawRound(
         id = RoundId(id),
         players = players.map { it.toDomain() },
         ante = ante,

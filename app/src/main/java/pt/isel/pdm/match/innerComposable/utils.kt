@@ -30,6 +30,7 @@ import kotlinx.coroutines.delay
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.PlayerRoundState
 import pt.isel.pdm.domain.PlayerStatus
+import pt.isel.pdm.domain.state.PlayerRoundStateWithName
 import pt.isel.pdm.match.ui.animation.DiceRollAnimationOverlay
 import pt.isel.pdm.match.ui.animation.RolledDices
 import pt.isel.pdm.match.ui.dices.DisplayClickableDices
@@ -39,9 +40,9 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun DrawOnPlayers(
-    players: List<PlayerRoundState>,
+    players: List<PlayerRoundStateWithName>,
     registry: PlayerRegistry,
-    content: @Composable (playerState: PlayerRoundState, modifier: Modifier) -> Unit
+    content: @Composable (playerState: PlayerRoundStateWithName, modifier: Modifier) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         players.forEach { playerState ->
@@ -72,7 +73,7 @@ fun Modifier.applyBounds(bounds: Rect): Modifier {
 
 @Composable
 fun DisplayOtherPlayersStatusOverlay(
-    players: List<PlayerRoundState>,
+    players: List<PlayerRoundStateWithName>,
     playersPosition: PlayerRegistry,
     collectMyDices: ((DiceFace) -> Unit)? = null
 ) {
@@ -83,7 +84,7 @@ fun DisplayOtherPlayersStatusOverlay(
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Player ${playerState.playerId}",
+                    text = playerState.name.name,
                     color = Color.White,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -105,7 +106,7 @@ fun DisplayOtherPlayersStatusOverlay(
 
 @Composable
 fun DrawCup(
-    me: PlayerRoundState,
+    me: PlayerRoundStateWithName,
     startAnimmation: Boolean,
     onClick: ()-> Unit,
     onRollFinished: () -> Unit

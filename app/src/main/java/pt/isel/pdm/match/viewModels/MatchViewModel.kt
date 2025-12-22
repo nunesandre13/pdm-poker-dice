@@ -18,17 +18,23 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.RawMatch
 import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.MatchStatus
+import pt.isel.pdm.domain.Match
 import pt.isel.pdm.domain.PlayerId
-import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RawRound
 import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.RoundState
 import pt.isel.pdm.domain.State
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.domain.state.MatchError
+import pt.isel.pdm.domain.state.Round
+import pt.isel.pdm.domain.state.mapping
+import pt.isel.pdm.domain.state.toRound
+import pt.isel.pdm.domain.toMatch
+import pt.isel.pdm.domain.withName
 import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.match.viewModels.interfaces.BettingActions
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
@@ -36,15 +42,19 @@ import pt.isel.pdm.match.viewModels.interfaces.RollingActions
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.OutCome
+import pt.isel.pdm.utils.PlayerNameResolver
+import pt.isel.pdm.utils.PlayersNameCache
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 import pt.isel.pdm.utils.errorOrNull
 import pt.isel.pdm.utils.getOrNull
+import pt.isel.pdm.utils.mapping
 import kotlin.time.Duration.Companion.seconds
 
 class MatchViewModel(
     private val viewModelBase: ViewModelState<MatchGlobalStateUi, MatchError>,
     private val matchServices: MatchServices,
+    private val playersNameCache: PlayersNameCache,
     userRepository: UserServices,
     matchId: Int
 ) : ViewModel(),
@@ -53,7 +63,7 @@ class MatchViewModel(
     private val matchUpdates = matchServices.getMatchUpdate(MatchId(matchId))
 
     override val player = userRepository.currentUser
-    override val matchState: StateFlow<MatchState> = matchUpdates.transformFlowIntoMatchStateFlow()
+    override val matchState: StateFlow<MatchState> = matchUpdates.transformFlowIntoMatchStateFlow().rawToRich()
 
     override val roundState: StateFlow<Round?> = matchState.filterIsInstance<MatchState.ActualMatch>()
         .map { it.match.actualRound }
@@ -164,25 +174,25 @@ class MatchViewModel(
         initialValue = null
     )
 
-    private fun Flow<OutCome<MatchResponse, MatchError>>.transformFlowIntoMatchStateFlow(): StateFlow<MatchState> {
-        val initial: MatchState = MatchState.NoMatch
+    private fun Flow<OutCome<MatchResponse, MatchError>>.transformFlowIntoMatchStateFlow(): StateFlow<RawMatchState> {
+        val initial: RawMatchState = RawMatchState.NoMatch
         return onEach { outcome -> outcome.errorOrNull()?.let { emitError(it) } }
             .map { it.getOrNull() }
             .scan(initial) { previous, response ->
                 when (response) {
                     is MatchResponse.MatchEnded -> {
-                        if (previous is MatchState.ActualMatch)
-                            MatchState.ActualMatch(previous.match.copy(matchStatus = MatchStatus.FINISHED))
+                        if (previous is RawMatchState.Actual)
+                            RawMatchState.Actual(previous.match.copy(matchStatus = MatchStatus.FINISHED))
                         else previous
                     }
-                    is MatchResponse.NewMatch -> MatchState.ActualMatch(response.newMatch)
+                    is MatchResponse.NewMatch -> RawMatchState.Actual(response.newMatch)
                     null -> previous
                 }
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.Eagerly,
-                initialValue = MatchState.NoMatch
+                initialValue = RawMatchState.NoMatch
             )
     }
 
@@ -203,6 +213,27 @@ class MatchViewModel(
         }
     }
 
+    private fun StateFlow<RawMatchState>.rawToRich(): StateFlow<MatchState> =
+        combine(playersNameCache.playersCache){ rawState, namesCache ->
+        val resolver = PlayerNameResolver(namesCache)
+            when (rawState) {
+                is RawMatchState.NoMatch -> MatchState.NoMatch
+                is RawMatchState.Actual -> rawState.match.run {
+                    MatchState.ActualMatch(
+                        toMatch(players.mapping(resolver),
+                            actualRound.toRound(
+                                actualRound.players.mapping(resolver)
+                            )
+                        )
+                    )
+                }
+            }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = MatchState.NoMatch
+    )
+
     init {
         viewModelScope.launch { observeGlobalState() }
     }
@@ -211,6 +242,7 @@ class MatchViewModel(
         fun factory(
             matchServices: MatchServices,
             userService: UserServices,
+            playersNameCache: PlayersNameCache,
             matchId: Int,
             base: ViewModelState<MatchGlobalStateUi, MatchError> =
                 ViewModelBase(MatchGlobalStateUi.Loading, MatchError.SomeError)
@@ -221,12 +253,12 @@ class MatchViewModel(
                     viewModelBase = base,
                     matchServices = matchServices,
                     userRepository = userService,
+                    playersNameCache = playersNameCache,
                     matchId = matchId
                 ) as T
             }
         }
     }
-
 }
 
 sealed interface InnerRoute : State {
@@ -248,6 +280,11 @@ sealed interface MatchGlobalStateUi: State {
 sealed interface MatchState{
     data object NoMatch: MatchState
     data class ActualMatch(val match: Match): MatchState
+}
+
+private sealed interface RawMatchState {
+    data object NoMatch : RawMatchState
+    data class Actual(val match: RawMatch) : RawMatchState
 }
 
 data class TableSetup(val myId: Int, val opponentsIds: List<Int>)

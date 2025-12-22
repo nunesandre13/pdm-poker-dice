@@ -121,7 +121,7 @@ class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : Repo
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
         return try {
-            val response = client.post("$baseUrl/lobbies/join/${lobby.id}") {
+            val response = client.post("$baseUrl/lobbies/join/${lobby.id.id}") {
                 contentType(ContentType.Application.Json)
                 userPreferences.getToken()?.let { t ->
                     header("Authorization", "Bearer $t")
@@ -136,7 +136,7 @@ class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : Repo
 
     override suspend fun leaveLobby(lobby: Lobby): OutCome<Unit, LobbyError> {
         return try {
-            client.post("$baseUrl/lobbies/leave/${lobby.id}") {
+            client.post("$baseUrl/lobbies/leave/${lobby.id.id}") {
                 contentType(ContentType.Application.Json)
                 userPreferences.getToken()?.let { t ->
                     header("Authorization", "Bearer $t")

@@ -8,7 +8,7 @@ import pt.isel.pdm.SuspendingLatch
 import pt.isel.pdm.domain.BetState
 import pt.isel.pdm.domain.DiceFace
 import pt.isel.pdm.domain.DicesHand
-import pt.isel.pdm.domain.Match
+import pt.isel.pdm.domain.RawMatch
 import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.MatchStatus
 import pt.isel.pdm.domain.PlayerBetState
@@ -16,7 +16,7 @@ import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.PlayerMatchState
 import pt.isel.pdm.domain.PlayerRoundState
 import pt.isel.pdm.domain.PlayerStatus
-import pt.isel.pdm.domain.Round
+import pt.isel.pdm.domain.RawRound
 import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.RoundState
 import pt.isel.pdm.domain.UserId
@@ -29,14 +29,14 @@ import pt.isel.pdm.match.viewModels.MatchViewModel
 import pt.isel.pdm.user.services.UsersServiceMock
 
 class MatchViewModelTest {
-    val fakeMatch = Match(
+    val fakeMatch = RawMatch(
         id = MatchId(1),
         players = listOf(
             PlayerMatchState(playerId = PlayerId(10), coins = 100),
             PlayerMatchState(playerId = PlayerId(20), coins = 120)
         ),
         owner = UserId(10),
-        actualRound = Round(
+        actualRound = RawRound(
             id = RoundId(1),
             players = listOf(
                 PlayerRoundState(

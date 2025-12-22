@@ -4,7 +4,7 @@ data class Lobby(
     val id: LobbyId,
     val name: String,
     val description: String,
-    val players: List<User>,
+    val players: List<PlayerInfo>,
     val owner: UserId,
     val maxPlayer: Int,
     val minPlayer: Int,

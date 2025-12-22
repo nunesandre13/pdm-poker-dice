@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
 
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun BasePlayerView(
     modifier: Modifier = Modifier,
@@ -88,16 +89,3 @@ fun BasePlayerView(
         }
     }
 }
-
-//val containerWidth = maxWidth * 0.6f
-//val fontSize = (containerWidth.value / 7f).sp
-//Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//    Text(
-//        text = stringResource(R.string.pVplayer_label,player.playerId),
-//        textAlign = TextAlign.Center,
-//        fontSize = fontSize,
-//        fontWeight = FontWeight.SemiBold,
-//        color = textColor
-//    )
-//    dicesContent(containerWidth)
-//}
