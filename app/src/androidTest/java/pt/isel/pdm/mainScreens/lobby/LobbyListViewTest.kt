@@ -11,6 +11,7 @@ import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserId
+import pt.isel.pdm.domain.toPlayerInfo
 import pt.isel.pdm.lobby.ui.LobbyListView
 
 class LobbyListViewTest {
@@ -25,7 +26,7 @@ class LobbyListViewTest {
         var backClicked = false
 
         val players = listOf(
-            User(UserId(1), Name("Alice"), Email("alice@mail"))
+            User(UserId(1), Name("Alice"), Email("alice@mail")).toPlayerInfo()
         )
 
         val lobbyA = Lobby(

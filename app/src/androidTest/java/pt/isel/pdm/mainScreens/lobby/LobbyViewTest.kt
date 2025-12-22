@@ -12,6 +12,7 @@ import pt.isel.pdm.domain.LobbyStatus
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.UserId
+import pt.isel.pdm.domain.toPlayerInfo
 
 class LobbyViewTest {
 
@@ -21,7 +22,7 @@ class LobbyViewTest {
     @Test
     fun lobbyViewTest() {
         var left = false
-        val players = listOf(User(UserId(1), Name("Alice"), Email("alice@mail")), User(UserId(2), Name("Bob"), Email("bob@mail")))
+        val players = listOf(User(UserId(1), Name("Alice"), Email("alice@mail")).toPlayerInfo(), User(UserId(2), Name("Bob"), Email("bob@mail")).toPlayerInfo())
         val lobby = Lobby(id = LobbyId(2), name = "Test Lobby", description = "desc", players = players, owner = UserId(1), maxPlayer = 4, minPlayer = 2, numberOdRounds = 3, firstAnte = 10, matchId = null, lobbyStatus = LobbyStatus.OPEN)
 
         composeTestRule.setContent {
