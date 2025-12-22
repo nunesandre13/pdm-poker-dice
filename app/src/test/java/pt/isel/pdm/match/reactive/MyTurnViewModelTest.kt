@@ -125,7 +125,8 @@ class MyTurnViewModelTest {
     private fun createSut(roundFlow: MutableStateFlow<Round?> = MutableStateFlow(null)): MyTurnViewModel {
         val stateProvider = object : RoundStateProvider {
             override val roundState = roundFlow
-            override val player = MutableStateFlow(User(UserId(10), Name("Me"), Email("me@test.com")))
+            override val player: MutableStateFlow<PlayerInfo?> =
+                MutableStateFlow(PlayerInfo(PlayerId(10), Name("Me")))
         }
 
         val actions = object : RollingActions {

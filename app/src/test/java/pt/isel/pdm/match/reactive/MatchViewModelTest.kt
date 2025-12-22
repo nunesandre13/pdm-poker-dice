@@ -217,7 +217,7 @@ class MatchViewModelTests {
 
         // Round termina
         updatesFlow.value = Success(MatchResponse.NewMatch(fakeMatch.copy(
-            actualRound = fakeRound.copy(state = RoundState.Finished(winner = myPlayerId.id))
+            actualRound = fakeRound.copy(state = RoundState.Finished(winner = PlayerId(myPlayerId.id)))
         )))
         finishedDeferred.await()
 

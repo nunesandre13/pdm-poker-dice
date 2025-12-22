@@ -61,7 +61,8 @@ class OtherPlayerTurnViewModelTest {
     private fun createSut(roundFlow: MutableStateFlow<Round?> = MutableStateFlow(null)): OtherPlayerTurnViewModel {
         val stateProvider = object : RoundStateProvider {
             override val roundState = roundFlow
-            override val player = MutableStateFlow(User(UserId(10), Name("Me"), Email("teste@email")))
+            override val player: MutableStateFlow<PlayerInfo?> =
+                MutableStateFlow(PlayerInfo(PlayerId(10), Name("Me")))
         }
 
         return OtherPlayerTurnViewModel(
