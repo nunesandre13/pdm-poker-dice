@@ -28,14 +28,13 @@ import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
 import kotlinx.coroutines.delay
 import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.PlayerRoundState
+import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.PlayerStatus
 import pt.isel.pdm.domain.state.PlayerRoundStateWithName
 import pt.isel.pdm.match.ui.animation.DiceRollAnimationOverlay
 import pt.isel.pdm.match.ui.animation.RolledDices
 import pt.isel.pdm.match.ui.dices.DisplayClickableDices
 import pt.isel.pdm.match.ui.dices.DisplayStaticDices
-import pt.isel.pdm.match.viewModels.myTurn.MyTurnUiState
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -106,16 +105,17 @@ fun DisplayOtherPlayersStatusOverlay(
 
 @Composable
 fun DrawCup(
-    me: PlayerRoundStateWithName,
+    me: PlayerRoundStateWithName?,
     startAnimmation: Boolean,
-    onClick: ()-> Unit,
+    onClick: () -> Unit,
     onRollFinished: () -> Unit
 ) {
-    val dices = when(val status = me.playerStatus){
+    val dices = when(val status = me?.playerStatus){
         is PlayerStatus.FinalHand -> status.hand
         PlayerStatus.NotStarted -> null
         PlayerStatus.PassRound -> null
         is PlayerStatus.StillRolling -> status.hand
+        else -> null
     }
 
     var showRolledDices by remember { mutableStateOf(false) }
@@ -169,3 +169,7 @@ fun DrawCupPreview() {
         )
     }
 }
+
+
+fun List<PlayerRoundStateWithName>.findMe(myId: PlayerId?): PlayerRoundStateWithName? =
+    this.find { it.playerId == myId }

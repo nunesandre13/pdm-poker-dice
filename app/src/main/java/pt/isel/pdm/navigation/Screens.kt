@@ -21,7 +21,7 @@ sealed interface Screens {
     data object Profile : Screens
 
     @Serializable
-    data object StartMatch : Screens
+    data object Lobby : Screens
 
     @Serializable
     @ScreenOrientation(OrientationType.LANDSCAPE)

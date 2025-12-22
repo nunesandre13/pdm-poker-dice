@@ -2,6 +2,7 @@ package pt.isel.pdm.dto.round
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.RoundState
 
 
@@ -30,6 +31,6 @@ sealed class RoundStateIn {
             amount = amount,
             playersBets = playersBets.map { it.toDomain() }
         )
-        is Finished -> RoundState.Finished(winner)
+        is Finished -> RoundState.Finished(winner?.let { PlayerId(it) })
     }
 }

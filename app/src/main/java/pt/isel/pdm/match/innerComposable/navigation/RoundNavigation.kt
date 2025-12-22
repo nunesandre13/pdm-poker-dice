@@ -34,7 +34,7 @@ fun RoundNavigation(matchViewModel: MatchViewModel, navController: NavHostContro
         otherPlayerTurn(matchViewModel,playersPosition)
         myTurn(matchViewModel,playersPosition)
         betting(matchViewModel,playersPosition)
-        finished()
+        finished(matchViewModel)
     }
 
 }

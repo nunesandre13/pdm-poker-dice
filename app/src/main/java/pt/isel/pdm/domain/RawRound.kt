@@ -14,7 +14,7 @@ sealed class RoundState {
 
     data class Rolling(val turn: PlayerRoundState) : RoundState()
     data class Betting(val turn: PlayerRoundState, val amount: Int, val playersBets: List<PlayerBetState>) : RoundState()
-    data class Finished(val winner: Int?) : RoundState()
+    data class Finished(val winner: PlayerId?) : RoundState()
 }
 
 data class PlayerBetState(val playerId: PlayerId, val betState: BetState)

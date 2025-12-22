@@ -36,7 +36,6 @@ class UserServicesHttp(private val userPreferences: UserPreferences) : UserServi
             })
         }
     }
-
     private val _currentUser = MutableStateFlow<User?>(null)
     override val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
     override fun getCurrentUser(): User? = currentUser.value

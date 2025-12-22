@@ -21,6 +21,7 @@ import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
 import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
@@ -63,6 +64,8 @@ class MyTurnViewModel(
 ) : ViewModel(),
     ViewModelState<MyTurnUiState, MyTurnError> by baseViewModel {
 
+
+    val player get() =  stateProvider.player.value
     private val actualRound = stateProvider.roundState.filterNotNull()
 
     private val _actionState = MutableStateFlow<MyTurnActionState>(MyTurnActionState.Idle)
@@ -118,7 +121,7 @@ class MyTurnViewModel(
         when (val state = stateUi.value) {
             InitialLoading -> {  /* do nothing */  }
             is ValidState -> {
-                if (state.data.rollsLeft > 0 && _actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.Rolling)) {
+                if (state.data.rollsLeft >= 0 && _actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.Rolling)) {
                     viewModelScope.launch {
                         if (actions.rollDice(dices)) {
                             starRollingAnimation = true

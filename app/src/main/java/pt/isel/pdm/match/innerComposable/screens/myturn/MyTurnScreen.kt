@@ -30,6 +30,7 @@ import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import pt.isel.pdm.match.innerComposable.findMe
 
 @Composable
 fun MyTurnScreen(vm: MyTurnViewModel, playersPosition: PlayerRegistry) {
@@ -93,8 +94,7 @@ private fun MyTurnUiRolling(
         players = state.round.players,
         playersPosition = playersPosition
     )
-    // mudar para ir buscar os dados concretos de um player em si
-    DrawCup(state.round.players.first(), vm.starRollingAnimation, {}) { vm.stopRollingAnimation() }
+    DrawCup(state.round.players.findMe(vm.player?.id), vm.starRollingAnimation, {}) { vm.stopRollingAnimation() }
 }
 
 

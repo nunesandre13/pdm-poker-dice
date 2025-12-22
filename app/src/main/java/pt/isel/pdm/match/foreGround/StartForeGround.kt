@@ -8,10 +8,12 @@ import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun GrantPermission() {
     val context = LocalContext.current
@@ -24,9 +26,7 @@ fun GrantPermission() {
             Log.d("Permission", "Permissão negada.")
         }
     }
-
     LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val isPermissionGranted = ContextCompat.checkSelfPermission(
                 context,
                 android.Manifest.permission.POST_NOTIFICATIONS
@@ -35,16 +35,12 @@ fun GrantPermission() {
             if (!isPermissionGranted) {
                 launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
-        }
+
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun enableForegroundService(context: Context, serviceClass: Class<out Service> = MatchForegroundService::class.java) {
     val intent = Intent(context, serviceClass)
-    // verificacao do tipo de android, android 8 + necessita de startForeGrounService
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        context.startForegroundService(intent)
-    } else {
-        context.startService(intent)
-    }
+    context.startForegroundService(intent)
 }

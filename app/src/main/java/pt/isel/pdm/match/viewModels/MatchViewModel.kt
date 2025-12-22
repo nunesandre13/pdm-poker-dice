@@ -23,6 +23,7 @@ import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.MatchStatus
 import pt.isel.pdm.domain.Match
 import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.PlayerInfo
 import pt.isel.pdm.domain.RawRound
 import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.RoundState
@@ -34,7 +35,7 @@ import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.domain.state.mapping
 import pt.isel.pdm.domain.state.toRound
 import pt.isel.pdm.domain.toMatch
-import pt.isel.pdm.domain.withName
+import pt.isel.pdm.domain.toPlayerInfo
 import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.match.viewModels.interfaces.BettingActions
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
@@ -62,7 +63,11 @@ class MatchViewModel(
     MatchStateProvider , RoundStateProvider, RollingActions, BettingActions {
     private val matchUpdates = matchServices.getMatchUpdate(MatchId(matchId))
 
-    override val player = userRepository.currentUser
+    override val player = userRepository.currentUser.map{ it?.toPlayerInfo()}.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = null
+    )
     override val matchState: StateFlow<MatchState> = matchUpdates.transformFlowIntoMatchStateFlow().rawToRich()
 
     override val roundState: StateFlow<Round?> = matchState.filterIsInstance<MatchState.ActualMatch>()
@@ -136,7 +141,7 @@ class MatchViewModel(
         }
     }
 
-    private fun calculateInnerRoute(state: MatchState, myPlayer: User?): InnerRoute {
+    private fun calculateInnerRoute(state: MatchState, myPlayer: PlayerInfo?): InnerRoute {
         if (state !is MatchState.ActualMatch || myPlayer == null) {
             return InnerRoute.Idle
         }

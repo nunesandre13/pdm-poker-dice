@@ -1,9 +1,7 @@
 package pt.isel.pdm.navigation.screens
 
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import pt.isel.pdm.configuration.DependenciesContainer
 import pt.isel.pdm.match.screens.MatchScreen
@@ -27,6 +25,6 @@ fun NavGraphBuilder.match(
                 matchId = matchId,
             )
         )
-        MatchScreen(matchVm, {onNavigation(NavigationEvent.Navigate(Screens.StartMatch))} )
+        MatchScreen(matchVm) { onNavigation(NavigationEvent.Back) }
     }
 }
