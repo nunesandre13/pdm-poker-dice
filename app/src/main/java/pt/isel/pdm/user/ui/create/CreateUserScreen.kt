@@ -74,7 +74,7 @@ fun CreateUserScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 EmailForm(email = email, emailError, onEmailChange = onEmailChange)
                 Spacer(modifier = Modifier.height(12.dp))
-                InviteForm(invite = inviteCode, onInviteCodeChange = onInviteChange)
+
             }
         },
         {
@@ -91,9 +91,11 @@ fun CreateUserScreen(
                     onShowPasswordChange = onShowPassword,
                     error = passwordError
                 )
+                InviteForm(invite = inviteCode, onInviteCodeChange = onInviteChange)
             }
         },
         {
+            Spacer(modifier = Modifier.height(18.dp))
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(12.dp),
