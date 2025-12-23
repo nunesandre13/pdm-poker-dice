@@ -1,11 +1,13 @@
 package pt.isel.pdm.match.innerComposable.screens.myturn
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +15,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.match.innerComposable.findMe
 
 @Composable
@@ -69,11 +78,8 @@ fun MyTurnContent(
 
             is MyTurnUiState.Rolling -> MyTurnUiRolling(state, playersPosition, vm)
 
-            is MyTurnUiState.SettingHand -> {
-                DisplayOtherPlayersStatusOverlay(
-                    players = state.round.players,
-                    playersPosition = playersPosition
-                )
+            is MyTurnUiState.SettingHand, is MyTurnUiState.PassingTurn -> {
+                DisplayOtherPlayersStatusOverlay(state.round.players,playersPosition)
             }
         }
     }
@@ -108,30 +114,68 @@ private fun MyTurnUiRolling(
 fun MyTurnButtons(
     onRaiseAnteClick: () -> Unit,
     onSetHandClick: () -> Unit,
+    onPassTurn: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth(0.38f)
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.Start,
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(
-            onClick = onRaiseAnteClick,
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .padding(end = 8.dp)
+                .fillMaxWidth(0.38f)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.Start
         ) {
-            Text("Raise Ante")
+            Button(
+                onClick = onRaiseAnteClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+            ) {
+                Text("Raise Ante")
+            }
+            Button(
+                onClick = onSetHandClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp),
+            ) {
+                Text("Set Ante ")
+            }
         }
-        Button(
-            onClick = onSetHandClick,
+
+        Spacer(modifier = Modifier.fillMaxWidth(0.62f))
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .padding(start = 8.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
         ) {
-            Text("Set Hand")
+            IconButton(
+                onClick = onPassTurn,
+                colors = IconButtonDefaults.filledIconButtonColors()
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Pass Turn",
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Dark Mode", widthDp = 412, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun MyTurnButtonsDarkPreview() {
+    MaterialTheme {
+        Surface {
+            MyTurnButtons(
+                onRaiseAnteClick = {},
+                onSetHandClick = {},
+                onPassTurn = {}
+            )
         }
     }
 }
@@ -160,6 +204,7 @@ fun BoxScope.MyTurnUiIdle(
     MyTurnButtons(
         onRaiseAnteClick = { showDialog = true },
         onSetHandClick = { vm.setHand() },
+        onPassTurn =  {vm.passTurn()},
         modifier = Modifier
             .align(Alignment.BottomStart)
     )

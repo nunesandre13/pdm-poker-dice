@@ -37,6 +37,7 @@ import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.match.ui.playerLayouts.MakeLayout
 import pt.isel.pdm.match.ui.playerView.BasePlayerView
 import pt.isel.pdm.match.ui.table.PokerTableSurface
+import pt.isel.pdm.match.ui.table.TableTitle
 import pt.isel.pdm.match.viewModels.MatchGlobalStateUi
 import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.MatchViewModel
@@ -60,6 +61,7 @@ fun RoundScreen(matchViewModel: MatchViewModel) {
         val setup = tableSetup
         if (setup != null){
             PokerTableSurface(modifier = Modifier.fillMaxWidth(0.78f).aspectRatio(2f)) {
+                TableTitle()
                 MakeLayout(
                     me = setup.myId,
                     others = setup.opponentsIds,

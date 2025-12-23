@@ -31,6 +31,8 @@ sealed interface MyTurnActionState {
     object Idle : MyTurnActionState
     object Rolling : MyTurnActionState
     object SettingHand : MyTurnActionState
+
+    object PassingTurn: MyTurnActionState
     object RaisingAnte : MyTurnActionState
 }
 
@@ -45,6 +47,8 @@ sealed interface MyTurnUiState : State {
         val round: Round
     }
     object InitialLoading : MyTurnUiState
+
+    data class PassingTurn(override val data: MyTurnDataState, override val round: Round) : ValidState
 
     data class Idle(override val data: MyTurnDataState, override val round: Round) : ValidState
     data class Rolling(override val data: MyTurnDataState, override val round: Round ) : ValidState
@@ -108,6 +112,7 @@ class MyTurnViewModel(
                 is MyTurnActionState.Rolling -> Rolling(data,round)
                 is MyTurnActionState.SettingHand -> SettingHand(data,round)
                 is MyTurnActionState.RaisingAnte -> RaisingAnte(data,round)
+                is MyTurnActionState.PassingTurn -> PassingTurn(data,round)
             }
         }.collect { uiState ->
             navigateTo(uiState)
@@ -159,6 +164,19 @@ class MyTurnViewModel(
                 if (_actionState.updateIf(MyTurnActionState.Idle, MyTurnActionState.RaisingAnte)) {
                     runAndSetAction(MyTurnActionState.Idle){
                         actions.raiseAnte(ante)
+                    }
+                }
+            }
+        }
+    }
+
+    fun passTurn(){
+        when(stateUi.value) {
+            InitialLoading -> { /* do nothing */ }
+            is ValidState -> {
+                if (_actionState.updateIf(MyTurnActionState.Idle, MyTurnActionState.PassingTurn)) {
+                    runAndSetAction(MyTurnActionState.Idle){
+                        actions.passTurn()
                     }
                 }
             }

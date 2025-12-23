@@ -6,4 +6,5 @@ interface RollingActions {
     suspend fun rollDice(dices: List<DiceFace>): Boolean
     suspend fun setHand(): Boolean
     suspend fun raiseAnte(ante: Int): Boolean
+    suspend fun passTurn(): Boolean
 }
