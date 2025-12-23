@@ -11,6 +11,10 @@ import pt.isel.pdm.user.ui.create.CreateUserScreen
 import pt.isel.pdm.user.ui.create.ViewUserCreateStateFull
 import pt.isel.pdm.user.ui.login.LoginScreen
 import pt.isel.pdm.user.ui.login.ViewUserLoginStateFull
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.user.services.UsersServiceMock
+import pt.isel.pdm.utils.ViewModelBase
 
 @Composable
 fun UserScreen(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
@@ -92,3 +96,49 @@ private fun UserScreenError(viewModel: UserViewModel) {
 }
 
 
+
+@Preview(showBackground = true, showSystemUi = true, name = "Preview Login")
+@Composable
+fun UserScreenLoginPreview() {
+    val userServiceMock = UsersServiceMock()
+
+    // CORREÇÃO: Declarar explicitamente <UserScreenState, UserError>
+    val viewModelBase = ViewModelBase<UserScreenState, UserError>(
+        initialState = UserScreenState.UserLoggedOut,
+        noError = UserError.NoError
+    )
+
+    val viewModel = UserViewModel(
+        userService = userServiceMock,
+        viewModelBase = viewModelBase
+    )
+
+    MaterialTheme {
+        UserScreen(
+            viewModel = viewModel,
+            onTitleScreen = { }
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun UserScreenCreatePreview() {
+    val userServiceMock = UsersServiceMock()
+    val viewModelBase = ViewModelBase<UserScreenState, UserError>(
+        initialState = UserScreenState.CreatingUser,
+        noError = UserError.NoError
+    )
+
+    val viewModel = UserViewModel(
+        userService = userServiceMock,
+        viewModelBase = viewModelBase
+    )
+
+    MaterialTheme {
+        UserScreen(
+            viewModel = viewModel,
+            onTitleScreen = { }
+        )
+    }
+}

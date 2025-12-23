@@ -1,5 +1,6 @@
 package pt.isel.pdm.match.ui.playerLayouts
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,10 +32,3 @@ fun <T> ConstraintLayoutScope.LayoutFor3Players(others: List<T>,  playersComposa
     PlaceOtherPlayers(players = others, constraintBlocks = constraints, playersComposable)
 }
 
-@Preview(showBackground = true, widthDp = 800, heightDp = 400)
-@Composable
-private fun LayoutFor3PlayersPreview() {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        //LayoutFor3Players(others = listOf(1, 2))
-    }
-}

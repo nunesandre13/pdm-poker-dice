@@ -13,6 +13,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun Cup(
@@ -44,4 +52,27 @@ fun Cup(
                 onClick = onClick
             )
     )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun CupPreview() {
+
+    var rotation by remember { mutableFloatStateOf(0f) }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Cup(
+            offsetX = 0f,
+            offsetY = 0f,
+            rotation = rotation,
+            onCupSized = { },
+            onClick = {
+                rotation += 45f
+            },
+            enable = true
+        )
+    }
 }

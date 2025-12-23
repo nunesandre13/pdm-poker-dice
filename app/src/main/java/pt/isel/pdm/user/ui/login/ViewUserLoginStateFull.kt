@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.domain.toEmail
@@ -13,6 +12,9 @@ import pt.isel.pdm.domain.toPassword
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.utils.presentError
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.tooling.preview.Preview
+
 
 
 data class LoginState(
@@ -82,3 +84,29 @@ fun ViewUserLoginStateFull(
     loginView(state, actions)
 }
 
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun ViewUserLoginStateFullPreview() {
+    MaterialTheme {
+        ViewUserLoginStateFull(
+            onLogin = { /* Simula chamada de login */ },
+            onSignUp = { /* Navega para registo */ },
+            topBarConfig = TopBarConfig.Simple("Login Test"),
+            loginView = { state, actions ->
+                LoginScreen(
+                    topBarConfig = state.topBarConfig,
+                    email = state.email,
+                    password = state.password,
+                    onEmailChange = actions.onEmailChange,
+                    onPasswordChange = actions.onPasswordChange,
+                    showPassword = state.showPassword,
+                    onShowPassword = actions.onShowPassword,
+                    login = actions.onLogin,
+                    onSignUp = actions.onSignUp,
+                    emailError = state.emailError,
+                    passwordError = state.passwordError
+                )
+            }
+        )
+    }
+}

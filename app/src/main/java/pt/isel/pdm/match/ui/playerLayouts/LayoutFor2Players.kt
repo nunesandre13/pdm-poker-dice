@@ -10,6 +10,13 @@ import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 
 
 @Composable
@@ -27,7 +34,28 @@ fun <T> ConstraintLayoutScope.LayoutFor2Players(others: List<T>, playersComposab
 @Preview(showBackground = true, widthDp = 800, heightDp = 400)
 @Composable
 private fun LayoutFor2PlayersPreview() {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        //LayoutFor2Players(others = listOf(), {})
+    val fakeOpponents = listOf("Adversário 1")
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF1B5E20))
+    ) {
+        LayoutFor2Players(
+            others = fakeOpponents,
+            playersComposable = { name, modifier ->
+                Box(
+                    modifier = modifier
+                        .border(2.dp, Color.White)
+                        .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = name,
+                        color = Color.White,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+        )
     }
 }

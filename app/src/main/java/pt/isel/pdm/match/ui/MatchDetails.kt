@@ -25,7 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import pt.isel.pdm.domain.PlayerMatchStateWithName
-
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.PlayerId
 
 @Composable
 fun PlayerListItem(
@@ -89,4 +95,44 @@ fun PlayerDetailsDialog(
             }
         }
     )
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun PlayerListItemPreview() {
+    val fakePlayer = PlayerMatchStateWithName(
+        playerId = PlayerId(123),
+        name = Name("Gabriel Silva"),
+        coins = 1500
+    )
+
+    MaterialTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            PlayerListItem(
+                player = fakePlayer,
+                onClick = {  }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PlayerDetailsDialogPreview() {
+    val fakePlayer = PlayerMatchStateWithName(
+        playerId = PlayerId(456),
+        name = Name("Alice Santos"),
+        coins = 2500
+    )
+
+    var showDialog by remember { mutableStateOf(true) }
+    MaterialTheme {
+        if (showDialog) {
+            PlayerDetailsDialog(
+                player = fakePlayer,
+                onDismiss = { showDialog = false }
+            )
+        }
+    }
 }

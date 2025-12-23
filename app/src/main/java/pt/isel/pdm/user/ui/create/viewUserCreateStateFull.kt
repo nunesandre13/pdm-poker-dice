@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import pt.isel.pdm.domain.InviteCode
-import pt.isel.pdm.domain.UserCreate
-import pt.isel.pdm.domain.UserLogin
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.InviteInput
 import pt.isel.pdm.domain.inputs.NameInput
@@ -107,3 +107,36 @@ fun ViewUserCreateStateFull(
     createView(state, actions)
 }
 
+
+
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun ViewUserCreateStateFullPreview() {
+    MaterialTheme {
+        ViewUserCreateStateFull(
+            onCreateUser = { user, invite ->
+                println("User: ${user.name}, Invite: ${invite.code}")
+            },
+            topBarConfig = TopBarConfig.WithBack("Registo") { },
+            createView = { state, actions ->
+                CreateUserScreen(
+                    topBarConfig = state.topBarConfig,
+                    email = state.email,
+                    onEmailChange = actions.onEmailChange,
+                    userName = state.name,
+                    onUserNameChange = actions.onNameChange,
+                    password = state.password,
+                    onPasswordChange = actions.onPasswordChange,
+                    showPassword = state.showPassword,
+                    onShowPassword = actions.onShowPassword,
+                    onCreateUser = actions.onCreateUser,
+                    emailError = state.emailError,
+                    passwordError = state.passwordError,
+                    inviteCode = state.inviteCode,
+                    onInviteChange = actions.onInviteCodeChange
+                )
+            }
+        )
+    }
+}

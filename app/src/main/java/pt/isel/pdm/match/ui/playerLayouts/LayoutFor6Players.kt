@@ -1,16 +1,11 @@
 package pt.isel.pdm.match.ui.playerLayouts
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstrainScope
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
-import pt.isel.pdm.domain.PlayerRoundState
-import pt.isel.pdm.domain.PlayerStatus
+
 
 @Composable
 fun <T>ConstraintLayoutScope.LayoutFor6Players(others: List<T>, playersComposable: PlayerComposable<T>) {
