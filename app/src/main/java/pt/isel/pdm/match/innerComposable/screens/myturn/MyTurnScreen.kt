@@ -1,16 +1,21 @@
 package pt.isel.pdm.match.innerComposable.screens.myturn
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -30,6 +35,8 @@ import pt.isel.pdm.match.viewModels.myTurn.MyTurnViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import pt.isel.pdm.match.innerComposable.findMe
 
 @Composable
@@ -83,7 +90,6 @@ private fun MyTurnUiRaisingAnte(
     DrawCup()
 }
 
-
 @Composable
 private fun MyTurnUiRolling(
     state: MyTurnUiState.Rolling,
@@ -97,7 +103,6 @@ private fun MyTurnUiRolling(
     DrawCup(state.round.players.findMe(vm.player?.id), vm.starRollingAnimation, {}) { vm.stopRollingAnimation() }
 }
 
-
 @Composable
 fun BoxScope.MyTurnUiIdle(
     state: MyTurnUiState.Idle,
@@ -106,7 +111,6 @@ fun BoxScope.MyTurnUiIdle(
 ) {
     var ante by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
-
     var dices by remember { mutableStateOf(emptyList<DiceFace>()) }
     DisplayOtherPlayersStatusOverlay(
         players = state.round.players,
@@ -115,9 +119,8 @@ fun BoxScope.MyTurnUiIdle(
             dices = if (diceFace in dices) dices - diceFace else dices + diceFace
         }
     )
-    Text(
-        "Select Dices to Reroll: "
-                + dices.joinToString { it.name + ";" },
+    SelectedDiceOverlay(
+        dices = dices,
         modifier = Modifier
             .padding(16.dp)
             .align(Alignment.TopEnd)
@@ -157,7 +160,6 @@ fun BoxScope.MyTurnUiIdle(
     )
 }
 
-
 @Composable
 fun ShowAnteDialog(
     ante: Int,
@@ -189,7 +191,44 @@ fun ShowAnteDialog(
 }
 
 
+@Composable
+fun SelectedDiceOverlay(
+    dices: List<DiceFace>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.End
+    ) {
+        Text(
+            text = "Select Dices to Reroll:",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
 
+        if (dices.isNotEmpty()) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                dices.forEach { dice ->
+                    Image(
+                        painter = painterResource(id = dice.resId),
+                        contentDescription = dice.name,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        } else {
+            Text(
+                text = "(None selected)",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray
+            )
+        }
+    }
+}
 
 
 

@@ -1,5 +1,6 @@
 package pt.isel.pdm
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,5 +26,10 @@ class MainActivity : ComponentActivity() {
                 RootApp(appConfiguration)
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        this.intent = intent
     }
 }

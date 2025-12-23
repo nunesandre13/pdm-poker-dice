@@ -2,7 +2,9 @@ package pt.isel.pdm.navigation.screens
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import pt.isel.pdm.DeepLinks
 import pt.isel.pdm.configuration.DependenciesContainer
 import pt.isel.pdm.match.screens.MatchScreen
 import pt.isel.pdm.match.viewModels.MatchViewModel
@@ -14,7 +16,7 @@ fun NavGraphBuilder.match(
     appConfiguration: DependenciesContainer,
     onNavigation: (NavigationEvent) -> Unit
 ) {
-    composableWithOrientation<Screens.Match> { backStackEntry ->
+    composableWithOrientation<Screens.Match>(getDeepLink()) { backStackEntry ->
         val matchId = backStackEntry.toRoute<Screens.Match>().matchId
         val matchVm: MatchViewModel = viewModel(
             viewModelStoreOwner = backStackEntry,
@@ -28,3 +30,9 @@ fun NavGraphBuilder.match(
         MatchScreen(matchVm) { onNavigation(NavigationEvent.NavigatePopping(Screens.Title)) }
     }
 }
+
+private fun getDeepLink() = listOf(
+    navDeepLink<Screens.Match>(
+        basePath = DeepLinks.MATCH_BASE
+    )
+)

@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
@@ -20,6 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import pt.isel.pdm.DeepLinks
 import pt.isel.pdm.MainActivity
 import pt.isel.pdm.configuration.DependenciesContainer
 import pt.isel.pdm.domain.Match
@@ -100,12 +102,25 @@ class MatchForegroundService : Service() {
     }
 
     private fun createNotification(contentText: String): Notification {
-        val intent = Intent(this, MainActivity::class.java)
+        val matchId = matchService.matchIdState.value
+        val deepLinkUri = if (matchId != null) {
+            DeepLinks.createMatchUri(matchId)
+        } else {
+            DeepLinks.createLobbyUri()
+        }
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            deepLinkUri,
+            this,
+            MainActivity::class.java
+        )
+
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Poker Dice Match")
