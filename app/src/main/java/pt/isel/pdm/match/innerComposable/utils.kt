@@ -30,8 +30,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.DicesHand
 import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.PlayerStatus
 import pt.isel.pdm.domain.state.PlayerRoundStateWithName
@@ -213,6 +215,53 @@ fun DrawCupPreview() {
     }
 }
 
+@Preview(showBackground = true, backgroundColor = 0xFF2E7D32)
+@Composable
+fun DrawNameAndCoinsPreview() {
+     val mockPlayer = PlayerRoundStateWithName(
+        playerId = PlayerId(1),
+        name = pt.isel.pdm.domain.Name("Jogador 1"),
+        coins = 500,
+        playerStatus = PlayerStatus.StillRolling(
+            hand = DicesHand(
+                listOf(DiceFace.ACE, DiceFace.KING, DiceFace.QUEEN).toImmutableList()
+            )
+        )
+    )
+    MaterialTheme {
+        androidx.compose.material3.Surface(
+            color = Color(0xFF2E7D32),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            DrawNameAndCoins(playerState = mockPlayer)
+        }
+    }
+}
+
+
+@Preview(showBackground = true, name = "Cup with Rolled Dices")
+@Composable
+fun DrawCupAnimationStatePreview() {
+    val mockPlayer = PlayerRoundStateWithName(
+        playerId = PlayerId(1),
+        name = pt.isel.pdm.domain.Name("Jogador 1"),
+        coins = 500,
+        playerStatus = PlayerStatus.StillRolling(
+            hand = DicesHand(
+                listOf(DiceFace.ACE, DiceFace.KING, DiceFace.QUEEN).toImmutableList()
+            )
+        )
+    )
+    MaterialTheme {
+        // Simulando o estado onde os dados aparecem após o lançamento
+        DrawCup(
+            me = mockPlayer,
+            startAnimmation = false,
+            onClick = {},
+            onRollFinished = {}
+        )
+    }
+}
 
 fun List<PlayerRoundStateWithName>.findMe(myId: PlayerId?): PlayerRoundStateWithName? =
     this.find { it.playerId == myId }
