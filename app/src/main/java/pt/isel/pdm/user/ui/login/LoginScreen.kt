@@ -19,9 +19,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.PasswordInput
 import pt.isel.pdm.ui.background.DefaultBackGround
@@ -55,14 +57,14 @@ fun LoginScreen(
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Welcome!!",
+                    text = stringResource(R.string.welcome),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Sign in to continue",
+                    text = stringResource(R.string.sigIn),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
@@ -112,7 +114,7 @@ fun LoginScreen(
                             .fillMaxWidth()
                             .height(48.dp)
                     ) {
-                        Text(text = "Sign in")
+                        Text(text = stringResource(R.string.SIGIN))
                     }
 
                     Row(
@@ -120,10 +122,10 @@ fun LoginScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Don't have an account?", style = MaterialTheme.typography.bodySmall)
+                        Text(text = stringResource(R.string.dontHaveAcc), style = MaterialTheme.typography.bodySmall)
                         Spacer(modifier = Modifier.height(4.dp))
                         TextButton(onClick = { onSignUp() }) {
-                            Text(text = "Create account", color = MaterialTheme.colorScheme.primary)
+                            Text(text = stringResource(R.string.createAccout), color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }

@@ -10,9 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
@@ -57,14 +59,14 @@ fun LobbyView(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Máx jogadores: ${lobby.maxPlayer} | Actual Players: ${lobby.players.size}",
+                                    text = stringResource(R.string.lobby_players, lobby.maxPlayer, lobby.players.size),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
                             IconButton(onClick = onLeave) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                                    contentDescription = "Leave"
+                                    contentDescription = stringResource(R.string.leave)
                                 )
                             }
                         }
@@ -87,7 +89,7 @@ fun LobbyView(
             }
         },
         topBarConfig = TopBarConfig.WithBack(
-            title = "Lobby",
+            title = stringResource(R.string.lobby),
             onBack = onLeave
         ),
         modifier = modifier

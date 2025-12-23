@@ -7,8 +7,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
@@ -30,13 +32,13 @@ fun LobbyListView(
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Lobbies",
+                    text = stringResource(R.string.lobbies),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Choose a lobby to enter or cry a new one.",
+                    text = stringResource(R.string.Desclobbies),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
@@ -76,7 +78,7 @@ fun LobbyListView(
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "Players: ${lobby.players.size}/${lobby.maxPlayer}",
+                                        text = stringResource(R.string.lobby_players_count, lobby.players.size, lobby.maxPlayer),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -89,7 +91,7 @@ fun LobbyListView(
                                     ),
                                     shape = MaterialTheme.shapes.small
                                 ) {
-                                    Text("Join")
+                                    Text(stringResource(R.string.join))
                                 }
                             }
                         }
@@ -126,13 +128,13 @@ fun LobbyListView(
                         ),
                         shape = MaterialTheme.shapes.small
                     ) {
-                        Text("Create Lobby")
+                        Text(stringResource(R.string.createLobby))
                     }
                 }
             }
         },
         topBarConfig = TopBarConfig.WithBack(
-            title = "Lobbies",
+            title = stringResource(R.string.lobbies),
             onBack = onBack
         ),
         modifier = Modifier.fillMaxSize()

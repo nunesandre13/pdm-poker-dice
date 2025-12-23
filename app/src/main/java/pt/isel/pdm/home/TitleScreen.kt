@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,7 +60,7 @@ fun TitleScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "Poker Dice",
+                        text = stringResource(R.string.pokerdice),
                         fontSize = 32.sp,
                         color = Color(0xFFFFD700),
                         fontWeight = FontWeight.ExtraBold,
@@ -82,7 +83,7 @@ fun TitleScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             PokerButton(
-                                text = "Start Match",
+                                text = stringResource(R.string.startMatch),
                                 onClick = onStartMatchClick,
                                 background = Brush.horizontalGradient(
                                     listOf(Color(0xFFD4AF37), Color(0xFFFFD700))
@@ -90,7 +91,7 @@ fun TitleScreen(
                                 textColor = Color.Black
                             )
                             PokerButton(
-                                text = "About",
+                                text = stringResource(R.string.about),
                                 onClick = onAboutClick,
                                 background = Brush.horizontalGradient(
                                     listOf(Color(0xFFB22222), Color(0xFF8B0000))
@@ -102,7 +103,7 @@ fun TitleScreen(
             }
         },
         topBarConfig = TopBarConfig.WithProfile(
-            title = "Poker Dice",
+            title = stringResource(R.string.pokerdice),
             onProfileClick = onProfileClick
         ),
         modifier = Modifier.fillMaxSize()

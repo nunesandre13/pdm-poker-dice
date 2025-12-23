@@ -16,9 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.InviteInput
@@ -58,14 +60,14 @@ fun CreateUserScreen(
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Create account",
+                    text =  stringResource(R.string.createAccout),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Fill the fields below to create your account",
+                    text = stringResource(R.string.createAccoutFields),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
@@ -121,7 +123,7 @@ fun CreateUserScreen(
                             .fillMaxWidth()
                             .height(48.dp)
                     ) {
-                        Text(text = "Create Account")
+                        Text(text = stringResource(R.string.createAccout))
                     }
                 }
             }

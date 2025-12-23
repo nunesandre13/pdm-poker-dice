@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.res.stringResource
+import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.Lobby
 import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.ui.background.DefaultBackGround
@@ -38,14 +40,14 @@ fun LobbyCreationView(
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Create Lobby",
+                    text = stringResource(R.string.createLobby),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Set lobby details",
+                    text = stringResource(R.string.setLobbysDetails),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center
@@ -63,7 +65,7 @@ fun LobbyCreationView(
                 OutlinedTextField(
                     value = lobbyName,
                     onValueChange = { lobbyName = it },
-                    label = { Text("Lobby name") },
+                    label = { Text(stringResource(R.string.lobbyname)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -71,14 +73,14 @@ fun LobbyCreationView(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description") },
+                    label = { Text(stringResource(R.string.lobbydescription)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 OutlinedTextField(
                     value = minPlayers,
                     onValueChange = { minPlayers = it.filter(Char::isDigit) },
-                    label = { Text("Minimum players") },
+                    label = { Text(stringResource(R.string.minPlayers)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -86,7 +88,7 @@ fun LobbyCreationView(
                 OutlinedTextField(
                     value = maxPlayers,
                     onValueChange = { maxPlayers = it.filter(Char::isDigit) },
-                    label = { Text("Maximum players") },
+                    label = { Text(stringResource(R.string.maxPlayers)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -94,7 +96,7 @@ fun LobbyCreationView(
                 OutlinedTextField(
                     value = numberOfRounds,
                     onValueChange = { numberOfRounds = it.filter(Char::isDigit) },
-                    label = { Text("Number of rounds") },
+                    label = { Text(stringResource(R.string.numOfRounds)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -102,7 +104,7 @@ fun LobbyCreationView(
                 OutlinedTextField(
                     value = firstAnte,
                     onValueChange = { firstAnte = it.filter(Char::isDigit) },
-                    label = { Text("First ante") },
+                    label = { Text(stringResource(R.string.firstAnte)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -145,13 +147,13 @@ fun LobbyCreationView(
                             .fillMaxWidth()
                             .height(48.dp)
                     ) {
-                        Text(text = "Create Lobby")
+                        Text(text = stringResource(R.string.createLobby))
                     }
                 }
             }
         },
         topBarConfig = TopBarConfig.WithBack(
-            title = "Create Lobby",
+            title = stringResource(R.string.createLobby),
             onBack = onBack
         ),
         modifier = Modifier

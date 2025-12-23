@@ -16,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.chelasmulti_playerpokerdice.R
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.ui.ProfileCard
 import pt.isel.pdm.ui.StatCard
@@ -65,27 +67,28 @@ fun ProfileView(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     ProfileCard(
-                        icon = { Icon(Icons.Default.Person, contentDescription = "Name") },
-                        title = "Name",
+                        icon = { Icon(Icons.Default.Person, contentDescription =  stringResource(R.string.nameProfile)) },
+                        title = stringResource(R.string.nameProfile),
                         value = user.name.name,
                         modifier = Modifier.fillMaxWidth()
                     )
                     ProfileCard(
-                        icon = { Icon(Icons.Default.Email, contentDescription = "Email") },
-                        title = "Email",
+                        icon = { Icon(Icons.Default.Email, contentDescription = stringResource(R.string.emailProfile)) },
+                        title =  stringResource(R.string.emailProfile),
                         value = user.email.email,
                         modifier = Modifier.fillMaxWidth()
                     )
                     inviteCode?.let { code ->
+                        val stringClick = stringResource(R.string.copied)
                         ProfileCard(
-                            icon = { Icon(Icons.Default.Share, contentDescription = "Invite Code") },
-                            title = "Invite Code (Tap to Copy)",
+                            icon = { Icon(Icons.Default.Share, contentDescription = stringResource(R.string.inviteCode)) },
+                            title = stringResource(R.string.copyInvite),
                             value = code,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
                                     clipboardManager.setText(AnnotatedString(code))
-                                    Toast.makeText(context, "Invite Code copied!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, stringClick, Toast.LENGTH_SHORT).show()
                                 }
                         )
                     }
@@ -99,7 +102,7 @@ fun ProfileView(
                     ),
                     shape = MaterialTheme.shapes.small
                 ) {
-                    Text("Generate Invite Code")
+                    Text(stringResource(R.string.generate))
                 }
                 Button(
                     onClick = onLogOut,
@@ -109,12 +112,12 @@ fun ProfileView(
                     ),
                     shape = MaterialTheme.shapes.small
                 ) {
-                    Text("LogOut")
+                    Text(stringResource(R.string.logout))
                 }
             }
         },
         topBarConfig = TopBarConfig.WithBack(
-            title = "Profile",
+            title = stringResource(R.string.profile),
             onBack = onBack
         ),
         modifier = Modifier.fillMaxSize()

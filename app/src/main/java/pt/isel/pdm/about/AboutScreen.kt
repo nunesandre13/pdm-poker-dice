@@ -79,13 +79,13 @@ fun AboutScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "See more about Poker Dice",
+                        text = stringResource(R.string.textAbout),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "More info",
+                        contentDescription = stringResource(R.string.moreInfo),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
@@ -110,7 +110,7 @@ fun AboutScreen(
             )
         },
         topBarConfig = TopBarConfig.WithBack(
-            title = "About the game",
+            title = stringResource(R.string.aboutGame),
             onBack = onBack
         ),
         modifier = Modifier

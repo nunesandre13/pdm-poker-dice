@@ -11,4 +11,59 @@
     <!--Dices -->
     <string name="die_face">Die Face: %1$s</string>
 
+    <string name="textAbout">See more about Poker Dice</string>
+    <string name="moreInfo">More info</string>
+    <string name="aboutGame">About the game</string>
+
+    <string name="wikiurl">https://en.wikipedia.org/wiki/Poker_dice</string>
+
+    <string name="pokerdice">Poker Dice</string>
+    <string name="startMatch">Start Match</string>
+    <string name="about">About</string>
+
+    <string name="leave">Leave</string>
+    <string name="lobby">Lobby</string>
+
+    <string name="lobby_players">Máx jogadores: %1$d | Actual Players: %2$d</string>
+
+    <string name="lobbies">Lobbies</string>
+    <string name="Desclobbies">Choose a lobby to enter or cry a new one.</string>
+
+    <string name="lobby_players_count">Players: %1$d/%2$d</string>
+    <string name="join">Join</string>
+    <string name="createLobby">Create Lobby</string>
+    Set lobby details
+    <string name="setLobbysDetails">Set lobby details</string>
+    <string name="lobbyname">Lobby name</string>
+    <string name="lobbydescription">Description</string>
+    <string name="minPlayers">Minimum players</string>
+    <string name="maxPlayers">Maximum players</string>
+    <string name="numOfRounds">Number of rounds</string>
+    <string name="firstAnte">First ante</string>
+
+    <string name="nameProfile">Name</string>
+    <string name="emailProfile">Email</string>
+    <string name="inviteCode">Invite Code</string>
+    <string name="copyInvite">Invite Code (Tap to Copy)</string>
+    <string name="copied">Invite Code copied!</string>
+    <string name="generate">Generate Invite Code</string>
+    <string name="logout">LogOut</string>
+    <string name="profile">Profile</string>
+    <string name="createAccout">Create Account</string>
+    <string name="createAccoutFields">Fill the fields below to create your account</string>
+    <string name="welcome">Welcome!!</string>
+    <string name="sigIn">Sign in to continue</string>
+    <string name="SIGIN">Sign in</string>
+    <string name="dontHaveAcc">Don't have an account?</string>
+    ""
+
+
+
+
+
+
+</string>
+
+
+
 </resources>
