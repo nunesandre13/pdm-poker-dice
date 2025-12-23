@@ -21,9 +21,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.serialization.json.Json
@@ -34,35 +36,24 @@ import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.domain.toDto
 import pt.isel.pdm.dto.match.MatchEvent
 import pt.isel.pdm.dto.match.MatchIn
+import pt.isel.pdm.dto.match.PlayCommandOut
+import pt.isel.pdm.httpConfig.MethodRequest
+import pt.isel.pdm.httpConfig.NetworkClient
+import pt.isel.pdm.httpConfig.NetworkResult
+import pt.isel.pdm.httpConfig.RequestConfig
+import pt.isel.pdm.httpConfig.listen
+import pt.isel.pdm.httpConfig.request
 import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import java.util.concurrent.TimeUnit
 
-class RepositoryMatchHttp(private val userPreferences: UserPreferences) : RepositoryMatch {
+class RepositoryMatchHttp(
+    private val networkClient: NetworkClient,
+    private val userPreferences: UserPreferences
+) : RepositoryMatch {
     private val baseUrl = "http://10.0.2.2:4000/api"
-
-    private val client = HttpClient(OkHttp) {
-        engine {
-            config {
-                pingInterval(30, TimeUnit.SECONDS)
-            }
-        }
-        install(HttpTimeout) {
-            requestTimeoutMillis = Long.MAX_VALUE
-            socketTimeoutMillis = Long.MAX_VALUE
-            connectTimeoutMillis = 10_000
-        }
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-                prettyPrint = true
-            })
-        }
-        install(SSE)
-    }
-
     private val scope = CoroutineScope(Dispatchers.IO)
     private val currentMatchId = MutableStateFlow<Int?>(null)
 
@@ -70,34 +61,34 @@ class RepositoryMatchHttp(private val userPreferences: UserPreferences) : Reposi
     private val matchSseFlow: SharedFlow<OutCome<MatchResponse, MatchError>> = currentMatchId
         .filterNotNull()
         .flatMapLatest { matchId ->
-            flow {
-                logger("created SSE connection for match: $matchId")
-                val clientId = userPreferences.getUserId() ?: return@flow
-                client.sse("$baseUrl/sse/match/$matchId/events?playerId=$clientId") {
-                    incoming.collect { event ->
-                        logger("EVENT: ${event.event}")
-                        logger("new event: ${event.data}")
-                        if (event.event == "MATCH_EVENT") {
-                            event.data?.let { data ->
-                                try {
-                                    val matchResponse = Json.decodeFromString<MatchEvent>(data)
-                                    logger("decoded: $matchResponse")
-                                    this@flow.emit(Success(matchResponse.toDomain()))
-                                } catch (e: Exception) {
-                                    logger("decode error: $e")
-                                    emit(Failure(MatchError.SomeError))
-                                }
-                            }
+            val userId = userPreferences.getUserId()
+            if (userId == null) {
+                logger("User ID not found, skipping SSE")
+                return@flatMapLatest emptyFlow()
+            }
+            logger("Starting SSE for match: $matchId, player: $userId")
+            val config = RequestConfig<Unit>(
+                url = "$baseUrl/sse/match/$matchId/events",
+                queryParams = mapOf("playerId" to userId),
+                numberOfTries = 3
+            )
+            networkClient.listen<MatchEvent>(config, eventName = "MATCH_EVENT")
+                .map { result ->
+                    when (result) {
+                        is NetworkResult.Success -> {
+                            logger("SSE Received: ${result.data}")
+                            Success(result.data.toDomain())
+                        }
+                        is NetworkResult.NetworkError -> {
+                            logger("SSE Network Error: ${result.exception.message}")
+                            Failure(MatchError.SomeError)
+                        }
+                        else -> {
+                            logger("SSE Error: $result")
+                            Failure(MatchError.SomeError)
                         }
                     }
                 }
-            }
-        }
-        .retry(2) { cause ->
-            logger("SSE error: $cause")
-            delay(2000)
-            logger("trying to reconnect...")
-            true
         }
         .shareIn(
             scope = scope,
@@ -111,36 +102,52 @@ class RepositoryMatchHttp(private val userPreferences: UserPreferences) : Reposi
     }
 
     override suspend fun play(command: PlayCommand): OutCome<RawMatch, MatchError> {
-        return try {
-            val response = client.post("$baseUrl/match/${currentMatchId.value}/play") {
-                contentType(ContentType.Application.Json)
-                userPreferences.getToken()?.let { t ->
-                    header("Authorization", "Bearer $t")
-                } ?: return Failure(MatchError.SomeError)
-                setBody(command.toDto())
+        val matchId = currentMatchId.value ?: return Failure(MatchError.SomeError)
+        val bodyDto: PlayCommandOut = command.toDto()
+        val config = RequestConfig<PlayCommandOut>(
+            url = "$baseUrl/match/$matchId/play",
+            method = MethodRequest.POST,
+            body = bodyDto,
+            headers = getAuthHeader()
+        )
+        return when (val result = networkClient.request<MatchIn, PlayCommandOut>(config)) {
+            is NetworkResult.Success -> Success(result.data.toDomain())
+            is NetworkResult.ApiError -> {
+                logger("Play API Error: ${result.code}")
+                Failure(MatchError.SomeError)
             }
-            val match = response.body<MatchIn>().toDomain()
-            Success(match)
-        } catch (e: Exception) {
-            logger("play error: $e")
-            Failure(MatchError.SomeError)
+            else -> {
+                logger("Play Network/Unknown Error")
+                Failure(MatchError.SomeError)
+            }
         }
     }
 
     override suspend fun leaveMatch(match: RawMatch): OutCome<RawMatch, MatchError> {
-        return try {
-            val response = client.post("$baseUrl/match/${match.id.id}/leave") {
-                contentType(ContentType.Application.Json)
-                userPreferences.getToken()?.let { t ->
-                    header("Authorization", "Bearer $t")
-                } ?: return Failure(MatchError.SomeError)
+        val config = RequestConfig<Unit>(
+            url = "$baseUrl/match/${match.id.id}/leave",
+            method = MethodRequest.POST,
+            headers = getAuthHeader()
+        )
+
+        return when (val result = networkClient.request<MatchIn, Unit>(config)) {
+            is NetworkResult.Success -> {
+                currentMatchId.value = null
+                Success(result.data.toDomain())
             }
-            val updatedMatch = response.body<MatchIn>().toDomain()
-            currentMatchId.value = null
-            Success(updatedMatch)
-        } catch (e: Exception) {
-            logger("leaveMatch error: $e")
-            Failure(MatchError.SomeError)
+            else -> {
+                logger("Leave Error")
+                Failure(MatchError.SomeError)
+            }
+        }
+    }
+
+    private suspend fun getAuthHeader(): Map<String, String> {
+        val token = userPreferences.getToken()
+        return if (token != null) {
+            mapOf("Authorization" to "Bearer $token")
+        } else {
+            emptyMap()
         }
     }
 

@@ -3,6 +3,8 @@ package pt.isel.pdm.configuration
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
+import pt.isel.pdm.httpConfig.KtorNetworkClient
+import pt.isel.pdm.httpConfig.NetworkClient
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
 import pt.isel.pdm.lobby.repository.RepositoryLobbiesHttp
 import pt.isel.pdm.lobby.services.LobbyServiceImp
@@ -14,6 +16,7 @@ import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.user.services.UserServicesHttp
 import pt.isel.pdm.utils.PlayersNameCache
+import kotlin.time.Duration.Companion.seconds
 
 
 class MockConfiguration : Application(), DependenciesContainer {
@@ -28,11 +31,15 @@ class MockConfiguration : Application(), DependenciesContainer {
          ProcessLifecycleOwner.get().lifecycle.addObserver(MatchLifecycleObserver(this))
      }
 
+    override val networkClient: NetworkClient by lazy {
+        KtorNetworkClient(3.seconds)
+    }
+
     override val playersNameCache: PlayersNameCache by lazy {
         PlayersNameCache()
     }
     override val repoLobby: RepositoryLobbies by lazy {
-        RepositoryLobbiesHttp(userPreferences)
+        RepositoryLobbiesHttp(userPreferences, networkClient)
     }
 
     private val userPreferences by lazy {
@@ -40,7 +47,7 @@ class MockConfiguration : Application(), DependenciesContainer {
     }
 
     override val userServices by lazy{
-        UserServicesHttp(userPreferences)
+        UserServicesHttp(networkClient,userPreferences)
     }
 
     override val lobbyServices by lazy{
@@ -48,7 +55,7 @@ class MockConfiguration : Application(), DependenciesContainer {
     }
 
     override val matchRepo: RepositoryMatch by lazy {
-        RepositoryMatchHttp(userPreferences)
+        RepositoryMatchHttp(networkClient,userPreferences)
     }
 
     override val matchService: MatchServices by lazy {

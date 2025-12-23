@@ -1,8 +1,6 @@
 package pt.isel.pdm.httpConfig
 
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -25,25 +23,30 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import java.io.IOException
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.ClassDiscriminatorMode
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 
 class KtorNetworkClient(val delay: Duration) : NetworkClient {
+    @OptIn(ExperimentalSerializationApi::class)
     private val jsonConfig = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
         isLenient = true
+        classDiscriminatorMode = ClassDiscriminatorMode.ALL_JSON_OBJECTS
     }
 
     private val client = HttpClient(OkHttp) {
         engine {
             config {
-                pingInterval(3, TimeUnit.SECONDS)
+                pingInterval(30, TimeUnit.SECONDS)
             }
         }
         install(HttpTimeout) {
@@ -64,19 +67,22 @@ class KtorNetworkClient(val delay: Duration) : NetworkClient {
         repeat(config.numberOfTries) { attempt ->
             try {
                 val response = when (config.method) {
-                    HttpMethod.GET -> client.get(config.url){ buildRequest(config) }
-                    HttpMethod.POST -> client.post(config.url){ buildRequest(config) }
-                    HttpMethod.PUT -> client.put(config.url){ buildRequest(config) }
-                    HttpMethod.DELETE -> client.delete(config.url){ buildRequest(config) }
+                    MethodRequest.GET -> client.get(config.url){ buildRequest(config) }
+                    MethodRequest.POST -> client.post(config.url){ buildRequest(config) }
+                    MethodRequest.PUT -> client.put(config.url){ buildRequest(config) }
+                    MethodRequest.DELETE -> client.delete(config.url){ buildRequest(config) }
                 }
                 if (response.status.isSuccess()) {
                     val bodyText = response.bodyAsText()
+                    if (bodyText.isBlank() && responseSerializer.descriptor == Unit.serializer().descriptor) {
+                        @Suppress("UNCHECKED_CAST")
+                        return NetworkResult.Success(Unit as T)
+                    }
                     val data = jsonConfig.decodeFromString(responseSerializer, bodyText)
                     return NetworkResult.Success(data)
                 } else {
                     return NetworkResult.ApiError(response.status.value, response.status.description)
                 }
-
             } catch (e: SerializationException) {
                 return NetworkResult.SerializationError(e)
             } catch (e: IOException) {
@@ -85,7 +91,11 @@ class KtorNetworkClient(val delay: Duration) : NetworkClient {
                 } else {
                     return NetworkResult.NetworkError(e)
                 }
-            } catch (e: Exception) {
+            }
+            catch (e: CancellationException) {
+                throw e
+            }
+            catch (e: Exception) {
                 return NetworkResult.UnknownError(e)
             }
         }
@@ -118,7 +128,8 @@ class KtorNetworkClient(val delay: Duration) : NetworkClient {
                         try {
                             val parsedData = jsonConfig.decodeFromString(responseSerializer, data)
                             emit(NetworkResult.Success(parsedData))
-                        } catch (e: Exception) {
+                        }
+                        catch (e: Exception) {
                             if (e is IOException) throw e
                             if (e is CancellationException) throw e
                             if (e is SerializationException) {
@@ -145,7 +156,6 @@ class KtorNetworkClient(val delay: Duration) : NetworkClient {
     }
 
     private fun <V> HttpRequestBuilder.buildRequest(config: RequestConfig<V>) {
-        contentType(ContentType.Application.Json)
         url {
             config.queryParams.forEach { (key, value) ->
                 parameters.append(key, value)
@@ -155,6 +165,7 @@ class KtorNetworkClient(val delay: Duration) : NetworkClient {
             header(key, value)
         }
         if (config.body != null) {
+            contentType(ContentType.Application.Json)
             setBody(config.body)
         }
     }

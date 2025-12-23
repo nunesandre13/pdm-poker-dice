@@ -24,7 +24,7 @@ fun MatchScreen(
         }
         is MatchGlobalStateUi.Finished -> {
             MatchFinishedView(
-                matchViewModel = matchViewModel,
+                matchStateProvider = matchViewModel,
                 onExit = onMatchEnded
             )
         }

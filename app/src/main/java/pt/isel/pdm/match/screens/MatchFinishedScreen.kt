@@ -15,13 +15,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pt.isel.pdm.domain.MatchStatus
 import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.MatchViewModel
+import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 
 @Composable
 fun MatchFinishedView(
-    matchViewModel: MatchViewModel,
+    matchStateProvider: MatchStateProvider,
     onExit: () -> Unit
 ) {
-    val matchState by matchViewModel.matchState.collectAsStateWithLifecycle()
+    val matchState by matchStateProvider.matchState.collectAsStateWithLifecycle()
 
     val winner = if (matchState is MatchState.ActualMatch &&
         (matchState as MatchState.ActualMatch).match.matchStatus == MatchStatus.FINISHED) {
@@ -42,9 +43,7 @@ fun MatchFinishedView(
                 ),
                 color = Color.White
             )
-
-            Spacer(modifier = Modifier.height(40.dp))
-
+            Spacer(modifier = Modifier.height(20.dp))
             if (winner != null) {
                 Text(
                     text = "Winner:",
@@ -58,7 +57,7 @@ fun MatchFinishedView(
                     ),
                     color = Color.Green
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "${winner.coins} coins",
                     style = MaterialTheme.typography.headlineSmall.copy(
@@ -75,7 +74,7 @@ fun MatchFinishedView(
                 )
             }
 
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Button(onClick = onExit) {
                 Text("Back to Menu")

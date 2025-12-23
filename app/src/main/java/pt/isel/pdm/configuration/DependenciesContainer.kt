@@ -1,5 +1,6 @@
 package pt.isel.pdm.configuration
 
+import pt.isel.pdm.httpConfig.NetworkClient
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
 import pt.isel.pdm.lobby.services.LobbyServices
 import pt.isel.pdm.match.repository.RepositoryMatch
@@ -11,6 +12,7 @@ interface DependenciesContainer {
 
     val playersNameCache : PlayersNameCache
 
+    val networkClient: NetworkClient
     val repoLobby : RepositoryLobbies
     val userServices: UserServices
     val lobbyServices: LobbyServices

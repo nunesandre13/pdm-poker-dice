@@ -35,34 +35,26 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.header
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.mapNotNull
 import pt.isel.pdm.domain.LobbyCreation
 import pt.isel.pdm.domain.toDto
 import pt.isel.pdm.dto.lobby.LobbyIn
+import pt.isel.pdm.dto.lobby.LobbyOut
+import pt.isel.pdm.httpConfig.MethodRequest
+import pt.isel.pdm.httpConfig.NetworkClient
+import pt.isel.pdm.httpConfig.NetworkResult
+import pt.isel.pdm.httpConfig.RequestConfig
+import pt.isel.pdm.httpConfig.listen
+import pt.isel.pdm.httpConfig.request
 import pt.isel.pdm.user.UserPreferences
 import java.util.concurrent.TimeUnit
 
-class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : RepositoryLobbies {
+class RepositoryLobbiesHttp(
+    private val userPreferences: UserPreferences,
+    private val networkClient: NetworkClient,
+) : RepositoryLobbies {
     private val baseUrl = "http://10.0.2.2:4000/api"
 
-    private val client = HttpClient(OkHttp) {
-        engine {
-            config {
-                pingInterval(30, TimeUnit.SECONDS)
-            }
-        }
-        install(HttpTimeout) {
-            requestTimeoutMillis = Long.MAX_VALUE
-            socketTimeoutMillis = Long.MAX_VALUE
-            connectTimeoutMillis = 10_000
-        }
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-                prettyPrint = true
-            })
-        }
-        install(SSE)
-    }
     private val scope = CoroutineScope(Dispatchers.IO)
     val currentClientId = userPreferences.userId.distinctUntilChanged()
 
@@ -70,81 +62,87 @@ class RepositoryLobbiesHttp(private val userPreferences: UserPreferences) : Repo
     override val lobbySseListener: SharedFlow<LobbyResponse> = currentClientId
         .filterNotNull()
         .flatMapLatest { clientId ->
-            flow {
-                logger("created connection")
-                client.sse("$baseUrl/lobbies/events?clientId=$clientId") {
-                    incoming.collect { event ->
-                        logger("EVENT:" + event.event)
-                        logger("new event: ${event.data}")
-                        if (event.event == "LOBBY_EVENT") {
-                            event.data?.let { data ->
-                                try {
-                                    val lobbyResponse = Json.decodeFromString<LobbyEvent>(data)
-                                    logger("decoded:$lobbyResponse")
-                                    this@flow.emit(lobbyResponse.toDomain())
-                                } catch (e: Exception) {
-                                    logger(e.toString())
-                                }
-                            }
+            logger("Starting SSE for client: $clientId")
+
+            val config = RequestConfig<Unit>(
+                url = "$baseUrl/lobbies/events",
+                queryParams = mapOf("clientId" to clientId),
+                numberOfTries = 3
+            )
+            networkClient.listen<LobbyEvent>(config, eventName = "LOBBY_EVENT")
+                .mapNotNull { result ->
+                    when (result) {
+                        is NetworkResult.Success -> {
+                            logger("SSE Received: ${result.data}")
+                            result.data.toDomain()
+                        }
+                        is NetworkResult.NetworkError -> {
+                            logger("SSE Network Error: ${result.exception.message}")
+                            null
+                        }
+                        is NetworkResult.SerializationError -> {
+                            logger("SSE Parsing Error: ${result.exception.message}")
+                            null
+                        }
+                        else -> {
+                            logger("SSE Unknown Error: $result")
+                            null
                         }
                     }
                 }
-            }
-        }
-        .retry(2) { cause ->
-            logger(cause.toString())
-            delay(2000)
-            logger("trying to reconnect")
-            true
         }
         .shareIn(
             scope = scope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+            started = SharingStarted.WhileSubscribed(),
             replay = 0
         )
 
     override suspend fun createNewLobby(lobby: LobbyCreation): OutCome<Lobby, LobbyError> {
-        return try {
-            val response = client.post("$baseUrl/lobbies") {
-                contentType(ContentType.Application.Json)
-                userPreferences.getToken()?.let { t ->
-                    header("Authorization", "Bearer $t")
-                } ?: return@post
-                setBody(lobby.toDto())
-            }
-            val createdLobby = response.body<LobbyIn>().toDomain()
-            Success(createdLobby)
-        } catch (e: Exception) {
-            Failure(LobbyError.NetWorkError)
+        val config = RequestConfig(
+            url = "$baseUrl/lobbies",
+            method = MethodRequest.POST,
+            body = lobby.toDto(),
+            headers = getAuthHeader()
+        )
+        return when (val result = networkClient.request<LobbyIn, LobbyOut>(config)) {
+            is NetworkResult.Success -> Success(result.data.toDomain())
+            // falta mapear erros aquiii
+            is NetworkResult.ApiError -> Failure(LobbyError.NetWorkError)
+            else -> Failure(LobbyError.NetWorkError)
         }
     }
 
     override suspend fun joinLobby(lobby: Lobby): OutCome<Lobby, LobbyError> {
-        return try {
-            val response = client.post("$baseUrl/lobbies/join/${lobby.id.id}") {
-                contentType(ContentType.Application.Json)
-                userPreferences.getToken()?.let { t ->
-                    header("Authorization", "Bearer $t")
-                } ?: return@post
-            }
-            val joinedLobby = response.body<LobbyIn>().toDomain()
-            Success(joinedLobby)
-        } catch (e: Exception) {
-            Failure(LobbyError.NetWorkError)
+        val config = RequestConfig<Unit>(
+            url = "$baseUrl/lobbies/join/${lobby.id.id}",
+            method = MethodRequest.POST,
+            headers = getAuthHeader()
+        )
+        return when (val result = networkClient.request<LobbyIn, Unit>(config)) {
+            is NetworkResult.Success -> Success(result.data.toDomain())
+            else -> Failure(LobbyError.NetWorkError)
         }
     }
 
     override suspend fun leaveLobby(lobby: Lobby): OutCome<Unit, LobbyError> {
-        return try {
-            client.post("$baseUrl/lobbies/leave/${lobby.id.id}") {
-                contentType(ContentType.Application.Json)
-                userPreferences.getToken()?.let { t ->
-                    header("Authorization", "Bearer $t")
-                } ?: return@post
-            }
-            Success(Unit)
-        } catch (e: Exception) {
-            Failure(LobbyError.NetWorkError)
+        val config = RequestConfig<Unit>(
+            url = "$baseUrl/lobbies/leave/${lobby.id.id}",
+            method = MethodRequest.POST,
+            headers = getAuthHeader()
+        )
+        val result = networkClient.request<Unit, Unit>(config)
+        return when (result) {
+            is NetworkResult.Success -> Success(Unit)
+            else -> Failure(LobbyError.NetWorkError)
+        }
+    }
+
+    private suspend fun getAuthHeader(): Map<String, String> {
+        val token = userPreferences.getToken()
+        return if (token != null) {
+            mapOf("Authorization" to "Bearer $token")
+        } else {
+            emptyMap()
         }
     }
 

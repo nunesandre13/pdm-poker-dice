@@ -84,11 +84,10 @@ fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
 @Composable
 private fun UserScreenError(viewModel: UserViewModel) {
     when (val stateError = viewModel.errorState.collectAsState().value) {
-        is UserError.ErrorLogin, is UserError.ErrorCreateUser, is UserError.UserNotFound -> ErrorPopUp(stateError){
+        is UserError.ErrorLogin, is UserError.NetworkError, is UserError.ErrorCreateUser, is UserError.UserNotFound -> ErrorPopUp(stateError){
             viewModel.dismissError()
         }
         is UserError.NoError -> {}
-        UserError.NetworkError -> TODO()
     }
 }
 

@@ -1,6 +1,7 @@
 package pt.isel.pdm.navigation
 
 sealed interface NavigationEvent {
+    data class NavigatePopping(val screen: Screens): NavigationEvent
     data class Navigate(val screen: Screens): NavigationEvent
     data object Back : NavigationEvent
     data object Title: NavigationEvent

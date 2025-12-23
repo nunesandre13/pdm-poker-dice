@@ -25,6 +25,6 @@ fun NavGraphBuilder.match(
                 matchId = matchId,
             )
         )
-        MatchScreen(matchVm) { onNavigation(NavigationEvent.Back) }
+        MatchScreen(matchVm) { onNavigation(NavigationEvent.NavigatePopping(Screens.Title)) }
     }
 }

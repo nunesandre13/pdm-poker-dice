@@ -58,10 +58,9 @@ private fun LobbyScreenContent(viewModel: LobbyViewModel, goBack: () -> Unit, on
 private fun LobbyScreenError(viewModel: LobbyViewModel) {
     when (val stateError = viewModel.errorState.collectAsState().value) {
         is LobbyError.NoError -> {}
-        is LobbyError.LobbyNotFound, is LobbyError.LobbyFull  -> ErrorPopUp(stateError){
+        is LobbyError.LobbyNotFound,is LobbyError.NetWorkError, is LobbyError.LobbyFull  -> ErrorPopUp(stateError){
             viewModel.dismissError()
         }
-        LobbyError.NetWorkError -> TODO()
     }
 }
 

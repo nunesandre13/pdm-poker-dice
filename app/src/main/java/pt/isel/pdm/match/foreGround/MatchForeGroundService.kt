@@ -87,7 +87,7 @@ class MatchForegroundService : Service() {
     private fun determineNotificationMessage(match: RawMatch?): String {
         return when {
             match?.matchStatus == MatchStatus.FINISHED -> "Match Ended Go See the results."
-            (match?.actualRound?.state as? RoundState.Rolling)?.turn == localPlayerId -> "Your Turn To Player!!!!"
+            (match?.actualRound?.state as? RoundState.Rolling)?.turn?.playerId == localPlayerId?.id -> "Your Turn To Player!!!!"
             match?.actualRound?.state is RoundState.Betting -> "Betting Phase is Going"
             else -> "Match OnGoing"
         }
