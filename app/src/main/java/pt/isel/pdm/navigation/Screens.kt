@@ -10,9 +10,11 @@ sealed interface Screens {
     @ScreenOrientation(OrientationType.PORTRAIT)
     data object Home : Screens
     @Serializable
+    @ScreenOrientation(OrientationType.PORTRAIT)
     data object Title : Screens
 
     @Serializable
+    @ScreenOrientation(OrientationType.PORTRAIT)
     data object About : Screens
 
     @Serializable
@@ -20,6 +22,7 @@ sealed interface Screens {
     data object Profile : Screens
 
     @Serializable
+    @ScreenOrientation(OrientationType.PORTRAIT)
     data object Lobby : Screens
     @Serializable
     @ScreenOrientation(OrientationType.LANDSCAPE)

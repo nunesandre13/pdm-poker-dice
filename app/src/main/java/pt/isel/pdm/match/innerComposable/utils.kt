@@ -2,9 +2,12 @@ package pt.isel.pdm.match.innerComposable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -80,28 +83,50 @@ fun DisplayOtherPlayersStatusOverlay(
         players = players,
         registry = playersPosition
     ) { playerState, modifier ->
-        Box(modifier = modifier, contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        BoxWithConstraints(
+            modifier = modifier
+        ) {
+            val diceSize = (maxWidth * 0.3f)
+                .coerceIn(64.dp, 96.dp)
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = playerState.name.name,
+                    modifier = Modifier
+                        .padding(top = 4.dp, bottom = 4.dp),
                     color = Color.White,
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1
                 )
+
                 val hand = when (val s = playerState.playerStatus) {
                     is PlayerStatus.StillRolling -> s.hand
                     is PlayerStatus.FinalHand -> s.hand
-                    PlayerStatus.NotStarted, PlayerStatus.PassRound -> null
+                    PlayerStatus.NotStarted,
+                    PlayerStatus.PassRound -> null
                 }
 
                 if (hand?.dices?.isNotEmpty() == true) {
                     collectMyDices?.let {
-                        DisplayClickableDices(dicesHand = hand, onClick = collectMyDices, size = 80.dp)
-                    } ?: DisplayStaticDices(dicesHand = hand, size = 80.dp)
+                        DisplayClickableDices(
+                            dicesHand = hand,
+                            onClick = it,
+                            size = diceSize
+                        )
+                    } ?: DisplayStaticDices(
+                        dicesHand = hand,
+                        size = diceSize
+                    )
                 }
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
 }
+
 
 @Composable
 fun DrawCup(

@@ -20,7 +20,6 @@ sealed interface PlayerRegistry {
     }
 }
 
-
 class PlayerRegistryManager {
     private val _positions = mutableStateMapOf<Int, Rect>()
     val isEmpty get() = _positions.isEmpty()

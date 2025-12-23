@@ -81,10 +81,19 @@ class MatchViewModel(
 
     val innerNavigation: StateFlow<InnerRoute> = combine(matchState, player) { state, myPlayer ->
         calculateInnerRoute(state, myPlayer)
-    }.conflate()
-        .transform { targetRoute ->
-            emit(targetRoute)
-            if (targetRoute == InnerRoute.Finished) {
+    }.distinctUntilChanged()
+        .scan<InnerRoute, Pair<InnerRoute?, InnerRoute>>(null to InnerRoute.Idle) { (previous, current), new ->
+            current to new
+        }
+        .transform { (previous, current) ->
+            if (
+                previous == InnerRoute.MyTurnState &&
+                current == InnerRoute.OtherPlayerTurn
+            ) {
+                delay(2.seconds)
+            }
+            emit(current)
+            if (current == InnerRoute.Finished) {
                 delay(4.seconds)
             }
         }.stateIn(
@@ -239,9 +248,7 @@ class MatchViewModel(
         initialValue = MatchState.NoMatch
     )
 
-    init {
-        viewModelScope.launch { observeGlobalState() }
-    }
+    fun init() = viewModelScope.launch { observeGlobalState() }
 
     companion object {
         fun factory(
@@ -250,7 +257,7 @@ class MatchViewModel(
             playersNameCache: PlayersNameCache,
             matchId: Int,
             base: ViewModelState<MatchGlobalStateUi, MatchError> =
-                ViewModelBase(MatchGlobalStateUi.Loading, MatchError.SomeError)
+                ViewModelBase(MatchGlobalStateUi.Loading, MatchError.NoError)
         ) = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -260,7 +267,7 @@ class MatchViewModel(
                     userRepository = userService,
                     playersNameCache = playersNameCache,
                     matchId = matchId
-                ) as T
+                ).also { it.init() } as T
             }
         }
     }

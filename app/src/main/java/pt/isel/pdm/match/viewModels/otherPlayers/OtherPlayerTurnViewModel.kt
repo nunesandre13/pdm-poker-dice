@@ -29,13 +29,11 @@ class OtherPlayerTurnViewModel(
     private val baseViewModel: ViewModelState<OtherPlayerTurnUiState, OtherPlayerTurnError>
 ) : ViewModel(), ViewModelState<OtherPlayerTurnUiState, OtherPlayerTurnError> by baseViewModel {
 
-    init {
-        viewModelScope.launch {
-            stateProvider.roundState.filterNotNull()
-                .collect { round ->
-                    navigateTo(OtherPlayerTurnUiState.ShowingTurn(round))
-                }
-        }
+    fun init() = viewModelScope.launch {
+        stateProvider.roundState.filterNotNull()
+            .collect { round ->
+                navigateTo(OtherPlayerTurnUiState.ShowingTurn(round))
+            }
     }
 
     companion object {
@@ -49,7 +47,7 @@ class OtherPlayerTurnViewModel(
                 return OtherPlayerTurnViewModel(
                     stateProvider = stateProvider,
                     baseViewModel = base
-                ) as T
+                ).also { it.init() } as T
             }
         }
     }

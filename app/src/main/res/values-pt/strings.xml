@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Chelas Multi-Player Poker Dice</string>
+    <string name="description_game">O Poker Dice é um jogo de dados inspirado no póquer onde cada jogador lança cinco dados e pode relançar até duas vezes para formar a melhor mão. Após todos os jogadores terminarem, as suas combinações são comparadas e a mão mais alta ganha. A classificação das mãos, da mais forte para a mais fraca, é: Quina (Five of a Kind), Quadra (Four of a Kind), Full House, Sequência (Straight), Trio (Three of a Kind), Dois Pares, Um Par e Nada (Bust).</string>
+    <string name="title_app">Bem-vindo ao Poker Dice!</string>
+    <string name="table_title">JOGO POKER DICE</string>
+
+    <string name="pVplayer_label">Jogador: %1$d</string>
+
+    <string name="die_face">Face do Dado: %1$s</string>
+
+    <string name="textAbout">Ver mais sobre Poker Dice</string>
+    <string name="moreInfo">Mais informações</string>
+    <string name="aboutGame">Sobre o jogo</string>
+
+    <string name="wikiurl">https://en.wikipedia.org/wiki/Poker_dice</string>
+
+    <string name="pokerdice">Poker Dice</string>
+    <string name="startMatch">Iniciar Partida</string>
+    <string name="about">Sobre</string>
+
+    <string name="leave">Sair</string>
+    <string name="lobby">Lobby</string>
+
+    <string name="lobby_players">Máx. jogadores: %1$d | Jogadores Atuais: %2$d</string>
+
+    <string name="lobbies">Lobbies</string>
+    <string name="Desclobbies">Escolha um lobby para entrar ou crie um novo.</string>
+
+    <string name="lobby_players_count">Jogadores: %1$d/%2$d</string>
+    <string name="join">Entrar</string>
+    <string name="createLobby">Criar Lobby</string>
+    <string name="setLobbysDetails">Definir detalhes do lobby</string>
+    <string name="lobbyname">Nome do lobby</string>
+    <string name="lobbydescription">Descrição</string>
+    <string name="minPlayers">Mínimo de jogadores</string>
+    <string name="maxPlayers">Máximo de jogadores</string>
+    <string name="numOfRounds">Número de rondas</string>
+    <string name="firstAnte">Aposta inicial</string>
+
+    <string name="nameProfile">Nome</string>
+    <string name="emailProfile">Email</string>
+    <string name="inviteCode">Código de Convite</string>
+    <string name="copyInvite">Código de Convite (Toque para Copiar)</string>
+    <string name="copied">Código de convite copiado!</string>
+    <string name="generate">Gerar Código de Convite</string>
+    <string name="logout">Terminar Sessão</string>
+    <string name="profile">Perfil</string>
+    <string name="createAccout">Criar Conta</string>
+    <string name="createAccoutFields">Preencha os campos abaixo para criar a sua conta</string>
+    <string name="welcome">Bem-vindo!!</string>
+    <string name="signIn">Inicie sessão para continuar</string>
+    <string name="SIGIN">Iniciar sessão</string>
+    <string name="dontHaveAcc">Não tem uma conta?</string>
+</resources>

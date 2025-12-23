@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
 import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
+import pt.isel.pdm.utils.updateIf
 
 sealed interface MyTurnActionState {
     object Idle : MyTurnActionState
@@ -70,11 +71,7 @@ class MyTurnViewModel(
 
     private val _actionState = MutableStateFlow<MyTurnActionState>(MyTurnActionState.Idle)
 
-        init {
-            viewModelScope.launch {
-                transformStateInUiState()
-            }
-        }
+
 
     private fun RoundState.Rolling.extractDataFromRoundState(): MyTurnDataState? =
         when(val myTurn = turn.playerStatus){
@@ -121,7 +118,7 @@ class MyTurnViewModel(
         when (val state = stateUi.value) {
             InitialLoading -> {  /* do nothing */  }
             is ValidState -> {
-                if (state.data.rollsLeft >= 0 && _actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.Rolling)) {
+                if (state.data.rollsLeft >= 0 && _actionState.updateIf(MyTurnActionState.Idle, MyTurnActionState.Rolling)) {
                     viewModelScope.launch {
                         if (actions.rollDice(dices)) {
                             starRollingAnimation = true
@@ -146,7 +143,7 @@ class MyTurnViewModel(
         when (stateUi.value) {
             InitialLoading -> { /* do nothing */ }
             is ValidState -> {
-                if (_actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.SettingHand)) {
+                if (_actionState.updateIf(MyTurnActionState.Idle, MyTurnActionState.SettingHand)) {
                     runAndSetAction(MyTurnActionState.Idle){
                         actions.setHand()
                     }
@@ -159,7 +156,7 @@ class MyTurnViewModel(
         when(stateUi.value) {
             InitialLoading -> { /* do nothing */ }
             is ValidState -> {
-                if (_actionState.compareAndSet(MyTurnActionState.Idle, MyTurnActionState.RaisingAnte)) {
+                if (_actionState.updateIf(MyTurnActionState.Idle, MyTurnActionState.RaisingAnte)) {
                     runAndSetAction(MyTurnActionState.Idle){
                         actions.raiseAnte(ante)
                     }
@@ -167,6 +164,7 @@ class MyTurnViewModel(
             }
         }
     }
+
 
     private fun runAndSetAction(endAction: MyTurnActionState, code: suspend ()-> Unit){
         viewModelScope.launch {
@@ -177,6 +175,8 @@ class MyTurnViewModel(
             }
         }
     }
+
+    fun init() = viewModelScope.launch { transformStateInUiState() }
 
     companion object {
         fun factory(
@@ -191,7 +191,7 @@ class MyTurnViewModel(
                     baseViewModel = base,
                     stateProvider = stateProvider,
                     actions = actions
-                ) as T
+                ).also { it.init() } as T
             }
         }
     }

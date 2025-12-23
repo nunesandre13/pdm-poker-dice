@@ -52,9 +52,10 @@ fun MatchScreenContent(
 @Composable
 fun MatchScreenError(viewModel: MatchViewModel) {
     when (val stateError = viewModel.errorState.collectAsState().value) {
-        is MatchError -> ErrorPopUp(stateError){
+        is MatchError.InvalidPlay, MatchError.SomeError -> ErrorPopUp(stateError){
             viewModel.dismissError()
         }
+        is MatchError.NoError -> Unit
     }
 }
 

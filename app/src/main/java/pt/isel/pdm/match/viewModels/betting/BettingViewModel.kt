@@ -20,6 +20,7 @@ import pt.isel.pdm.match.viewModels.interfaces.BettingActions
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
+import pt.isel.pdm.utils.updateIf
 
 sealed interface BettingActionState {
     object Idle : BettingActionState
@@ -75,7 +76,7 @@ class BettingViewModel(
         when (stateUi.value) {
             is InitialLoading -> { /* Não fazer nada */ }
             is ValidState -> {
-                if (_actionState.compareAndSet(BettingActionState.Idle, BettingActionState.PlacingBet)) {
+                if (_actionState.updateIf(BettingActionState.Idle, BettingActionState.PlacingBet)) {
                     runAndSetAction(BettingActionState.BettingDone) {
                         actions.call()
                     }
@@ -88,7 +89,7 @@ class BettingViewModel(
         when (stateUi.value) {
             is InitialLoading -> { /* Não fazer nada */ }
             is ValidState -> {
-                if (_actionState.compareAndSet(BettingActionState.Idle, BettingActionState.PlacingBet)) {
+                if (_actionState.updateIf(BettingActionState.Idle, BettingActionState.PlacingBet)) {
                     runAndSetAction(BettingActionState.BettingDone) {
                         actions.fold()
                     }
@@ -120,7 +121,7 @@ class BettingViewModel(
         is BettingActionState.BettingDone -> BettingDone(round)
     }
 
-    init {
+    fun init() {
         viewModelScope.launch {
             transformStateInUiState()
         }
@@ -139,7 +140,7 @@ class BettingViewModel(
                     baseViewModel = base,
                     stateProvider = stateProvider,
                     actions = actions
-                ) as T
+                ).also { it.init() } as T
             }
         }
     }
