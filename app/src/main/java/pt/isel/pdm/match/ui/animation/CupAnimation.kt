@@ -64,12 +64,21 @@ fun DiceRollAnimationOverlay(
 }
 
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DiceRollAnimationOverlayPreview() {
-//    var start by remember { mutableStateOf(false) }
-//    DiceRollAnimationOverlay(
-//        startAnimation = start,
-//        onAnimationFinished = { start = false }
-//    )
+    var start by remember { mutableStateOf(false) }
+    Box(modifier = Modifier.fillMaxSize()) {
+        DiceRollAnimationOverlay(
+            startAnimation = start,
+            onClick = {
+                // Inicia a animação ao clicar no copo
+                start = true
+            },
+            onAnimationFinished = {
+                // Faz reset ao estado quando termina
+                start = false
+            }
+        )
+    }
 }

@@ -15,7 +15,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
+import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyId
+import pt.isel.pdm.domain.LobbyStatus
+import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
+import pt.isel.pdm.domain.toPlayerInfo
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.ui.author.PlayerItem
@@ -96,21 +103,32 @@ fun LobbyView(
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LobbyScreenPreview() {
-//    val fakeLobby = Lobby(
-//        name = "Exemplo",
-//        id = 1,
-//        maxPlayers = 4,
-//        players = listOf(
-//            User("1233", Name("Alice"), Email("Alice@gamail.com")),
-//            User("1234444", Name("Bob"), Email("Bob@gmail.com"))
-//        )
-//    )
-//    LobbyView(
-//        lobby = fakeLobby,
-//        onLeave = {},
-//        modifier = Modifier
-//    )
+fun LobbyViewPreview() {
+    val fakePlayers = listOf(
+        User(UserId(1), Name("Alice"), Email("alice@gmail.com")).toPlayerInfo(),
+        User(UserId(2), Name("Bob"), Email("bob@gmail.com")).toPlayerInfo()
+    )
+    val fakeLobby = Lobby(
+        id = LobbyId(1),
+        name = "Poker Night",
+        description = "Casual game with friends",
+        players = fakePlayers,
+        owner =UserId(1),
+        maxPlayer = 4,
+        minPlayer = 2,
+        numberOdRounds = 5,
+        firstAnte = 10,
+        matchId = null,
+        lobbyStatus = LobbyStatus.OPEN
+    )
+
+    MaterialTheme {
+        LobbyView(
+            lobby = fakeLobby,
+            onLeave = { },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 }

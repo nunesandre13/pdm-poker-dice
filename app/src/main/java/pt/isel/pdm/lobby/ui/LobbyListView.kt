@@ -11,7 +11,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
+import pt.isel.pdm.domain.Email
 import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.LobbyId
+import pt.isel.pdm.domain.LobbyStatus
+import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.UserId
+import pt.isel.pdm.domain.toPlayerInfo
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 
@@ -144,14 +151,23 @@ fun LobbyListView(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LobbyListPreview() {
-    LobbyListView(
-        listOf(
-//            Lobby("Lobby 1",1, 4, listOf()),
-//            Lobby("Lobby 2", 1,6, listOf()),
-//            Lobby("Lobby 3", 1,8, listOf())
-        ),
-        onJoinClick = {},
-        onBack = {},
-        onCreateLobby = {}
+    val players = listOf(
+        User(UserId(1), Name("Player 1"), Email("teste@email")).toPlayerInfo(),
+        User(UserId(2), Name("Player 2"), Email("teste2@email")).toPlayerInfo(),
+        User(UserId(3), Name("Player 3"), Email("teste3@email")).toPlayerInfo()
     )
+
+    val lobbyList = listOf(
+        Lobby(LobbyId(1), "Lobby Beginner", "Ideal for new players", players, UserId(1), 4, 2, 3, 10, null, LobbyStatus.OPEN),
+        Lobby(LobbyId(2), "High Stakes", "Only for pros", players.take(2), UserId(2), 8, 2, 5, 50, null, LobbyStatus.OPEN),
+        Lobby(LobbyId(3), "Final Table", "Tournament final", players, UserId(3), 3, 2, 10, 100, "match_123", LobbyStatus.IN_GAME)
+    )
+    MaterialTheme {
+        LobbyListView(
+            lobbies = lobbyList,
+            onJoinClick = { },
+            onBack = { },
+            onCreateLobby = { }
+        )
+    }
 }

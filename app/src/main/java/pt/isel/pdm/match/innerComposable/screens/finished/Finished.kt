@@ -19,10 +19,20 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.PlayerStatus
+import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.RoundState
+import pt.isel.pdm.domain.state.PlayerRoundStateWithName
+import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
+import pt.isel.pdm.domain.PlayerInfo
 
 @Composable
 fun FinishedScreen(roundStateProvider: RoundStateProvider) {
@@ -62,5 +72,21 @@ fun FinishedScreen(roundStateProvider: RoundStateProvider) {
             textAlign = TextAlign.Center,
             modifier = Modifier.alpha(alpha)
         )
+    }
+}
+
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun FinishedScreenPreview() {
+    val player1 = PlayerRoundStateWithName(playerId = PlayerId(1), name = Name("Alice"), coins = 100, playerStatus = PlayerStatus.NotStarted)
+    val player2 = PlayerRoundStateWithName(playerId = PlayerId(2), name = Name("Bob"), coins = 50, playerStatus = PlayerStatus.NotStarted)
+    val mockRound = Round(id = RoundId(1), state = RoundState.Finished(winner = PlayerId(1)), players = listOf(player1, player2))
+    val mockProvider = object : RoundStateProvider {
+        override val roundState: StateFlow<Round?> = MutableStateFlow(mockRound)
+        override val player: StateFlow<PlayerInfo?> = MutableStateFlow(null)
+    }
+    MaterialTheme {
+        FinishedScreen(roundStateProvider = mockProvider)
     }
 }

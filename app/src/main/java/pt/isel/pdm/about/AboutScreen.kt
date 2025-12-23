@@ -120,6 +120,6 @@ fun AboutScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun Teste(){
+fun AboutScreenPreview(){
     AboutScreen({}, {},{})
 }
