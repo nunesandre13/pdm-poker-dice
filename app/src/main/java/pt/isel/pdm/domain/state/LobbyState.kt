@@ -16,6 +16,8 @@ sealed interface LobbyScreenState : State{
 sealed class LobbyError(override val message: String?): DomainError {
     data object LobbyFull: LobbyError(null)
     data object NoError: LobbyError(null)
+
+    data class ApiError(override val message: String?): LobbyError(message)
     data object LobbyNotFound: DomainError, LobbyError("Lobby not found")
 
     data object NetWorkError: LobbyError("NetWorkError")

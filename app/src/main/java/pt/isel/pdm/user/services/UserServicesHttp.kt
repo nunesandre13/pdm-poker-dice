@@ -1,16 +1,8 @@
 package pt.isel.pdm.user.services
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.json.Json
 import pt.isel.pdm.domain.InviteCode
 import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.state.UserError
@@ -22,14 +14,12 @@ import pt.isel.pdm.dto.user.toDomain
 import pt.isel.pdm.httpConfig.MethodRequest
 import pt.isel.pdm.httpConfig.NetworkClient
 import pt.isel.pdm.httpConfig.NetworkResult
-import pt.isel.pdm.httpConfig.RequestConfig
 import pt.isel.pdm.httpConfig.RequestConfigBuilder
 import pt.isel.pdm.httpConfig.request
 import pt.isel.pdm.user.UserPreferences
 import pt.isel.pdm.utils.Failure
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
-import pt.isel.pdm.utils.onOutCome
 
 class UserServicesHttp(private val networkClient: NetworkClient, private val userPreferences: UserPreferences) : UserServices {
     private val baseUrl = "http://10.0.2.2:4000/api"
@@ -46,7 +36,7 @@ class UserServicesHttp(private val networkClient: NetworkClient, private val use
         val tokenResult = networkClient.request<UserCreateTokenOutputModel,UserCreateTokenInputModel>(tokenConfig)
         val tokenModel = when (tokenResult) {
             is NetworkResult.Success -> tokenResult.data
-            is NetworkResult.ApiError -> return Failure(UserError.ErrorLogin)
+            is NetworkResult.ApiError -> return Failure(UserError.UsersApiError(tokenResult.message))
             else -> return Failure(UserError.NetworkError)
         }
         return when (val meResult = fetchMe(tokenModel.token)) {
@@ -56,6 +46,7 @@ class UserServicesHttp(private val networkClient: NetworkClient, private val use
                 userPreferences.saveSession(tokenModel.token, userDomain.id.id.toString())
                 Success(tokenModel)
             }
+            is NetworkResult.ApiError -> Failure(UserError.UsersApiError(meResult.message))
             else -> Failure(UserError.NetworkError)
         }
     }
@@ -73,13 +64,13 @@ class UserServicesHttp(private val networkClient: NetworkClient, private val use
             method = MethodRequest.POST
             authenticated()
         }
-        val result = networkClient.request<Unit, Unit>(config)
-        return when(result) {
+        return when(val result = networkClient.request<Unit, Unit>(config)) {
             is NetworkResult.Success -> {
                 _currentUser.value = null
                 userPreferences.clearSession()
                 Success(Unit)
             }
+            is NetworkResult.ApiError -> Failure(UserError.UsersApiError(result.message))
             else -> Failure(UserError.NetworkError)
         }
     }
@@ -105,15 +96,15 @@ class UserServicesHttp(private val networkClient: NetworkClient, private val use
         }
         val createResult = networkClient.request<Unit, UserInput>(config)
         if (createResult !is NetworkResult.Success) {
-            return if (createResult is NetworkResult.ApiError) Failure(UserError.ErrorCreateUser)
+            return if (createResult is NetworkResult.ApiError) Failure(UserError.UsersApiError(createResult.message))
             else Failure(UserError.NetworkError)
         }
         val loginInput = UserCreateTokenInputModel(user.email, user.password)
-        return when (login(loginInput)) {
+        return when (val login = login(loginInput)) {
             is Success -> {
                 currentUser.value?.let { Success(it) } ?: Failure(UserError.ErrorLogin)
             }
-            is Failure -> Failure(UserError.ErrorLogin)
+            is Failure -> Failure(login.value)
         }
     }
 

@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -24,11 +23,9 @@ import pt.isel.pdm.domain.MatchStatus
 import pt.isel.pdm.domain.Match
 import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.PlayerInfo
-import pt.isel.pdm.domain.RawRound
 import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.RoundState
 import pt.isel.pdm.domain.State
-import pt.isel.pdm.domain.User
 import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.domain.state.Round

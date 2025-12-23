@@ -18,6 +18,6 @@ sealed class UserError(override val message: String?) : DomainError {
     data object UserNotFound : UserError("Users not found")
     data object ErrorLogin : UserError("Login not possible")
     data object ErrorCreateUser : UserError("Create user not possible")
-
+    data class UsersApiError(override val message: String?) : UserError(message)
     data object NetworkError: UserError("NetWorkError")
 }

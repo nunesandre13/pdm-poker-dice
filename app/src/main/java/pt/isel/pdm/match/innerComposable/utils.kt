@@ -4,13 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -86,29 +87,20 @@ fun DisplayOtherPlayersStatusOverlay(
         BoxWithConstraints(
             modifier = modifier
         ) {
-            val diceSize = (maxWidth * 0.3f)
+            val diceSize = (maxWidth * 0.4f)
                 .coerceIn(64.dp, 96.dp)
 
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = playerState.name.name,
-                    modifier = Modifier
-                        .padding(top = 4.dp, bottom = 4.dp),
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1
-                )
-
+                DrawNameAndCoins(playerState)
                 val hand = when (val s = playerState.playerStatus) {
                     is PlayerStatus.StillRolling -> s.hand
                     is PlayerStatus.FinalHand -> s.hand
                     PlayerStatus.NotStarted,
                     PlayerStatus.PassRound -> null
                 }
-
                 if (hand?.dices?.isNotEmpty() == true) {
                     collectMyDices?.let {
                         DisplayClickableDices(
@@ -121,12 +113,38 @@ fun DisplayOtherPlayersStatusOverlay(
                         size = diceSize
                     )
                 }
-                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
 }
 
+@Composable
+fun DrawNameAndCoins(playerState: PlayerRoundStateWithName) {
+    Row(
+        modifier = Modifier
+            .padding(top = 4.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = playerState.name.name,
+            color = Color.White,
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = playerState.coins.toString(),
+            color = Color.White,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Image(
+            painter = painterResource(id = R.drawable.ficha),
+            contentDescription = "Poker chip",
+            modifier = Modifier.size(16.dp)
+        )
+    }
+}
 
 @Composable
 fun DrawCup(

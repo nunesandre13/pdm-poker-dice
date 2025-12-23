@@ -41,6 +41,7 @@ import pt.isel.pdm.httpConfig.MethodRequest
 import pt.isel.pdm.httpConfig.NetworkClient
 import pt.isel.pdm.httpConfig.NetworkResult
 import pt.isel.pdm.httpConfig.RequestConfig
+import pt.isel.pdm.httpConfig.RequestConfigBuilder
 import pt.isel.pdm.httpConfig.listen
 import pt.isel.pdm.httpConfig.request
 import pt.isel.pdm.user.UserPreferences
@@ -67,11 +68,10 @@ class RepositoryMatchHttp(
                 return@flatMapLatest emptyFlow()
             }
             logger("Starting SSE for match: $matchId, player: $userId")
-            val config = RequestConfig<Unit>(
-                url = "$baseUrl/sse/match/$matchId/events",
-                queryParams = mapOf("playerId" to userId),
+            val config = request<Unit>("$baseUrl/sse/match/$matchId/events") {
+                parameter("playerId", userId)
                 numberOfTries = 3
-            )
+            }
             networkClient.listen<MatchEvent>(config, eventName = "MATCH_EVENT")
                 .map { result ->
                     when (result) {
@@ -79,9 +79,13 @@ class RepositoryMatchHttp(
                             logger("SSE Received: ${result.data}")
                             Success(result.data.toDomain())
                         }
+                        is NetworkResult.ApiError -> {
+                            logger("SSE API Error: ${result.code}")
+                            Failure(MatchError.ApiError(result.message))
+                        }
                         is NetworkResult.NetworkError -> {
                             logger("SSE Network Error: ${result.exception.message}")
-                            Failure(MatchError.SomeError)
+                            Failure(MatchError.NetworkError)
                         }
                         else -> {
                             logger("SSE Error: $result")
@@ -104,17 +108,20 @@ class RepositoryMatchHttp(
     override suspend fun play(command: PlayCommand): OutCome<RawMatch, MatchError> {
         val matchId = currentMatchId.value ?: return Failure(MatchError.SomeError)
         val bodyDto: PlayCommandOut = command.toDto()
-        val config = RequestConfig<PlayCommandOut>(
-            url = "$baseUrl/match/$matchId/play",
-            method = MethodRequest.POST,
-            body = bodyDto,
-            headers = getAuthHeader()
-        )
+        val config = request<PlayCommandOut>("$baseUrl/match/$matchId/play") {
+            method = MethodRequest.POST
+            body = bodyDto
+            authenticated()
+        }
         return when (val result = networkClient.request<MatchIn, PlayCommandOut>(config)) {
             is NetworkResult.Success -> Success(result.data.toDomain())
             is NetworkResult.ApiError -> {
                 logger("Play API Error: ${result.code}")
-                Failure(MatchError.SomeError)
+                Failure(MatchError.ApiError(result.message))
+            }
+            is NetworkResult.NetworkError -> {
+                logger("Play Network Error: ${result.exception.message}")
+                Failure(MatchError.NetworkError)
             }
             else -> {
                 logger("Play Network/Unknown Error")
@@ -124,16 +131,22 @@ class RepositoryMatchHttp(
     }
 
     override suspend fun leaveMatch(match: RawMatch): OutCome<RawMatch, MatchError> {
-        val config = RequestConfig<Unit>(
-            url = "$baseUrl/match/${match.id.id}/leave",
-            method = MethodRequest.POST,
-            headers = getAuthHeader()
-        )
-
+        val config = request<Unit>("$baseUrl/match/${match.id.id}/leave") {
+            method = MethodRequest.POST
+            authenticated()
+        }
         return when (val result = networkClient.request<MatchIn, Unit>(config)) {
             is NetworkResult.Success -> {
                 currentMatchId.value = null
                 Success(result.data.toDomain())
+            }
+            is NetworkResult.ApiError -> {
+                logger("Leave API Error: ${result.code}")
+                Failure(MatchError.ApiError(result.message))
+            }
+            is NetworkResult.NetworkError -> {
+                logger("Leave Network Error: ${result.exception.message}")
+                Failure(MatchError.NetworkError)
             }
             else -> {
                 logger("Leave Error")
@@ -142,13 +155,9 @@ class RepositoryMatchHttp(
         }
     }
 
-    private suspend fun getAuthHeader(): Map<String, String> {
+    private suspend fun <T> RequestConfigBuilder<T>.authenticated() {
         val token = userPreferences.getToken()
-        return if (token != null) {
-            mapOf("Authorization" to "Bearer $token")
-        } else {
-            emptyMap()
-        }
+        if (token != null) header("Authorization", "Bearer $token")
     }
 
     private fun logger(str: String) {
