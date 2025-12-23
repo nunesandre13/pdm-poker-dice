@@ -88,7 +88,7 @@ fun DisplayOtherPlayersStatusOverlay(
             modifier = modifier
         ) {
             val diceSize = (maxWidth * 0.4f)
-                .coerceIn(64.dp, 96.dp)
+                .coerceIn(50.dp, 96.dp)
 
             Column(
                 modifier = Modifier.fillMaxSize(),

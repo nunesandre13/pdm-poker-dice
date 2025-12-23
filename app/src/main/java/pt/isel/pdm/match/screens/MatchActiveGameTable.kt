@@ -33,6 +33,8 @@ import pt.isel.pdm.match.ui.PlayerDetailsDialog
 import pt.isel.pdm.match.ui.PlayerListItem
 import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.MatchViewModel
+import pt.isel.pdm.ui.CircularBox
+import pt.isel.pdm.ui.clickable.ClickableIcon
 
 @Composable
 fun MatchActiveGameTable(
@@ -61,43 +63,11 @@ fun MatchActiveGameTable(
             )
     ) {
         if (showMatchDetails) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                Column(
-                    modifier = Modifier
-                        .weight(0.2f)
-                        .fillMaxHeight()
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
-                        .padding(top = 50.dp)
-                ) {
-                    val matchState by matchViewModel.matchState.collectAsStateWithLifecycle()
-                    Text(
-                        text = "PLAYERS",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                    if (matchState is MatchState.ActualMatch) {
-                        val match = (matchState as MatchState.ActualMatch).match
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(bottom = 16.dp)
-                        ) {
-                            items(match.players) { player ->
-                                PlayerListItem(
-                                    player = player,
-                                    onClick = { selectedPlayer = player }
-                                )
-                            }
-                        }
-                    } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                }
-                Box(modifier = Modifier.weight(0.8f).fillMaxHeight()) {
-                    pokerTableContent()
-                }
-            }
+            showMatchState(
+                matchViewModel = matchViewModel,
+                onPlayerSelected = { selectedPlayer = it },
+                pokerTableContent = pokerTableContent
+            )
         } else {
             pokerTableContent()
         }
@@ -121,6 +91,49 @@ fun MatchActiveGameTable(
                 player = player,
                 onDismiss = { selectedPlayer = null }
             )
+        }
+    }
+}
+
+@Composable
+private fun showMatchState(
+    matchViewModel: MatchViewModel,
+    onPlayerSelected: (PlayerMatchStateWithName) -> Unit,
+    pokerTableContent: @Composable (() -> Unit)
+) {
+    Row(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(0.2f)
+                .fillMaxHeight()
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
+                .padding(top = 50.dp)
+        ) {
+            val matchState by matchViewModel.matchState.collectAsStateWithLifecycle()
+            Text(
+                text = "PLAYERS",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+            if (matchState is MatchState.ActualMatch) {
+                val match = (matchState as MatchState.ActualMatch).match
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    items(match.players) { player ->
+                        PlayerListItem(
+                            player = player,
+                            onClick = { onPlayerSelected(player) }
+                        )
+                    }
+                }
+            } else CircularBox()
+        }
+        Box(modifier = Modifier
+            .weight(0.8f)
+            .fillMaxHeight()) {
+            pokerTableContent()
         }
     }
 }

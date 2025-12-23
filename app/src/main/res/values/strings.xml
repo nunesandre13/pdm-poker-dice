@@ -11,6 +11,7 @@
     <string name="textAbout">See more about Poker Dice</string>
     <string name="moreInfo">More info</string>
     <string name="aboutGame">About the game</string>
+    <string name="invalid_number">Invalid number</string>
 
     <string name="wikiurl">https://en.wikipedia.org/wiki/Poker_dice</string>
 

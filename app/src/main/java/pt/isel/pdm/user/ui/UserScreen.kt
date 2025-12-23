@@ -1,5 +1,8 @@
 package pt.isel.pdm.user.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import pt.isel.pdm.domain.state.UserScreenState
@@ -12,7 +15,10 @@ import pt.isel.pdm.user.ui.create.ViewUserCreateStateFull
 import pt.isel.pdm.user.ui.login.LoginScreen
 import pt.isel.pdm.user.ui.login.ViewUserLoginStateFull
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.pdm.ui.CircularBox
 import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.utils.ViewModelBase
 
@@ -57,9 +63,7 @@ fun UserScreenContent(viewModel: UserViewModel, onTitleScreen: () -> Unit) {
             }
         )
 
-        is UserScreenState.Idle -> {
-
-        }
+        is UserScreenState.Idle -> CircularBox()
 
         is UserScreenState.UserLoggIn -> onTitleScreen()
 

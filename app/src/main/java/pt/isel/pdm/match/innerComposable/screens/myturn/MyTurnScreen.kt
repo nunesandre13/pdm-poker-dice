@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -79,7 +80,7 @@ fun MyTurnContent(
 }
 
 @Composable
-private fun MyTurnUiRaisingAnte(
+private fun BoxScope.MyTurnUiRaisingAnte(
     state: MyTurnUiState.RaisingAnte,
     playersPosition: PlayerRegistry
 ) {
@@ -87,7 +88,7 @@ private fun MyTurnUiRaisingAnte(
         players = state.round.players,
         playersPosition = playersPosition
     )
-    DrawCup()
+    DrawCup(modifier = Modifier.align(Alignment.BottomEnd))
 }
 
 @Composable
@@ -103,6 +104,37 @@ private fun MyTurnUiRolling(
     DrawCup(state.round.players.findMe(vm.player?.id), vm.starRollingAnimation, {}) { vm.stopRollingAnimation() }
 }
 
+@Composable
+fun MyTurnButtons(
+    onRaiseAnteClick: () -> Unit,
+    onSetHandClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth(0.38f)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Button(
+            onClick = onRaiseAnteClick,
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp)
+        ) {
+            Text("Raise Ante")
+        }
+        Button(
+            onClick = onSetHandClick,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
+        ) {
+            Text("Set Hand")
+        }
+    }
+}
 @Composable
 fun BoxScope.MyTurnUiIdle(
     state: MyTurnUiState.Idle,
@@ -125,27 +157,12 @@ fun BoxScope.MyTurnUiIdle(
             .padding(16.dp)
             .align(Alignment.TopEnd)
     )
-    Row(
+    MyTurnButtons(
+        onRaiseAnteClick = { showDialog = true },
+        onSetHandClick = { vm.setHand() },
         modifier = Modifier
             .align(Alignment.BottomStart)
-            .padding(16.dp)
-    ) {
-        Button(
-            onClick = { showDialog = true},
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            Text("Raise Ante")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = { vm.setHand() },
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            Text("Set Hand")
-        }
-    }
+    )
     if (showDialog) {
         ShowAnteDialog(
             ante = ante,
@@ -155,7 +172,7 @@ fun BoxScope.MyTurnUiIdle(
         )
     }
     DrawCup(modifier = Modifier
-        .clickable(onClick = { vm.rollDice(dices); dices })
+        .clickable(onClick = { vm.rollDice(dices); dices = emptyList() })
         .align(Alignment.BottomEnd)
     )
 }
@@ -169,7 +186,7 @@ fun ShowAnteDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Aumentar Ante") },
+        title = { Text("Raise Ante") },
         text = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(onClick = { if (ante > 0) onAnteChange(ante - 1) }) { Text("-") }
@@ -179,12 +196,12 @@ fun ShowAnteDialog(
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Confirmar")
+                Text("Confirm")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+                Text("Cancel")
             }
         }
     )

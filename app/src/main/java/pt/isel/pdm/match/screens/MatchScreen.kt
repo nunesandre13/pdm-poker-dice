@@ -10,6 +10,7 @@ import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.match.innerComposable.RoundScreen
 import pt.isel.pdm.match.viewModels.MatchGlobalStateUi
 import pt.isel.pdm.match.viewModels.MatchViewModel
+import pt.isel.pdm.ui.CircularBox
 import pt.isel.pdm.ui.errorPresentation.ErrorPopUp
 
 @Composable
@@ -25,11 +26,7 @@ fun MatchScreenContent(
 ) {
     val globalUiState by matchViewModel.stateUi.collectAsStateWithLifecycle()
     when (globalUiState) {
-        is MatchGlobalStateUi.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
+        is MatchGlobalStateUi.Loading -> CircularBox()
         is MatchGlobalStateUi.Finished -> {
             MatchFinishedView(
                 matchStateProvider = matchViewModel,
