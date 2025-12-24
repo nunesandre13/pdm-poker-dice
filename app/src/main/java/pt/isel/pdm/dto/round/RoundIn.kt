@@ -1,8 +1,8 @@
 package pt.isel.pdm.dto.round
 
 import kotlinx.serialization.Serializable
-import pt.isel.pdm.domain.INITIAL_ANTE
-import pt.isel.pdm.domain.RawRound
+import pt.isel.pdm.domain.match.INITIAL_ANTE
+import pt.isel.pdm.domain.match.RawRound
 import pt.isel.pdm.domain.RoundId
 
 @Serializable

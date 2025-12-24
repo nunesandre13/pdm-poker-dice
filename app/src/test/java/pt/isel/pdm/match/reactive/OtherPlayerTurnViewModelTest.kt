@@ -11,8 +11,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import pt.isel.pdm.domain.*
+import pt.isel.pdm.domain.match.DiceFace
+import pt.isel.pdm.domain.match.DicesHand
+import pt.isel.pdm.domain.match.PlayerRoundState
+import pt.isel.pdm.domain.match.PlayerStatus
+import pt.isel.pdm.domain.match.RoundState
 import pt.isel.pdm.domain.state.PlayerRoundStateWithName
 import pt.isel.pdm.domain.state.Round
+import pt.isel.pdm.domain.user.PlayerInfo
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 import pt.isel.pdm.match.viewModels.otherPlayers.*
 import pt.isel.pdm.utils.ViewModelBase

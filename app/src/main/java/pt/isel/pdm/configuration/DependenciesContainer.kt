@@ -11,8 +11,6 @@ import pt.isel.pdm.utils.PlayersNameCache
 interface DependenciesContainer {
 
     val playersNameCache : PlayersNameCache
-
-    val networkClient: NetworkClient
     val repoLobby : RepositoryLobbies
     val userServices: UserServices
     val lobbyServices: LobbyServices

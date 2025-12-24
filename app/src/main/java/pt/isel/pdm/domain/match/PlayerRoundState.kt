@@ -1,4 +1,7 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.match
+
+import pt.isel.pdm.domain.PlayerId
+
 const val NUMBER_OF_ROLLS = 2
 sealed class PlayerStatus {
     abstract val type: StatusType

@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.match.DiceFace
 import pt.isel.pdm.ui.clickable.ClickableImage
 
 @Composable

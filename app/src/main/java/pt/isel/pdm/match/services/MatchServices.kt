@@ -3,8 +3,8 @@ package pt.isel.pdm.match.services
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.RawMatch
+import pt.isel.pdm.domain.match.DiceFace
+import pt.isel.pdm.domain.match.RawMatch
 import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.RoundId

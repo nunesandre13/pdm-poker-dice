@@ -3,8 +3,8 @@ package pt.isel.pdm.user.services
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import pt.isel.pdm.domain.InviteCode
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.InviteCode
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel
 import pt.isel.pdm.dto.user.UserCreateTokenOutputModel

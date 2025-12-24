@@ -9,8 +9,8 @@ import androidx.compose.ui.test.performClick
 import org.junit.Rule
 import org.junit.Test
 import org.junit.Assert.assertTrue
-import pt.isel.pdm.domain.User
-import pt.isel.pdm.domain.Email
+import pt.isel.pdm.domain.user.User
+import pt.isel.pdm.domain.user.Email
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.profile.ui.ProfileView

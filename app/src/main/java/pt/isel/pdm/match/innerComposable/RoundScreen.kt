@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -18,17 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.take
-import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.match.DiceFace
 import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.PlayerId
-import pt.isel.pdm.domain.RawMatch
+import pt.isel.pdm.domain.match.RawMatch
 import pt.isel.pdm.domain.RoundId
 import pt.isel.pdm.domain.events.MatchResponse
 import pt.isel.pdm.domain.state.MatchError
@@ -39,8 +34,8 @@ import pt.isel.pdm.match.ui.playerView.BasePlayerView
 import pt.isel.pdm.match.ui.table.PokerTableSurface
 import pt.isel.pdm.match.ui.table.TableTitle
 import pt.isel.pdm.match.viewModels.MatchGlobalStateUi
-import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.MatchViewModel
+import pt.isel.pdm.ui.CircularBox
 import pt.isel.pdm.user.services.UsersServiceMock
 import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.PlayersNameCache
@@ -84,7 +79,7 @@ fun RoundScreen(matchViewModel: MatchViewModel) {
                 playersPosition = registryManager.build()
             )
         } else {
-            Unit // depois colocar algo
+            CircularBox()
         }
     }
 }

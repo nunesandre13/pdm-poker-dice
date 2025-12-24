@@ -1,6 +1,6 @@
 package pt.isel.pdm.mainScreens.match
 
-import pt.isel.pdm.match.ui.Cup
+import pt.isel.pdm.match.ui.cup.Cup
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule

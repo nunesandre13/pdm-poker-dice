@@ -1,15 +1,13 @@
 package pt.isel.pdm.match.ui.dices
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
-import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.DicesHand
+import pt.isel.pdm.domain.match.DiceFace
+import pt.isel.pdm.domain.match.DicesHand
 
 @Composable
 fun DisplayClickableDices(

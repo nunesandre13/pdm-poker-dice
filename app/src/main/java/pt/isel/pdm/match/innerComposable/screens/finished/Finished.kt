@@ -27,13 +27,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.PlayerId
-import pt.isel.pdm.domain.PlayerStatus
+import pt.isel.pdm.domain.match.PlayerStatus
 import pt.isel.pdm.domain.RoundId
-import pt.isel.pdm.domain.RoundState
+import pt.isel.pdm.domain.match.RoundState
 import pt.isel.pdm.domain.state.PlayerRoundStateWithName
 import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
-import pt.isel.pdm.domain.PlayerInfo
+import pt.isel.pdm.domain.user.PlayerInfo
 
 @Composable
 fun FinishedScreen(roundStateProvider: RoundStateProvider) {

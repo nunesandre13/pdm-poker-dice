@@ -1,4 +1,4 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.lobby
 
 import pt.isel.pdm.dto.lobby.LobbyOut
 

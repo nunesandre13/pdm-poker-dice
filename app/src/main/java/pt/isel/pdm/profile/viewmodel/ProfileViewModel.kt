@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.isel.pdm.domain.AuthenticatedUser
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.AuthenticatedUser
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.domain.state.ProfileError
 import pt.isel.pdm.domain.state.ProfileScreenState
 import pt.isel.pdm.user.services.UserServices

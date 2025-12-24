@@ -2,7 +2,7 @@ package pt.isel.pdm.dto.round
 
 import kotlinx.serialization.Serializable
 import pt.isel.pdm.domain.PlayerId
-import pt.isel.pdm.domain.PlayerRoundState
+import pt.isel.pdm.domain.match.PlayerRoundState
 import pt.isel.pdm.dto.player.PlayerStatusIn
 
 @Serializable

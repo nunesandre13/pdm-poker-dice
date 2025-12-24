@@ -4,7 +4,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import org.junit.Rule
 import org.junit.Test
-import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.lobby.LobbyCreation
 import pt.isel.pdm.lobby.ui.LobbyCreationView
 
 class LobbyCreationViewTest {

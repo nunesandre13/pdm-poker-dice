@@ -1,16 +1,13 @@
 package pt.isel.pdm.domain.state
 
-import pt.isel.pdm.domain.INITIAL_ANTE
+import pt.isel.pdm.domain.match.INITIAL_ANTE
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.PlayerId
-import pt.isel.pdm.domain.PlayerMatchState
-import pt.isel.pdm.domain.PlayerMatchStateWithName
-import pt.isel.pdm.domain.PlayerRoundState
-import pt.isel.pdm.domain.PlayerStatus
-import pt.isel.pdm.domain.RawRound
+import pt.isel.pdm.domain.match.PlayerRoundState
+import pt.isel.pdm.domain.match.PlayerStatus
+import pt.isel.pdm.domain.match.RawRound
 import pt.isel.pdm.domain.RoundId
-import pt.isel.pdm.domain.RoundState
-import pt.isel.pdm.domain.withName
+import pt.isel.pdm.domain.match.RoundState
 import pt.isel.pdm.utils.PlayerNameResolver
 
 data class Round(

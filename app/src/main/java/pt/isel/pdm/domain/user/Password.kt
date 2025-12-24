@@ -1,4 +1,4 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.user
 
 import kotlinx.serialization.Serializable
 

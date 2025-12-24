@@ -12,12 +12,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pt.isel.pdm.match.innerComposable.PlayerRegistry
 import pt.isel.pdm.match.viewModels.otherPlayers.OtherPlayerTurnUiState
 import pt.isel.pdm.match.viewModels.otherPlayers.OtherPlayerTurnViewModel
-import pt.isel.pdm.match.innerComposable.DisplayOtherPlayersStatusOverlay
+import pt.isel.pdm.match.ui.DrawPlayers.DisplayOtherPlayersStatusOverlay
 
 @Composable
 fun OtherPlayerTurnScreen(vm: OtherPlayerTurnViewModel, playersPosition: PlayerRegistry) {
     val uiState by vm.stateUi.collectAsStateWithLifecycle()
-
     when (val state = uiState) {
         is OtherPlayerTurnUiState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

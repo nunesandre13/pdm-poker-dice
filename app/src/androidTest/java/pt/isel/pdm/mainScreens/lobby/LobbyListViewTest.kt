@@ -4,14 +4,14 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import org.junit.Rule
 import org.junit.Test
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.user.Email
+import pt.isel.pdm.domain.lobby.Lobby
 import pt.isel.pdm.domain.LobbyId
-import pt.isel.pdm.domain.LobbyStatus
+import pt.isel.pdm.domain.lobby.LobbyStatus
 import pt.isel.pdm.domain.Name
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.domain.UserId
-import pt.isel.pdm.domain.toPlayerInfo
+import pt.isel.pdm.domain.user.toPlayerInfo
 import pt.isel.pdm.lobby.ui.LobbyListView
 
 class LobbyListViewTest {

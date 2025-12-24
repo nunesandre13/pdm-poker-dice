@@ -21,9 +21,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.ui.ProfileCard
-import pt.isel.pdm.ui.StatCard
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 

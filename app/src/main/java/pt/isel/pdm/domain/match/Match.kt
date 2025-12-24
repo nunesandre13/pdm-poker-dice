@@ -1,7 +1,10 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.match
 
+import pt.isel.pdm.domain.MatchId
+import pt.isel.pdm.domain.Name
+import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.state.Round
-import pt.isel.pdm.utils.PlayerNameResolver
 
 data class Match(
     val id: MatchId,
@@ -26,6 +29,6 @@ fun RawMatch.toMatch(playersWithNames: List<PlayerMatchStateWithName>, round: Ro
 }
 
 
-class PlayerMatchStateWithName(val playerId: PlayerId,val name: Name, val coins: Int)
+class PlayerMatchStateWithName(val playerId: PlayerId, val name: Name, val coins: Int)
 
 fun PlayerMatchState.withName(name: Name) = PlayerMatchStateWithName(playerId,name,coins)

@@ -1,9 +1,11 @@
 package pt.isel.pdm.utils
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import pt.isel.pdm.domain.PlayerMatchState
-import pt.isel.pdm.domain.PlayerMatchStateWithName
-import pt.isel.pdm.domain.withName
+import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.match.PlayerMatchState
+import pt.isel.pdm.domain.match.PlayerMatchStateWithName
+import pt.isel.pdm.domain.state.PlayerRoundStateWithName
+import pt.isel.pdm.domain.match.withName
 
 suspend fun <T> runOperation(defaultValue: T, operation: suspend () -> T?) : T {
     return operation() ?: defaultValue
@@ -26,3 +28,6 @@ fun <T> MutableStateFlow<T>.updateIf(expect: T, newValue: T): Boolean {
     }
     return false
 }
+
+fun List<PlayerRoundStateWithName>.findMe(myId: PlayerId?): PlayerRoundStateWithName? =
+    this.find { it.playerId == myId }

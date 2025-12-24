@@ -1,4 +1,6 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.user
+
+import pt.isel.pdm.domain.Name
 
 data class UserCreate(
     val name: Name,

@@ -1,9 +1,9 @@
 package pt.isel.pdm.dto.user
 
 import kotlinx.serialization.Serializable
-import pt.isel.pdm.domain.Email
+import pt.isel.pdm.domain.user.Email
 import pt.isel.pdm.domain.Name
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.domain.UserId
 
 @Serializable

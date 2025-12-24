@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.shareIn
-import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.lobby.Lobby
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.dto.lobby.LobbyEvent
@@ -19,8 +19,8 @@ import pt.isel.pdm.utils.OutCome
 import pt.isel.pdm.utils.Success
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
-import pt.isel.pdm.domain.LobbyCreation
-import pt.isel.pdm.domain.toDto
+import pt.isel.pdm.domain.lobby.LobbyCreation
+import pt.isel.pdm.domain.lobby.toDto
 import pt.isel.pdm.dto.lobby.LobbyIn
 import pt.isel.pdm.dto.lobby.LobbyOut
 import pt.isel.pdm.httpConfig.MethodRequest

@@ -1,4 +1,7 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.match
+
+import pt.isel.pdm.domain.MatchId
+import pt.isel.pdm.domain.UserId
 
 
 data class RawMatch(

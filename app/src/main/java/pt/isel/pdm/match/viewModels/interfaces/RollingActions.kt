@@ -1,6 +1,6 @@
 package pt.isel.pdm.match.viewModels.interfaces
 
-import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.match.DiceFace
 
 interface RollingActions {
     suspend fun rollDice(dices: List<DiceFace>): Boolean

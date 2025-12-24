@@ -14,8 +14,23 @@ import kotlinx.coroutines.withTimeout
 import org.junit.Test
 import pt.isel.pdm.domain.*
 import pt.isel.pdm.domain.events.MatchResponse
+import pt.isel.pdm.domain.match.BetState
+import pt.isel.pdm.domain.match.DiceFace
+import pt.isel.pdm.domain.match.DicesHand
+import pt.isel.pdm.domain.match.MatchStatus
+import pt.isel.pdm.domain.match.PlayerBetState
+import pt.isel.pdm.domain.match.PlayerMatchState
+import pt.isel.pdm.domain.match.PlayerRoundState
+import pt.isel.pdm.domain.match.PlayerStatus
+import pt.isel.pdm.domain.match.RawMatch
+import pt.isel.pdm.domain.match.RawRound
+import pt.isel.pdm.domain.match.RoundState
 import pt.isel.pdm.domain.state.MatchError
 import pt.isel.pdm.domain.state.Round
+import pt.isel.pdm.domain.user.Email
+import pt.isel.pdm.domain.user.InviteCode
+import pt.isel.pdm.domain.user.PlayerInfo
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.match.viewModels.*
 import pt.isel.pdm.match.services.MatchServices
 import pt.isel.pdm.user.services.UserServices
@@ -61,7 +76,8 @@ class MatchViewModelTests {
             )
         )
     )
-    private val fakeMatch = RawMatch(id = matchId, players = listOf(
+    private val fakeMatch = RawMatch(
+        id = matchId, players = listOf(
             PlayerMatchState(myPlayerId, 100),
             PlayerMatchState(opponentPlayerId, 120)
         ),
@@ -205,13 +221,21 @@ class MatchViewModelTests {
 
         // Muda para Rolling - minha vez
         updatesFlow.value = Success(MatchResponse.NewMatch(fakeMatch.copy(
-            actualRound = fakeRound.copy(state = RoundState.Rolling(turn = PlayerRoundState(myPlayerId, 90)))
+            actualRound = fakeRound.copy(state = RoundState.Rolling(turn = PlayerRoundState(
+                myPlayerId,
+                90
+            )
+            ))
         )))
         myTurnDeferred.await()
 
         // Muda para Rolling - vez do adversário
         updatesFlow.value = Success(MatchResponse.NewMatch(fakeMatch.copy(
-            actualRound = fakeRound.copy(state = RoundState.Rolling(turn = PlayerRoundState(opponentPlayerId, 120)))
+            actualRound = fakeRound.copy(state = RoundState.Rolling(turn = PlayerRoundState(
+                opponentPlayerId,
+                120
+            )
+            ))
         )))
         opponentTurnDeferred.await()
 
@@ -280,7 +304,11 @@ class MatchViewModelTests {
 
         // Simula uma nova atualização com um round diferente
         updatesFlow.value = Success(MatchResponse.NewMatch(fakeMatch.copy(
-            actualRound = fakeRound.copy(id = RoundId(2), state = RoundState.Rolling(turn = PlayerRoundState(myPlayerId, 90)))
+            actualRound = fakeRound.copy(id = RoundId(2), state = RoundState.Rolling(turn = PlayerRoundState(
+                myPlayerId,
+                90
+            )
+            ))
         )))
 
         // Deve emitir o novo round

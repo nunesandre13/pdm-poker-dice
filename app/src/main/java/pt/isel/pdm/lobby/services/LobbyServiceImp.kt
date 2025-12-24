@@ -2,17 +2,17 @@ package pt.isel.pdm.lobby.services
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
-import pt.isel.pdm.domain.Lobby
-import pt.isel.pdm.domain.LobbyCreation
-import pt.isel.pdm.domain.LobbyStatus
+import pt.isel.pdm.domain.lobby.Lobby
+import pt.isel.pdm.domain.lobby.LobbyCreation
+import pt.isel.pdm.domain.lobby.LobbyStatus
 import pt.isel.pdm.domain.PlayerId
 import pt.isel.pdm.domain.events.LobbyResponse
 import pt.isel.pdm.domain.state.LobbyError
-import pt.isel.pdm.domain.toPlayerInfo
+import pt.isel.pdm.domain.user.toPlayerInfo
 import pt.isel.pdm.lobby.repository.RepositoryLobbies
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.Failure
@@ -36,11 +36,12 @@ class LobbyServiceImp(
                 is LobbyResponse.LobbyFull -> response.lobby.id == id
                 else -> false
             }
-        }.map { response ->
+        }.mapNotNull{ response ->
             when (response) {
                 is LobbyResponse.UpdatedLobby -> response.lobby
                 is LobbyResponse.LobbyFull -> response.lobby
-                else -> error("Unexpected response type")
+                is LobbyResponse.RemovedLobby -> response.lobby
+                else -> null
             }
         }.onEach { updatedLobby ->
             cacheLobbyPlayers(updatedLobby)

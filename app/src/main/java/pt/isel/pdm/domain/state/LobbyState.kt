@@ -1,9 +1,8 @@
 package pt.isel.pdm.domain.state
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.pdm.domain.DomainError
-import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.lobby.Lobby
 import pt.isel.pdm.domain.State
 
 sealed interface LobbyScreenState : State{

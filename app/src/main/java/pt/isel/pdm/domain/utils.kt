@@ -4,6 +4,9 @@ import pt.isel.pdm.domain.inputs.EmailInput
 import pt.isel.pdm.domain.inputs.InviteInput
 import pt.isel.pdm.domain.inputs.NameInput
 import pt.isel.pdm.domain.inputs.PasswordInput
+import pt.isel.pdm.domain.user.Email
+import pt.isel.pdm.domain.user.InviteCode
+import pt.isel.pdm.domain.user.Password
 
 fun EmailInput.toEmail(): Email? =
     if (email.isNotBlank() && email.contains("@")) Email(email) else null

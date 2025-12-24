@@ -1,11 +1,16 @@
 package pt.isel.pdm.match.innerComposable
 
+import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.toSize
 
 
@@ -55,4 +60,18 @@ private data class PlayerRegistryImpl(
 ) : PlayerRegistry {
     override fun getBounds(playerId: Int): Rect? = positions[playerId]
     override fun toString(): String = "PlayerRegistry(count=${positions.size})"
+}
+
+
+@Composable
+fun Modifier.applyBounds(bounds: Rect): Modifier {
+    val density = LocalDensity.current
+    return this
+        .absoluteOffset {
+            IntOffset(bounds.left.toInt(), bounds.top.toInt())
+        }
+        .size(
+            width = with(density) { bounds.width.toDp() },
+            height = with(density) { bounds.height.toDp() }
+        )
 }

@@ -1,4 +1,4 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.user
 
 data class Email(val email: String){
     override fun toString(): String {

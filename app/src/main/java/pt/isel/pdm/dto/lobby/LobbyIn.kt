@@ -1,14 +1,12 @@
 package pt.isel.pdm.dto.lobby
 
 import kotlinx.serialization.Serializable
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.lobby.Lobby
 import pt.isel.pdm.domain.LobbyId
-import pt.isel.pdm.domain.LobbyStatus
+import pt.isel.pdm.domain.lobby.LobbyStatus
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.PlayerId
-import pt.isel.pdm.domain.PlayerInfo
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.PlayerInfo
 import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.dto.player.PlayerInfoIn
 

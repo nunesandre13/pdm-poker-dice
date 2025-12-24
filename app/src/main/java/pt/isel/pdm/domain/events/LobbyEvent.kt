@@ -1,6 +1,6 @@
 package pt.isel.pdm.domain.events
 
-import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.lobby.Lobby
 
 
 sealed class LobbyResponse {

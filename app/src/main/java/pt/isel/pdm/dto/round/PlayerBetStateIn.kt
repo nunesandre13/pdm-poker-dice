@@ -1,8 +1,8 @@
 package pt.isel.pdm.dto.round
 
 import kotlinx.serialization.Serializable
-import pt.isel.pdm.domain.BetState
-import pt.isel.pdm.domain.PlayerBetState
+import pt.isel.pdm.domain.match.BetState
+import pt.isel.pdm.domain.match.PlayerBetState
 import pt.isel.pdm.domain.PlayerId
 
 @Serializable

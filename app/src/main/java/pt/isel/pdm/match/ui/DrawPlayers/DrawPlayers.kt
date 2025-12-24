@@ -1,4 +1,4 @@
-package pt.isel.pdm.match.innerComposable
+package pt.isel.pdm.match.ui.DrawPlayers
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -7,41 +7,30 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
-import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.DicesHand
+import pt.isel.pdm.domain.match.DiceFace
+import pt.isel.pdm.domain.match.DicesHand
 import pt.isel.pdm.domain.PlayerId
-import pt.isel.pdm.domain.PlayerStatus
+import pt.isel.pdm.domain.match.PlayerStatus
 import pt.isel.pdm.domain.state.PlayerRoundStateWithName
-import pt.isel.pdm.match.ui.animation.DiceRollAnimationOverlay
-import pt.isel.pdm.match.ui.animation.RolledDices
+import pt.isel.pdm.match.innerComposable.PlayerRegistry
+import pt.isel.pdm.match.innerComposable.applyBounds
 import pt.isel.pdm.match.ui.dices.DisplayClickableDices
 import pt.isel.pdm.match.ui.dices.DisplayStaticDices
-import kotlin.time.Duration.Companion.seconds
+import kotlin.collections.forEach
 
 @Composable
 fun DrawOnPlayers(
@@ -63,20 +52,6 @@ fun DrawOnPlayers(
 }
 
 @Composable
-fun Modifier.applyBounds(bounds: Rect): Modifier {
-    val density = LocalDensity.current
-    return this
-        .absoluteOffset {
-            IntOffset(bounds.left.toInt(), bounds.top.toInt())
-        }
-        .size(
-            width = with(density) { bounds.width.toDp() },
-            height = with(density) { bounds.height.toDp() }
-        )
-}
-
-
-@Composable
 fun DisplayOtherPlayersStatusOverlay(
     players: List<PlayerRoundStateWithName>,
     playersPosition: PlayerRegistry,
@@ -91,7 +66,6 @@ fun DisplayOtherPlayersStatusOverlay(
         ) {
             val diceSize = (maxWidth * 0.4f)
                 .coerceIn(50.dp, 96.dp)
-
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -148,77 +122,11 @@ fun DrawNameAndCoins(playerState: PlayerRoundStateWithName) {
     }
 }
 
-@Composable
-fun DrawCup(
-    me: PlayerRoundStateWithName?,
-    startAnimmation: Boolean,
-    onClick: () -> Unit,
-    onRollFinished: () -> Unit
-) {
-    val dices = when(val status = me?.playerStatus){
-        is PlayerStatus.FinalHand -> status.hand
-        PlayerStatus.NotStarted -> null
-        PlayerStatus.PassRound -> null
-        is PlayerStatus.StillRolling -> status.hand
-        else -> null
-    }
-
-    var showRolledDices by remember { mutableStateOf(false) }
-
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-        DiceRollAnimationOverlay(
-            startAnimation = startAnimmation,
-            onAnimationFinished = {
-                onRollFinished()
-            },
-            onClick = onClick
-        )
-
-        LaunchedEffect(startAnimmation) {
-            if (startAnimmation) {
-                delay(1.6.seconds)
-                showRolledDices = true
-                delay(2.seconds)
-                showRolledDices = false
-            }
-        }
-
-        if (showRolledDices) {
-            RolledDices(
-                dices = dices?.dices ?: emptyList(),
-                modifier = Modifier.size(width = 170.dp, height = 100.dp).offset((-50).dp, (-50).dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun DrawCup(
-    modifier: Modifier = Modifier
-) {
-    Image(
-        painter = painterResource(id = R.drawable.cup),
-        contentDescription = "Dice cup",
-        modifier = modifier
-            .padding(16.dp)
-            .size(130.dp)
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DrawCupPreview() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        DrawCup(
-            modifier = Modifier.align(Alignment.BottomEnd)
-        )
-    }
-}
 
 @Preview(showBackground = true, backgroundColor = 0xFF2E7D32)
 @Composable
 fun DrawNameAndCoinsPreview() {
-     val mockPlayer = PlayerRoundStateWithName(
+    val mockPlayer = PlayerRoundStateWithName(
         playerId = PlayerId(1),
         name = pt.isel.pdm.domain.Name("Jogador 1"),
         coins = 500,
@@ -237,31 +145,3 @@ fun DrawNameAndCoinsPreview() {
         }
     }
 }
-
-
-@Preview(showBackground = true, name = "Cup with Rolled Dices")
-@Composable
-fun DrawCupAnimationStatePreview() {
-    val mockPlayer = PlayerRoundStateWithName(
-        playerId = PlayerId(1),
-        name = pt.isel.pdm.domain.Name("Jogador 1"),
-        coins = 500,
-        playerStatus = PlayerStatus.StillRolling(
-            hand = DicesHand(
-                listOf(DiceFace.ACE, DiceFace.KING, DiceFace.QUEEN).toImmutableList()
-            )
-        )
-    )
-    MaterialTheme {
-        // Simulando o estado onde os dados aparecem após o lançamento
-        DrawCup(
-            me = mockPlayer,
-            startAnimmation = false,
-            onClick = {},
-            onRollFinished = {}
-        )
-    }
-}
-
-fun List<PlayerRoundStateWithName>.findMe(myId: PlayerId?): PlayerRoundStateWithName? =
-    this.find { it.playerId == myId }

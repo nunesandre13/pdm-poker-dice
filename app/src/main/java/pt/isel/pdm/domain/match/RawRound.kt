@@ -1,4 +1,7 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.match
+
+import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.RoundId
 
 const val INITIAL_ANTE = 0
 

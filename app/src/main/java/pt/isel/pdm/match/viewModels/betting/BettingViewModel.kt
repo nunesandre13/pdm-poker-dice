@@ -9,10 +9,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import pt.isel.pdm.domain.BetState
+import pt.isel.pdm.domain.match.BetState
 import pt.isel.pdm.domain.DomainError
-import pt.isel.pdm.domain.RawRound
-import pt.isel.pdm.domain.RoundState
+import pt.isel.pdm.domain.match.RoundState
 import pt.isel.pdm.domain.State
 import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.match.viewModels.betting.BettingUiState.*

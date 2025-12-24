@@ -11,14 +11,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chelasmulti_playerpokerdice.R
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.user.Email
+import pt.isel.pdm.domain.lobby.Lobby
 import pt.isel.pdm.domain.LobbyId
-import pt.isel.pdm.domain.LobbyStatus
+import pt.isel.pdm.domain.lobby.LobbyStatus
 import pt.isel.pdm.domain.Name
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.domain.UserId
-import pt.isel.pdm.domain.toPlayerInfo
+import pt.isel.pdm.domain.user.toPlayerInfo
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 

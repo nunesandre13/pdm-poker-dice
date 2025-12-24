@@ -4,11 +4,10 @@ import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import pt.isel.pdm.domain.AuthenticatedUser
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.InviteCode
+import pt.isel.pdm.domain.user.Email
+import pt.isel.pdm.domain.user.InviteCode
 import pt.isel.pdm.domain.Name
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel

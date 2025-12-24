@@ -8,9 +8,6 @@ import junit.framework.TestCase.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Rule
 import org.junit.Test
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.Password
-import pt.isel.pdm.domain.UserLogin
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel
 import pt.isel.pdm.ui.topBar.TopBarConfig
 import pt.isel.pdm.user.ui.login.LoginScreen

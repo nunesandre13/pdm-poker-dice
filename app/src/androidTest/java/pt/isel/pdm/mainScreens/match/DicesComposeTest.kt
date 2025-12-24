@@ -4,14 +4,12 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.collections.immutable.toImmutableList
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.DicesHand
+import pt.isel.pdm.domain.match.DiceFace
+import pt.isel.pdm.domain.match.DicesHand
 import pt.isel.pdm.match.ui.dices.DisplayClickableDices
 import pt.isel.pdm.match.ui.dices.DisplayStaticDices
 

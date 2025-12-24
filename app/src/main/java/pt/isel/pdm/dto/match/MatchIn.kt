@@ -1,9 +1,10 @@
 package pt.isel.pdm.dto.match
 
 import kotlinx.serialization.Serializable
-import pt.isel.pdm.domain.RawMatch
+import pt.isel.pdm.domain.match.RawMatch
 import pt.isel.pdm.domain.MatchId
 import pt.isel.pdm.domain.UserId
+import pt.isel.pdm.domain.match.MatchStatus
 import pt.isel.pdm.dto.round.RoundIn
 
 @Serializable
@@ -23,7 +24,7 @@ data class MatchIn(
         actualRound = actualRound.toDomain(),
         initialCoins = initialCoins,
         remainingRounds = remainingRounds,
-        matchStatus = pt.isel.pdm.domain.MatchStatus.valueOf(matchStatus)
+        matchStatus = MatchStatus.valueOf(matchStatus)
     )
 }
 

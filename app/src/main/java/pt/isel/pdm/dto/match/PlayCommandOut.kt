@@ -4,7 +4,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
-import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.match.DiceFace
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable

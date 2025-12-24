@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.flow.MutableStateFlow
-import pt.isel.pdm.domain.Lobby
+import pt.isel.pdm.domain.lobby.Lobby
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.domain.state.LobbyScreenState
 import pt.isel.pdm.lobby.repository.RepositoryLobbiesMock

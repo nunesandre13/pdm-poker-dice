@@ -10,7 +10,7 @@ import junit.framework.TestCase.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Rule
 import org.junit.Test
-import pt.isel.pdm.domain.InviteCode
+import pt.isel.pdm.domain.user.InviteCode
 import pt.isel.pdm.dto.user.UserInput
 import pt.isel.pdm.ui.topBar.TopBarConfig
 

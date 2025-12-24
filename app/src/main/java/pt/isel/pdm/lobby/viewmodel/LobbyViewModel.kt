@@ -4,22 +4,26 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import pt.isel.pdm.domain.Lobby
-import pt.isel.pdm.domain.LobbyCreation
-import pt.isel.pdm.domain.PlayerId
+import pt.isel.pdm.domain.lobby.Lobby
+import pt.isel.pdm.domain.lobby.LobbyCreation
+import pt.isel.pdm.domain.lobby.LobbyStatus
 import pt.isel.pdm.domain.state.LobbyError
 import pt.isel.pdm.domain.state.LobbyScreenState
+import pt.isel.pdm.domain.user.toPlayerInfo
 import pt.isel.pdm.lobby.services.LobbyServices
 import pt.isel.pdm.user.services.UserServices
 import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 import pt.isel.pdm.utils.onOutCome
 import pt.isel.pdm.utils.runOperation
+import kotlin.time.Duration.Companion.seconds
 
 class LobbyViewModel(
     private val lobbyService: LobbyServices,
@@ -83,7 +87,7 @@ class LobbyViewModel(
             runOperation(stateUi.value) {
                 navigateTo(LobbyScreenState.Loading)
                 userService.getCurrentUser()?.let { user ->
-                    lobbyService.leaveLobby(lobby, PlayerId(user.id.id)).onOutCome(
+                    lobbyService.leaveLobby(lobby, user.toPlayerInfo().id).onOutCome(
                         onSuccess = {
                             LobbyScreenState.LobbiesList(lobbiesListStateFlow)
                         },
@@ -100,11 +104,22 @@ class LobbyViewModel(
         }
     }
 
-    fun Flow<Lobby>.toState(lobby: Lobby) = stateIn(
+    fun Flow<Lobby>.toState(lobby: Lobby) = onEach{ lobby ->
+        onLobbyClosed(lobby)
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(2000),
         initialValue = lobby
     )
+
+    private fun onLobbyClosed(lobby: Lobby) {
+        if (lobby.lobbyStatus == LobbyStatus.CLOSED) {
+            viewModelScope.launch {
+                delay(2.seconds)
+                navigateTo(LobbyScreenState.LobbiesList(lobbiesListStateFlow))
+            }
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()

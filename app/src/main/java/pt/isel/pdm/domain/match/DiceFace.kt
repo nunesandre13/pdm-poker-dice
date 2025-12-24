@@ -1,4 +1,4 @@
-package pt.isel.pdm.domain
+package pt.isel.pdm.domain.match
 
 import com.example.chelasmulti_playerpokerdice.R
 

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.isel.pdm.domain.InviteCode
+import pt.isel.pdm.domain.user.InviteCode
 import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.domain.state.UserScreenState
 import pt.isel.pdm.dto.user.UserCreateTokenInputModel

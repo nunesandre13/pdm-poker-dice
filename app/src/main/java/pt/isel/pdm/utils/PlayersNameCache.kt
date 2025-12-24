@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import pt.isel.pdm.domain.Name
 import pt.isel.pdm.domain.PlayerId
-import pt.isel.pdm.domain.PlayerInfo
+import pt.isel.pdm.domain.user.PlayerInfo
 
 class PlayersNameCache {
     private val _playersCache = MutableStateFlow<Map<PlayerId, Name>>(emptyMap())

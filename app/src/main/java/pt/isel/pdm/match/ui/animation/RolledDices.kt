@@ -12,7 +12,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.match.DiceFace
 import pt.isel.pdm.match.ui.dices.StaticDice
 import java.lang.Float.min
 import kotlin.random.Random

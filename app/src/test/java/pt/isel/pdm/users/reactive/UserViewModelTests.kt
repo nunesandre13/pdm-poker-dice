@@ -7,10 +7,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import org.junit.Test
-import pt.isel.pdm.domain.Email
-import pt.isel.pdm.domain.InviteCode
+import pt.isel.pdm.domain.user.Email
+import pt.isel.pdm.domain.user.InviteCode
 import pt.isel.pdm.domain.Name
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.User
 import pt.isel.pdm.domain.UserId
 import pt.isel.pdm.domain.state.UserError
 import pt.isel.pdm.domain.state.UserScreenState

@@ -2,7 +2,7 @@ package pt.isel.pdm.domain.state
 
 import pt.isel.pdm.domain.DomainError
 import pt.isel.pdm.domain.State
-import pt.isel.pdm.domain.User
+import pt.isel.pdm.domain.user.User
 
 sealed interface UserScreenState : State {
     data object Idle : UserScreenState

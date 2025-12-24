@@ -2,8 +2,8 @@ package pt.isel.pdm.dto.round
 
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.Serializable
-import pt.isel.pdm.domain.DiceFace
-import pt.isel.pdm.domain.DicesHand
+import pt.isel.pdm.domain.match.DiceFace
+import pt.isel.pdm.domain.match.DicesHand
 
 @Serializable
 data class HandIn(

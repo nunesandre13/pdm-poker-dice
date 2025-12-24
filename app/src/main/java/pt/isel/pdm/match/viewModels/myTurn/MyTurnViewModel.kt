@@ -9,11 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import pt.isel.pdm.domain.DiceFace
+import pt.isel.pdm.domain.match.DiceFace
 import pt.isel.pdm.domain.DomainError
-import pt.isel.pdm.domain.PlayerStatus
-import pt.isel.pdm.domain.RawRound
-import pt.isel.pdm.domain.RoundState
+import pt.isel.pdm.domain.match.PlayerStatus
+import pt.isel.pdm.domain.match.RoundState
 import pt.isel.pdm.domain.State
 import pt.isel.pdm.match.viewModels.interfaces.RollingActions
 import pt.isel.pdm.match.viewModels.myTurn.MyTurnUiState.*
@@ -21,7 +20,6 @@ import pt.isel.pdm.utils.ViewModelBase
 import pt.isel.pdm.utils.ViewModelState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
 import pt.isel.pdm.domain.state.Round
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider

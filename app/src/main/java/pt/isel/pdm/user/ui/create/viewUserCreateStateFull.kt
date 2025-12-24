@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import pt.isel.pdm.domain.InviteCode
+import pt.isel.pdm.domain.user.InviteCode
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.pdm.domain.inputs.EmailInput

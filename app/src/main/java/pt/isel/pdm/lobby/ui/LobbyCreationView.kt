@@ -12,19 +12,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import com.example.chelasmulti_playerpokerdice.R
-import pt.isel.pdm.domain.LobbyCreation
+import pt.isel.pdm.domain.lobby.LobbyCreation
 import pt.isel.pdm.ui.background.DefaultBackGround
 import pt.isel.pdm.ui.topBar.TopBarConfig
 
-
-data class LobbyCreation(
-    val name: String,
-    val description: String,
-    val minPlayer: Int,
-    val maxPlayer: Int,
-    val numberOfRounds: Int,
-    val firstAnte: Int
-)
 
 @Composable
 fun LobbyCreationView(

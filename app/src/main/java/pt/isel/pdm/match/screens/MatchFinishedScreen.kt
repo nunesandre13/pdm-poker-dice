@@ -12,9 +12,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import pt.isel.pdm.domain.MatchStatus
+import pt.isel.pdm.domain.match.MatchStatus
 import pt.isel.pdm.match.viewModels.MatchState
-import pt.isel.pdm.match.viewModels.MatchViewModel
 import pt.isel.pdm.match.viewModels.interfaces.MatchStateProvider
 
 @Composable

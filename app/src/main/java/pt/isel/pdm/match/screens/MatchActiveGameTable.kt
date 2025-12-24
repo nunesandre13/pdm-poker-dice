@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,13 +27,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.chelasmulti_playerpokerdice.R
-import pt.isel.pdm.domain.PlayerMatchStateWithName
+import pt.isel.pdm.domain.match.PlayerMatchStateWithName
 import pt.isel.pdm.match.ui.PlayerDetailsDialog
 import pt.isel.pdm.match.ui.PlayerListItem
 import pt.isel.pdm.match.viewModels.MatchState
 import pt.isel.pdm.match.viewModels.MatchViewModel
 import pt.isel.pdm.ui.CircularBox
-import pt.isel.pdm.ui.clickable.ClickableIcon
 
 @Composable
 fun MatchActiveGameTable(

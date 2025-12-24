@@ -13,8 +13,14 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import pt.isel.pdm.domain.*
+import pt.isel.pdm.domain.match.DiceFace
+import pt.isel.pdm.domain.match.DicesHand
+import pt.isel.pdm.domain.match.PlayerRoundState
+import pt.isel.pdm.domain.match.PlayerStatus
+import pt.isel.pdm.domain.match.RoundState
 import pt.isel.pdm.domain.state.PlayerRoundStateWithName
 import pt.isel.pdm.domain.state.Round
+import pt.isel.pdm.domain.user.PlayerInfo
 import pt.isel.pdm.match.viewModels.interfaces.RollingActions
 import pt.isel.pdm.match.viewModels.interfaces.RoundStateProvider
 import pt.isel.pdm.match.viewModels.myTurn.*
@@ -61,9 +67,15 @@ class MyTurnViewModelTest {
                 playerId = myPlayerId,
                 name = Name("Me"),
                 coins = 100,
-                playerStatus =PlayerStatus.StillRolling(
+                playerStatus = PlayerStatus.StillRolling(
                     hand = DicesHand(
-                        dices = listOf(DiceFace.ACE, DiceFace.ACE, DiceFace.KING, DiceFace.KING, DiceFace.QUEEN).toImmutableList()
+                        dices = listOf(
+                            DiceFace.ACE,
+                            DiceFace.ACE,
+                            DiceFace.KING,
+                            DiceFace.KING,
+                            DiceFace.QUEEN
+                        ).toImmutableList()
                     ),
                     remainingRolls = 1
                 )
@@ -81,7 +93,13 @@ class MyTurnViewModelTest {
                 coins = 100,
                 playerStatus = PlayerStatus.StillRolling(
                     hand = DicesHand(
-                        dices = listOf(DiceFace.ACE, DiceFace.ACE, DiceFace.KING, DiceFace.KING, DiceFace.QUEEN).toImmutableList()
+                        dices = listOf(
+                            DiceFace.ACE,
+                            DiceFace.ACE,
+                            DiceFace.KING,
+                            DiceFace.KING,
+                            DiceFace.QUEEN
+                        ).toImmutableList()
                     ),
                     remainingRolls = 1
                 )
@@ -98,7 +116,13 @@ class MyTurnViewModelTest {
                 coins = 100,
                 playerStatus = PlayerStatus.FinalHand(
                     hand = DicesHand(
-                        dices = listOf(DiceFace.ACE, DiceFace.ACE, DiceFace.ACE, DiceFace.KING, DiceFace.KING).toImmutableList()
+                        dices = listOf(
+                            DiceFace.ACE,
+                            DiceFace.ACE,
+                            DiceFace.ACE,
+                            DiceFace.KING,
+                            DiceFace.KING
+                        ).toImmutableList()
                     )
                 )
             ),
@@ -115,7 +139,13 @@ class MyTurnViewModelTest {
                 coins = 100,
                 playerStatus = PlayerStatus.FinalHand(
                     hand = DicesHand(
-                        dices = listOf(DiceFace.ACE, DiceFace.ACE, DiceFace.ACE, DiceFace.KING, DiceFace.KING).toImmutableList()
+                        dices = listOf(
+                            DiceFace.ACE,
+                            DiceFace.ACE,
+                            DiceFace.ACE,
+                            DiceFace.KING,
+                            DiceFace.KING
+                        ).toImmutableList()
                     )
                 )
             )
@@ -139,6 +169,11 @@ class MyTurnViewModelTest {
                 return true
             }
             override suspend fun raiseAnte(ante: Int): Boolean {
+                delay(10)
+                return true
+            }
+
+            override suspend fun passTurn(): Boolean {
                 delay(10)
                 return true
             }
